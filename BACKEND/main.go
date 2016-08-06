@@ -13,6 +13,10 @@ func main() {
 	}
 
 	// Migrate the schema
-	db.AutoMigrate(&model.Author{}, &model.Owner{}, &model.Repository{}, &model.RepoCommit{}, &model.RepoVersion{});
+	db.AutoMigrate(&model.Author{}, &model.Repository{}, &model.RepoCommit{}, &model.RepoVersion{}, &model.RepoLanguage{}, &model.RepoContributor{});
 
+
+	//db.Model(&model.Repository{}).Related(&model.RepoVersion{})
+	//db.Model(&model.Repository{}).Related(&model.RepoCommit{})
+	//db.Model(&model.Repository{}).Related(&model.RepoLanguage{})
 }

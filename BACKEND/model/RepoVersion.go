@@ -7,7 +7,7 @@ import (
 
 type RepoVersion struct {
 	gorm.Model
-	// repository ID
+ 	// repository ID
 	RepoId			string
 	// version string
 	Version			string

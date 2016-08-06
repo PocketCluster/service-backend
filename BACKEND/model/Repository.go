@@ -7,7 +7,7 @@ import (
 type Repository struct{
 	gorm.Model
 	// two abbreviate chars + numbering : gh23247808
-	RepoId 	        string
+	RepoId 	        string	`gorm:"index;size:255"`
 	// Is this from Github/Gitlab/Bitbucket
 	Service     	string
 	// Repository Name
@@ -17,8 +17,6 @@ type Repository struct{
 
 	// Logo Image link
 	LogoImage		string
-	// Programming Language
-	Languages   	string
 	// default branch
 	Branch 			string
 	// check if this is original
@@ -45,16 +43,18 @@ type Repository struct{
 	// Framework/Library/Example/etc
 	Category    	string
 	// Short Description
-	Summary     	string
+	Summary     	string				`sql:"type:text"`
 	// Full Readme htmlfile
 	Readme      	string
 
 	// Primary author of this repository
-	Owned       	Owner
+	Owner			Author
 	// all the contributors
-	Contributors 	[]Author
+	Contributors 	[]RepoContributor
 	// latest official release/tag/snapshot
-	Version     	[]RepoVersion
+	Versions     	[]RepoVersion
 	// commit to the main repo only
-	Commit 			[]RepoCommit
+	Commits 		[]RepoCommit
+	// Programming Languages used
+	Languages       []RepoLanguage
 }

@@ -15,9 +15,9 @@ type Author struct{
 	// Profile Type : Organization/Personal/etc
 	Type            string
 
-	// Project Home Page Link
-	EntityURL		string
-	// Profile Page
+	// home Page Link
+	HomeURL			string
+	// service profile Page
 	ProfileURL		string
 	// Avatar Link
 	AvatarURL		string
