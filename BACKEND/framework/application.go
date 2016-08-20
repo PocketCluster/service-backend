@@ -55,7 +55,7 @@ func (application *Application) Init(filename *string) {
 	}
 
 	dbConfig := config.Get("database").(*toml.TomlTree)
-	db, err := gorm.Open(dbConfig.Get("database"), dbConfig.Get("filename"))
+	db, err := gorm.Open(dbConfig.Get("database").(string), dbConfig.Get("filename").(string))
 	if err != nil {
 		panic("failed to connect database")
 	}
