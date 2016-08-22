@@ -2,6 +2,7 @@ package control
 
 import (
 	"time"
+	"bytes"
 	"net/http"
 
 	"github.com/zenazn/goji/web"
@@ -18,10 +19,16 @@ func (controller *Controller) Sitemap(c web.C, r *http.Request) (string, int) {
 	sm.SetDefaultHost("https://index.pocketcluster.io")
 	sm.SetVerbose(false)
 
+	var buffer bytes.Buffer
 	var repos []model.Repository
 	controller.GetGORM(c).Find(&repos)
+
 	for _, repo := range repos {
-		sm.Add(stm.URL{"loc": repo.Slug, "lastmod": time.Now(), "changefreq":"daily", "priority":"0.5"})
+		buffer.Reset()
+		buffer.WriteString(repo.Slug)
+		buffer.WriteString(".html")
+		// FIXME : fix time to final updated timestamp
+		sm.Add(stm.URL{"loc": buffer.String(), "lastmod": time.Now(), "changefreq":"daily", "priority":"0.5"})
 	}
 
 	return string(sm.XMLContent()), http.StatusOK
