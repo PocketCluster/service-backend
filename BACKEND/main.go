@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"net/http"
+	//"regexp"
 
 	"github.com/golang/glog"
 	"github.com/gorilla/context"
@@ -37,7 +38,7 @@ func main() {
 	goji.Use(application.ApplyTemplates)
 	goji.Use(application.ApplySessions)
 	goji.Use(application.ApplyDbMap)
-	goji.Use(application.ApplyAuth)
+	//goji.Use(application.ApplyAuth)
 	goji.Use(application.ApplyIsXhr)
 	goji.Use(application.ApplyCsrfProtection)
 	goji.Use(context.ClearHandler)
@@ -49,20 +50,23 @@ func main() {
 	goji.Get("/favicon.ico", http.FileServer(http.Dir(publicPath+"/images")))
 
 	// Home page
-	goji.Get("/", application.Route(controller, "Index"))
+	goji.Get("/index.html", application.Route(controller, "Index"))
+	//goji.Get(regexp.MustCompile(`^/index.html/(?page=<id>\d+)$`), application.Route(controller, "Index"))
 
-/*
-	// Sign In routes
-	goji.Get("/signin", application.Route(controller, "SignIn"))
-	goji.Post("/signin", application.Route(controller, "SignInPost"))
+	/*
+		// Sign In routes
+		goji.Get("/signin", application.Route(controller, "SignIn"))
+		goji.Post("/signin", application.Route(controller, "SignInPost"))
 
-	// Sign Up routes
-	goji.Get("/signup", application.Route(controller, "SignUp"))
-	goji.Post("/signup", application.Route(controller, "SignUpPost"))
+		// Sign Up routes
+		goji.Get("/signup", application.Route(controller, "SignUp"))
+		goji.Post("/signup", application.Route(controller, "SignUpPost"))
 
-	// KTHXBYE
-	goji.Get("/logout", application.Route(controller, "Logout"))
-*/
+		// KTHXBYE
+		goji.Get("/logout", application.Route(controller, "Logout"))
+	*/
+
+	goji.Get("/sitemap.xml", application.Route(controller, "Sitemap"))
 
 	graceful.PostHook(func() {
 		application.Close()

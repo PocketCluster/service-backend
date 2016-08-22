@@ -33,7 +33,7 @@ type Application struct {
 	Config         *toml.TomlTree
 	Template       *template.Template
 	Store          *sessions.CookieStore
-	DbMap          *gorm.DB
+	GORM           *gorm.DB
 	CsrfProtection *CsrfProtection
 }
 
@@ -65,7 +65,7 @@ func (application *Application) Init(filename *string) {
 	// db.Model(&model.Repository{}).Related(&model.RepoVersion{})
 	// db.Model(&model.Repository{}).Related(&model.RepoCommit{})
 	// db.Model(&model.Repository{}).Related(&model.RepoLanguage{})
-	application.DbMap = db;
+	application.GORM = db;
 
 	application.CsrfProtection = &CsrfProtection{
 		Key:    config.Get("csrf.key").(string),

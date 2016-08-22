@@ -8,11 +8,9 @@ import (
 	"net/http"
 	"strings"
 
-	"gopkg.in/gorp.v1"
 	"github.com/go-utils/uslice"
 	"github.com/golang/glog"
 	"github.com/gorilla/sessions"
-	"github.com/haruyama/golang-goji-sample/models"
 	"github.com/zenazn/goji/web"
 )
 
@@ -37,12 +35,13 @@ func (application *Application) ApplySessions(c *web.C, h http.Handler) http.Han
 
 func (application *Application) ApplyDbMap(c *web.C, h http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
-		c.Env["DbMap"] = application.DbMap
+		c.Env["GORM"] = application.GORM
 		h.ServeHTTP(w, r)
 	}
 	return http.HandlerFunc(fn)
 }
 
+/*
 func (application *Application) ApplyAuth(c *web.C, h http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		session := c.Env["Session"].(*sessions.Session)
@@ -61,6 +60,7 @@ func (application *Application) ApplyAuth(c *web.C, h http.Handler) http.Handler
 	}
 	return http.HandlerFunc(fn)
 }
+*/
 
 func (application *Application) ApplyIsXhr(c *web.C, h http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
