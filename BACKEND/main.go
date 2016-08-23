@@ -51,7 +51,7 @@ func main() {
 
 	// Home page
 	goji.Get("/index.html", application.Route(controller, "Index"))
-	//goji.Get(regexp.MustCompile(`^/index.html/(?page=<id>\d+)$`), application.Route(controller, "Index"))
+	goji.Get("/sitemap.xml", application.Route(controller, "Sitemap"))
 
 	/*
 		// Sign In routes
@@ -66,7 +66,9 @@ func main() {
 		goji.Get("/logout", application.Route(controller, "Logout"))
 	*/
 
-	goji.Get("/sitemap.xml", application.Route(controller, "Sitemap"))
+	// Respotory
+	//goji.Get(regexp.MustCompile(`^/index.html/(?page=<id>\d+)$`), application.Route(controller, "Index"))
+	goji.Get("/:repo", application.Route(controller, "Repository"))
 
 	graceful.PostHook(func() {
 		application.Close()

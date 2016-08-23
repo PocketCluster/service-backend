@@ -19,10 +19,10 @@ func (controller *Controller) Sitemap(c web.C, r *http.Request) (string, int) {
 	sm.SetDefaultHost("https://index.pocketcluster.io")
 	sm.SetVerbose(false)
 
-	var buffer bytes.Buffer
 	var repos []model.Repository
 	controller.GetGORM(c).Find(&repos)
 
+	var buffer bytes.Buffer
 	for _, repo := range repos {
 		buffer.Reset()
 		buffer.WriteString(repo.Slug)
