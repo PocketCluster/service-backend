@@ -2,7 +2,6 @@ package control
 
 import (
 	"net/http"
-	"html/template"
 	"strings"
 
 	"github.com/zenazn/goji/web"
@@ -16,6 +15,7 @@ func (controller *Controller) Repository(c web.C, r *http.Request) (string, int)
 	var db *gorm.DB = controller.GetGORM(c)
 	var param string = strings.ToLower(c.URLParams["repo"])
 
+	// FIXME : check with REGEX
 	// when param does not ends with .html
 	if !strings.HasSuffix(param, ".html") {
 		return "", http.StatusNotFound
@@ -33,11 +33,11 @@ func (controller *Controller) Repository(c web.C, r *http.Request) (string, int)
 		return "", http.StatusNotFound
 	}
 
-	t := controller.GetTemplate(c)
-	widgets := util.Parse(t, "home", nil)
-	// With that kind of flags template can "figure out" what route is being rendered
-	c.Env["IsIndex"] = true
-	c.Env["Title"] = "Default Project - free Go website project template"
-	c.Env["Content"] = template.HTML(widgets)
-	return util.Parse(t, "main", c.Env), http.StatusOK
+	var content map[string]string = map[string]string{}
+	content["DEFAULT_LANG"] 	= "utf-8"
+	content["SITEURL"] 			= "https://index.pocketcluster.io"
+	content["THEME_STATIC_DIR"] = "/theme"
+	content["title"] 			= "test title"
+
+	return util.Render("repo.html.mustache", "base.html.mustache", content), http.StatusOK
 }
