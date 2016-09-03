@@ -124,6 +124,11 @@ func (application *Application) Route(controller interface{}, route string) inte
 				w.Header().Set("Content-Type", c.Env["Content-Type"].(string))
 			}
 			io.WriteString(w, body)
+		case http.StatusNotFound:
+			http.Error(w, http.StatusText(404), 404)
+		case http.StatusBadRequest:
+			// FIXME : replace "error" with err.Error()
+			http.Error(w, "error", http.StatusBadRequest)
 		case http.StatusSeeOther, http.StatusFound:
 			http.Redirect(w, r, body, code)
 		}
