@@ -15,7 +15,7 @@ func Parse(t *template.Template, name string, data interface{}) string {
 	return doc.String()
 }
 
-func Render(bodyTemplate string, baseTemplate string, data map[string]string) string {
+func Render(bodyTemplate string, baseTemplate string, data map[string]interface{}) string {
 	//filename := path.Join(path.Join(os.Getenv("PWD"), "tests"), "test1.mustache")
 	basefile := path.Join("views/", baseTemplate)
 	bodyfile := path.Join("views/", bodyTemplate)
