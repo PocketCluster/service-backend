@@ -12,13 +12,10 @@ func main() {
 		panic("failed to connect database " + err.Error() )
 	}
 	// Migrate the schema
-
-	// Migrate the schema
 	db.AutoMigrate(&model.Author{}, &model.Repository{}, &model.RepoCommit{}, &model.RepoVersion{}, &model.RepoLanguage{}, &model.RepoContributor{});
 
 	// set relation
 	// db.Model(&model.Repository{}).Related(&model.RepoVersion{})
 	// db.Model(&model.Repository{}).Related(&model.RepoCommit{})
 	// db.Model(&model.Repository{}).Related(&model.RepoLanguage{})
-
 }

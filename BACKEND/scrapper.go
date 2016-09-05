@@ -3,9 +3,12 @@ package main
 import (
 	"log"
 	"strings"
+	"io/ioutil"
 
 	"github.com/PuerkitoBio/goquery"
-	"io/ioutil"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"github.com/stkim1/BACKEND/model"
 )
 
 func GithubReadmeScrap(location string, filename string) {
@@ -44,7 +47,6 @@ func GithubReadmeScrap(location string, filename string) {
 	readme.Find("a[href] img").Each(func(_ int, s *goquery.Selection) {
 		href, _ := s.Parent().Attr("href")
 		if err == nil && !strings.HasPrefix(href,"http") {
-
 			if strings.HasPrefix(href, "/") {
 				s.Parent().SetAttr("href", location + href)
 			} else {
@@ -67,5 +69,14 @@ func GithubReadmeScrap(location string, filename string) {
 }
 
 func main() {
-	GithubReadmeScrap("https://github.com/capitalone/Hygieia", "capitalone-hygieia.html")
+	db, err := gorm.Open("sqlite3", "pc-index.db")
+	if err != nil {
+		panic("failed to connect database " + err.Error() )
+	}
+
+	var repos []model.Repository
+	db.Find(&repos)
+	for _, repo := range repos {
+		GithubReadmeScrap("https://github.com/capitalone/Hygieia", "capitalone-hygieia.html")
+	}
 }
