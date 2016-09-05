@@ -44,8 +44,21 @@ func GithubReadmeScrap(location string, filename string) {
 		}
 	})
 
+// img a.tag w/ image fix
+/*
 	readme.Find("a[href] img").Each(func(_ int, s *goquery.Selection) {
 		href, _ := s.Parent().Attr("href")
+		if err == nil && !strings.HasPrefix(href,"http") {
+			if strings.HasPrefix(href, "/") {
+				s.Parent().SetAttr("href", location + href)
+			} else {
+				s.Parent().SetAttr("href", location + "/" + href)
+			}
+		}
+	});
+*/
+	readme.Find("a[href]").Not(".anchor").Each(func(_ int, s *goquery.Selection) {
+		href, _ := s.Attr("href")
 		if err == nil && !strings.HasPrefix(href,"http") {
 			if strings.HasPrefix(href, "/") {
 				s.Parent().SetAttr("href", location + href)

@@ -43,16 +43,6 @@ func (controller *Controller) Repository(c web.C, r *http.Request) (string, int)
     // Find Owner
     db.Where("author_id = ?", repo.AuthorId).First(&owner)
 
-    // Find Contribution relation
-    db.Where("repo_id = ?", repo.RepoId).Order("contribution desc").Limit(10).Find(&repoContribs)
-    var contribId []string = make([]string, len(repoContribs))
-    for i, r := range repoContribs {
-        contribId[i] = r.AuthorId
-    }
-
-    // Find Contributors
-    db.Where("author_id in (?)", contribId).Find(&contribs)
-
     var content map[string]interface{} = map[string]interface{} {
         "DEFAULT_LANG"         : "utf-8",
         "SITEURL"              : "https://index.pocketcluster.io",
@@ -60,14 +50,29 @@ func (controller *Controller) Repository(c web.C, r *http.Request) (string, int)
         "title"                : repo.Title,
         "repo"                 : &repo,
         "owner"                : &owner,
-        "contribs"             : &contribs,
     }
 
+    // Find Contribution relation
+    db.Where("repo_id = ?", repo.RepoId).Not("author_id = ?", owner.AuthorId).Order("contribution desc").Limit(10).Find(&repoContribs)
+    if len(repoContribs) != 0 {
+        var contribId []string = make([]string, len(repoContribs))
+        for i, r := range repoContribs {
+            if owner.AuthorId != r.AuthorId {
+                contribId[i] = r.AuthorId
+            }
+        }
+        // Find Contributors
+        db.Where("author_id in (?)", contribId).Find(&contribs)
+        content["contribs"] = &contribs
+        content["hasContribs"] = true
+    }
+
+    // Patch readme
     readme, err := ioutil.ReadFile(path.Join("readme/", slug + ".html"))
     if err != nil {
         log.Panic("Cnnot read readme")
     }
-    content["readme"]             = string(readme)
+    content["readme"] = string(readme)
 
     return util.Render("repo.html.mustache", "base.html.mustache", content), http.StatusOK
 }
