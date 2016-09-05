@@ -50,6 +50,7 @@ func main() {
 	goji.Get("/favicon.ico", http.FileServer(http.Dir(publicPath+"/images")))
 
 	// Home page
+	goji.Get("/", application.Route(controller, "Index"))
 	goji.Get("/index.html", application.Route(controller, "Index"))
 	goji.Get("/sitemap.xml", application.Route(controller, "Sitemap"))
 
