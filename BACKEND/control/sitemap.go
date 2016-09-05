@@ -1,7 +1,6 @@
 package control
 
 import (
-	"time"
 	"bytes"
 	"net/http"
 
@@ -27,8 +26,7 @@ func (controller *Controller) Sitemap(c web.C, r *http.Request) (string, int) {
 		buffer.Reset()
 		buffer.WriteString(repo.Slug)
 		buffer.WriteString(".html")
-		// FIXME : fix time to final updated timestamp
-		sm.Add(stm.URL{"loc": buffer.String(), "lastmod": time.Now(), "changefreq":"daily", "priority":"0.5"})
+		sm.Add(stm.URL{"loc": buffer.String(), "lastmod": repo.Updated, "changefreq":"daily", "priority":"0.5"})
 	}
 
 	return string(sm.XMLContent()), http.StatusOK
