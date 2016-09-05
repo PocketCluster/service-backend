@@ -64,7 +64,7 @@ func GithubReadmeScrap(location string, filename string) {
 	// save to file
 	err = ioutil.WriteFile("readme/" + filename, []byte(html), 0644)
 	if err != nil {
-		log.Panic("Cannot save HTML readme")
+		log.Panic("Cannot save HTML readme " + err.Error())
 	}
 }
 
@@ -77,6 +77,7 @@ func main() {
 	var repos []model.Repository
 	db.Find(&repos)
 	for _, repo := range repos {
-		GithubReadmeScrap("https://github.com/capitalone/Hygieia", "capitalone-hygieia.html")
+		log.Print("commencing " + repo.RepoPage + "...")
+		GithubReadmeScrap(repo.RepoPage, repo.Slug + ".html")
 	}
 }
