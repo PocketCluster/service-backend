@@ -1,6 +1,8 @@
 package model
 
 import (
+	"time"
+
 	"github.com/jinzhu/gorm"
 )
 
@@ -8,6 +10,10 @@ type Repository struct{
 	gorm.Model
 	// two abbreviate chars + numbering : gh23247808
 	RepoId 	        string	`gorm:"index;size:255"`
+	// Primary author of this repository. use Authors.author_id
+	AuthorId		string  `gorm:"index;size:255"`
+	// If this repo is deceased
+	Deceased		bool
 	// Is this from Github/Gitlab/Bitbucket?
 	Service     	string
 	// Repository Name
@@ -44,11 +50,12 @@ type Repository struct{
 	Category    	string
 	// Short Description
 	Summary     	string				`sql:"type:text"`
-	// Full Readme htmlfile
-	Readme      	string
 
-	// Primary author of this repository
-	Owner			Author
+	// Created Date
+	Created         time.Time
+	// Updated Date
+	Updated 		time.Time
+
 	// all the contributors
 	Contributors 	[]RepoContributor
 	// latest official release/tag/snapshot
@@ -57,4 +64,13 @@ type Repository struct{
 	Commits 		[]RepoCommit
 	// Programming Languages used
 	Languages       []RepoLanguage
+}
+
+func (repo *Repository)CreatedDate() string {
+	//return repo.Created.Format("Jan. 2 2006 3:04 PM")
+	return repo.Created.Format("Jan. 2, 2006")
+}
+
+func (repo *Repository)UpdatedDate() string {
+	return repo.Updated.Format("Jan. 2, 2006")
 }

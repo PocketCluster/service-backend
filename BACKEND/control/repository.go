@@ -15,6 +15,9 @@ import (
 
 func (controller *Controller) Repository(c web.C, r *http.Request) (string, int) {
     var repositories []model.Repository
+    var owner model.Author;
+    var contribs []model.Author;
+    var repoContribs []model.RepoContributor
     var db *gorm.DB = controller.GetGORM(c)
     var param string = strings.ToLower(c.URLParams["repo"])
 
@@ -25,27 +28,42 @@ func (controller *Controller) Repository(c web.C, r *http.Request) (string, int)
     }
 
     // Split params into string array
-    var repoSlug string = strings.Split(param, ".html")[0]
-    if len(repoSlug) == 0 {
+    var slug string = strings.Split(param, ".html")[0]
+    if len(slug) == 0 {
         return "", http.StatusNotFound
     }
 
     // Find the repo by slug
-    db.Where("Slug = ?", repoSlug).First(&repositories)
+    db.Where("slug = ?", slug).First(&repositories)
     if len(repositories) == 0 {
         return "", http.StatusNotFound
     }
-
     var repo model.Repository  = repositories[0]
+
+    // Find Owner
+    db.Where("author_id = ?", repo.AuthorId).First(&owner)
+
+    // Find Contribution relation
+    db.Where("repo_id = ?", repo.RepoId).Order("contribution desc").Limit(10).Find(&repoContribs)
+    var contribId []string = make([]string, len(repoContribs))
+    for i, r := range repoContribs {
+        contribId[i] = r.AuthorId
+    }
+
+    // Find Contributors
+    db.Where("author_id in (?)", contribId).Find(&contribs)
+
     var content map[string]interface{} = map[string]interface{} {
         "DEFAULT_LANG"         : "utf-8",
         "SITEURL"              : "https://index.pocketcluster.io",
         "THEME_STATIC_DIR"     : "theme",
         "title"                : repo.Title,
         "repo"                 : &repo,
+        "owner"                : &owner,
+        "contribs"             : &contribs,
     }
 
-    readme, err := ioutil.ReadFile(path.Join("readme/", "readme.html"))
+    readme, err := ioutil.ReadFile(path.Join("readme/", slug + ".html"))
     if err != nil {
         log.Panic("Cnnot read readme")
     }
