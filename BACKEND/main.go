@@ -19,7 +19,6 @@ import (
 func main() {
 
 	filename := flag.String("config", "config.toml", "Path to configuration file")
-
 	flag.Parse()
 	defer glog.Flush()
 

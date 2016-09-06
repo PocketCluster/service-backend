@@ -45,9 +45,11 @@ func (controller *Controller) Index(c web.C, r *http.Request) (string, int) {
 
 	var content map[string]interface{} = map[string]interface{} {
 		"ISINDEX"			   : true,
+		"SITENAME"			   : "PocketCluster Index",
 		"DEFAULT_LANG"         : "utf-8",
 		"SITEURL"              : "https://index.pocketcluster.io",
 		"THEME_STATIC_DIR"     : "theme",
+		"CATEGORIES"		   : model.GetDefaultCategory(),
 		"repo1"				   : &repo1,
 		"repo2"				   : &repo2,
 		"repo3"				   : &repo3,
