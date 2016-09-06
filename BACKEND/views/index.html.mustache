@@ -1,0 +1,76 @@
+<div class="row marketing">
+    <div class="span4">
+    {{#repo1}}
+        <div class="card" {{^LogoImage}}style="padding-top:10px;"{{/LogoImage}}>
+            {{#LogoImage}}
+            <div class="card-media" >
+                <a class="card-media-container" href="{{SITEURL}}/{{Stub}}.html" >
+                    <img src="{{LogoImage}}" alt="{{Title}}" />
+                </a>
+            </div>
+            {{/LogoImage}}
+
+            <div class="card-body" {{^LogoImage}}style="margin-top:0px;"{{/LogoImage}}>
+                <h2><a href="{{SITEURL}}/{{Slug}}.html">{{Title}}</a></h2>
+                <span style="display:inline-block;padding-bottom:5px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 8 8" style="vertical-align:middle;">
+                        <path d="M4 0l-1 3h-3l2.5 2-1 3 2.5-2 2.5 2-1-3 2.5-2h-3l-1-3z" />
+                    </svg>
+                    <strong style="vertical-align:middle;">{{StarCount}}</strong>
+                </span>
+                <p>{{Summary}}</p>
+            </div>
+        </div>
+    {{/repo1}}
+    </div>
+
+    <div class="span4">
+    {{#repo2}}
+        <div class="card" {{^LogoImage}}style="padding-top:10px;"{{/LogoImage}}>
+            {{#LogoImage}}
+                <div class="card-media" >
+                    <a class="card-media-container" href="{{SITEURL}}/{{Stub}}.html" >
+                        <img src="{{LogoImage}}" alt="{{Title}}" />
+                    </a>
+                </div>
+            {{/LogoImage}}
+
+            <div class="card-body" {{^LogoImage}}style="margin-top:0px;"{{/LogoImage}}>
+                <h2><a href="{{SITEURL}}/{{Slug}}.html">{{Title}}</a></h2>
+                <span style="display:inline-block;padding-bottom:5px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 8 8" style="vertical-align:middle;">
+                        <path d="M4 0l-1 3h-3l2.5 2-1 3 2.5-2 2.5 2-1-3 2.5-2h-3l-1-3z" />
+                    </svg>
+                    <strong style="vertical-align:middle;">{{StarCount}}</strong>
+                </span>
+                <p>{{Summary}}</p>
+            </div>
+        </div>
+    {{/repo2}}
+    </div>
+
+    <div class="span4">
+    {{#repo3}}
+        <div class="card" {{^LogoImage}}style="padding-top:10px;"{{/LogoImage}}>
+            {{#LogoImage}}
+                <div class="card-media" >
+                    <a class="card-media-container" href="{{SITEURL}}/{{Stub}}.html" >
+                        <img src="{{LogoImage}}" alt="{{Title}}" />
+                    </a>
+                </div>
+            {{/LogoImage}}
+
+            <div class="card-body" {{^LogoImage}}style="margin-top:0px;"{{/LogoImage}}>
+                <h2><a href="{{SITEURL}}/{{Slug}}.html">{{Title}}</a></h2>
+                <span style="display:inline-block;padding-bottom:5px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 8 8" style="vertical-align:middle;">
+                        <path d="M4 0l-1 3h-3l2.5 2-1 3 2.5-2 2.5 2-1-3 2.5-2h-3l-1-3z" />
+                    </svg>
+                    <strong style="vertical-align:middle;">{{StarCount}}</strong>
+                </span>
+                <p>{{Summary}}</p>
+            </div>
+        </div>
+    {{/repo3}}
+    </div>
+</div>
