@@ -25,7 +25,6 @@ func main() {
 
 	var application = &framework.Application{}
 	application.Init(filename)
-	application.LoadTemplates()
 
 	// Setup static files
 	static := web.New()
@@ -35,7 +34,6 @@ func main() {
 	http.Handle("/assets/", static)
 
 	// Apply middleware
-	goji.Use(application.ApplyTemplates)
 	goji.Use(application.ApplySessions)
 	goji.Use(application.ApplyDbMap)
 	//goji.Use(application.ApplyAuth)

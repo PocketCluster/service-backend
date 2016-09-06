@@ -44,7 +44,6 @@ func (controller *Controller) Repository(c web.C, r *http.Request) (string, int)
     db.Where("author_id = ?", repo.AuthorId).First(&owner)
 
     var content map[string]interface{} = map[string]interface{} {
-        "DEFAULT_LANG"         : "utf-8",
         "SITEURL"              : "https://index.pocketcluster.io",
         "THEME_STATIC_DIR"     : "theme",
         "title"                : repo.Title,

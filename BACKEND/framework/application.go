@@ -4,11 +4,7 @@ import (
 	"html/template"
 	"io"
 	"net/http"
-	"os"
-	"path/filepath"
 	"reflect"
-	"strings"
-
 	"crypto/sha256"
 
 	"github.com/golang/glog"
@@ -75,26 +71,6 @@ func (application *Application) Init(filename *string) {
 	}
 
 	application.Config = config
-}
-
-func (application *Application) LoadTemplates() error {
-	var templates []string
-
-	fn := func(path string, f os.FileInfo, err error) error {
-		if f.IsDir() != true && strings.HasSuffix(f.Name(), ".html") {
-			templates = append(templates, path)
-		}
-		return nil
-	}
-
-	err := filepath.Walk(application.Config.Get("general.template_path").(string), fn)
-
-	if err != nil {
-		return err
-	}
-
-	application.Template = template.Must(template.ParseFiles(templates...))
-	return nil
 }
 
 func (application *Application) Close() {
