@@ -19,16 +19,8 @@ func (controller *Controller) Repository(c web.C, r *http.Request) (string, int)
     var contribs []model.Author;
     var repoContribs []model.RepoContributor
     var db *gorm.DB = controller.GetGORM(c)
-    var param string = strings.ToLower(c.URLParams["repo"])
+    var slug string = strings.ToLower(c.URLParams["repo"])
 
-    // FIXME : check with REGEX
-    // when param does not ends with .html
-    if !strings.HasSuffix(param, ".html") {
-        return "", http.StatusNotFound
-    }
-
-    // Split params into string array
-    var slug string = strings.Split(param, ".html")[0]
     if len(slug) == 0 {
         return "", http.StatusNotFound
     }

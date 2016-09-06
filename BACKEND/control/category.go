@@ -2,6 +2,7 @@ package control
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/zenazn/goji/web"
 	"github.com/jinzhu/gorm"
@@ -15,18 +16,40 @@ func (controller *Controller) Category(c web.C, r *http.Request) (string, int) {
 	const totalRowCount int = 3
 
 	var repositories []model.Repository
-	repo1 := make([]*model.Repository, singleColumnCount)
-	repo2 := make([]*model.Repository, singleColumnCount)
-	repo3 := make([]*model.Repository, singleColumnCount)
+	var repo1, repo2, repo3 []*model.Repository
+	var category string = strings.ToLower(c.URLParams["cat"])
+	//FIXME : Titalize
+	var title string = strings.TrimSpace(c.URLParams["cat"])
+	if !model.IsCategoryPresent(category) {
+		return "", http.StatusNotFound
+	}
 
 	var db *gorm.DB = controller.GetGORM(c)
-	db.Order("updated desc").Limit(singleColumnCount * totalRowCount).Find(&repositories)
+	db.Where("category = ?", category).Order("updated desc").Limit(singleColumnCount * totalRowCount).Find(&repositories)
 	if len(repositories) == 0 {
 		return "", http.StatusNotFound
 	}
 
+	// if queried repositories are smaller than required for a page
+	// FIXME : use recursive func
+	var repoCount int = len(repositories)
+	if repoCount <= singleColumnCount {
+		repo1 = make([]*model.Repository, repoCount)
+	} else {
+		repo1 = make([]*model.Repository, singleColumnCount)
+
+		var repoRemain int = repoCount - singleColumnCount
+		if repoRemain <= singleColumnCount {
+			repo2 = make([]*model.Repository, repoRemain)
+		} else {
+			repo2 = make([]*model.Repository, singleColumnCount)
+
+			repo3 = make([]*model.Repository, repoRemain - singleColumnCount)
+		}
+	}
+
 	for index, _ := range repositories {
-		subindex := index % singleColumnCount
+		var subindex int = index % singleColumnCount
 		switch int(index / singleColumnCount ) {
 			case 0: {
 				repo1[subindex] = &repositories[index]
@@ -49,7 +72,8 @@ func (controller *Controller) Category(c web.C, r *http.Request) (string, int) {
 		"DEFAULT_LANG"         : "utf-8",
 		"SITEURL"              : "https://index.pocketcluster.io",
 		"THEME_STATIC_DIR"     : "theme",
-		"CATEGORIES"		   : model.GetDefaultCategory(),
+		"CATEGORIES"		   : model.GetActivatedCategory(category),
+		"title"				   : title,
 		"repo1"				   : &repo1,
 		"repo2"				   : &repo2,
 		"repo3"				   : &repo3,

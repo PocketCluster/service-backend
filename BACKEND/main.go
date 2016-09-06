@@ -14,6 +14,7 @@ import (
 
 	"github.com/stkim1/BACKEND/framework"
 	"github.com/stkim1/BACKEND/control"
+	"regexp"
 )
 
 func main() {
@@ -50,6 +51,7 @@ func main() {
 	goji.Get("/", application.Route(controller, "Index"))
 	goji.Get("/index.html", application.Route(controller, "Index"))
 	goji.Get("/sitemap.xml", application.Route(controller, "Sitemap"))
+	goji.Get(regexp.MustCompile(`^/category/(?P<cat>[a-z]+).html$`), application.Route(controller, "Category"))
 
 	/*
 		// Sign In routes
@@ -65,8 +67,7 @@ func main() {
 	*/
 
 	// Respotory
-	//goji.Get(regexp.MustCompile(`^/index.html/(?page=<id>\d+)$`), application.Route(controller, "Index"))
-	goji.Get("/:repo", application.Route(controller, "Repository"))
+	goji.Get(regexp.MustCompile(`^/(?P<repo>[a-z0-9-]+).html$`), application.Route(controller, "Repository"))
 
 	graceful.PostHook(func() {
 		application.Close()

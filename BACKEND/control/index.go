@@ -11,7 +11,7 @@ import (
 
 // Home page route
 func (controller *Controller) Index(c web.C, r *http.Request) (string, int) {
-	const singleColumnCount int = 8
+	const singleColumnCount int = 10
 	const totalRowCount int = 3
 
 	var repositories []model.Repository
