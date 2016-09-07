@@ -3,7 +3,7 @@
         <div class="span4 card" {{^LogoImage}}style="padding-top:10px;"{{/LogoImage}}>
             {{#LogoImage}}
             <div class="card-media" >
-                <a class="card-media-container" href="{{SITEURL}}/{{Stub}}.html" >
+                <a class="card-media-container" href="{{SITEURL}}/{{Slug}}.html" >
                     <img src="{{LogoImage}}" alt="{{Title}}" />
                 </a>
             </div>
@@ -42,16 +42,11 @@
             });
         });
         grid.infinitescroll({
-            // Pagination element that will be hidden
             navSelector: '#pagination',
-            // Next page link
             nextSelector: '#pagination a',
-            // Selector of items to retrieve
             itemSelector: '.card',
-            // Loading message
             loadingText: 'Loading...'
         },
-        // Function called once the elements are retrieved
         function(elem) {
             grid.masonry('appended', elem);
             grid.imagesLoaded(function () {
