@@ -12,11 +12,7 @@ import (
 
 // Home page route
 func (controller *Controller) Category(c web.C, r *http.Request) (string, int) {
-	const singleColumnCount int = 8
-	const totalRowCount int = 3
-
 	var repositories []model.Repository
-	var repo1, repo2, repo3 []*model.Repository
 	var category string = strings.ToLower(c.URLParams["cat"])
 	//FIXME : Titalize
 	var title string = strings.TrimSpace(c.URLParams["cat"])
@@ -25,45 +21,9 @@ func (controller *Controller) Category(c web.C, r *http.Request) (string, int) {
 	}
 
 	var db *gorm.DB = controller.GetGORM(c)
-	db.Where("category = ?", category).Order("updated desc").Limit(singleColumnCount * totalRowCount).Find(&repositories)
+	db.Where("category = ?", category).Order("updated desc").Limit(SingleColumnCount * TotalRowCount).Find(&repositories)
 	if len(repositories) == 0 {
 		return "", http.StatusNotFound
-	}
-
-	// if queried repositories are smaller than required for a page
-	// FIXME : use recursive func
-	var repoCount int = len(repositories)
-	if repoCount <= singleColumnCount {
-		repo1 = make([]*model.Repository, repoCount)
-	} else {
-		repo1 = make([]*model.Repository, singleColumnCount)
-
-		var repoRemain int = repoCount - singleColumnCount
-		if repoRemain <= singleColumnCount {
-			repo2 = make([]*model.Repository, repoRemain)
-		} else {
-			repo2 = make([]*model.Repository, singleColumnCount)
-
-			repo3 = make([]*model.Repository, repoRemain - singleColumnCount)
-		}
-	}
-
-	for index, _ := range repositories {
-		var subindex int = index % singleColumnCount
-		switch int(index / singleColumnCount ) {
-			case 0: {
-				repo1[subindex] = &repositories[index]
-				break
-			}
-			case 1: {
-				repo2[subindex] = &repositories[index]
-				break
-			}
-			case 2: {
-				repo3[subindex] = &repositories[index]
-				break
-			}
-		}
 	}
 
 	var content map[string]interface{} = map[string]interface{} {
@@ -74,9 +34,12 @@ func (controller *Controller) Category(c web.C, r *http.Request) (string, int) {
 		"THEME_STATIC_DIR"     : "theme",
 		"CATEGORIES"		   : model.GetActivatedCategory(category),
 		"title"				   : title,
-		"repo1"				   : &repo1,
-		"repo2"				   : &repo2,
-		"repo3"				   : &repo3,
+		"repositories"		   : &repositories,
 	}
+
+	if SingleColumnCount * TotalRowCount <= len(repositories) {
+		content["nextpagelink"] = "/category/" + category + ".html?page=2"
+	}
+
 	return util.Render("index.html.mustache", "base.html.mustache", content), http.StatusOK
 }
