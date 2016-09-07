@@ -31,12 +31,8 @@ func main() {
 
 	// Setup Routers
 	controller := &control.Controller{}
-	// Home page
-	goji.Get("/", application.Route(controller, "Index"))
-	goji.Get("/index.html", application.Route(controller, "Index"))
-
+	// sitemap
 	goji.Get("/sitemap.xml", application.Route(controller, "Sitemap"))
-
 /*
 	// Sign In routes
 	goji.Get("/signin", application.Route(controller, "SignIn"))
@@ -50,8 +46,19 @@ func main() {
 	goji.Get("/logout", application.Route(controller, "Logout"))
 */
 
+	// Home page
+	// FIXME: all three regexp fail. WTF? (https://github.com/zenazn/goji/issues/75) & (https://github.com/zenazn/goji/blob/master/web/regexp_pattern.go#L56)
+	//goji.Get(regexp.MustCompile(`^/index.html\?page=(?P<page>\d+)$`), application.Route(controller, "IndexPaged"))
+	//goji.Get(regexp.MustCompile(`^/index.html\?page=(?P<page>[0-9]+)$`), application.Route(controller, "IndexPaged"))
+	//goji.Get(regexp.MustCompile(`^/index.html[?]page=(?P<page>[0-9]+)$`), application.Route(controller, "IndexPaged"))
+	goji.Get(regexp.MustCompile(`^/index.html/(?P<page>[0-9]+)$`), application.Route(controller, "IndexPaged"))
+	goji.Get("/", application.Route(controller, "Index"))
+	goji.Get("/index.html", application.Route(controller, "Index"))
+
 	// Category Index
+	goji.Get(regexp.MustCompile(`^/category/(?P<cat>[a-z]+).html/(?P<page>[0-9]+)$`), application.Route(controller, "CategoryPaged"))
 	goji.Get(regexp.MustCompile(`^/category/(?P<cat>[a-z]+).html$`), application.Route(controller, "Category"))
+
 	// Respotory
 	goji.Get(regexp.MustCompile(`^/(?P<repo>[a-z0-9-]+).html$`), application.Route(controller, "Repository"))
 

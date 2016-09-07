@@ -2,6 +2,8 @@ package control
 
 import (
 	"net/http"
+	"strconv"
+	"log"
 
 	"github.com/zenazn/goji/web"
 	"github.com/jinzhu/gorm"
@@ -11,36 +13,11 @@ import (
 
 // Home page route
 func (controller *Controller) Index(c web.C, r *http.Request) (string, int) {
-	const singleColumnCount int = 10
-	const totalRowCount int = 3
-
 	var repositories []model.Repository
-	repo1 := make([]*model.Repository, singleColumnCount)
-	repo2 := make([]*model.Repository, singleColumnCount)
-	repo3 := make([]*model.Repository, singleColumnCount)
-
 	var db *gorm.DB = controller.GetGORM(c)
-	db.Order("updated desc").Limit(singleColumnCount * totalRowCount).Find(&repositories)
+	db.Order("updated desc").Limit(SingleColumnCount * TotalRowCount).Find(&repositories)
 	if len(repositories) == 0 {
 		return "", http.StatusNotFound
-	}
-
-	for index, _ := range repositories {
-		subindex := index % singleColumnCount
-		switch int(index / singleColumnCount ) {
-			case 0: {
-				repo1[subindex] = &repositories[index]
-				break
-			}
-			case 1: {
-				repo2[subindex] = &repositories[index]
-				break
-			}
-			case 2: {
-				repo3[subindex] = &repositories[index]
-				break
-			}
-		}
 	}
 
 	var content map[string]interface{} = map[string]interface{} {
@@ -50,9 +27,45 @@ func (controller *Controller) Index(c web.C, r *http.Request) (string, int) {
 		"SITEURL"              : "https://index.pocketcluster.io",
 		"THEME_STATIC_DIR"     : "theme",
 		"CATEGORIES"		   : model.GetDefaultCategory(),
-		"repo1"				   : &repo1,
-		"repo2"				   : &repo2,
-		"repo3"				   : &repo3,
+		"repositories"		   : &repositories,
+		"nextpagelink" 		   : "/index.html/2",
 	}
+
+	return util.Render("index.html.mustache", "base.html.mustache", content), http.StatusOK
+}
+
+func (controller *Controller) IndexPaged(c web.C, r *http.Request) (string, int) {
+	page, err := strconv.Atoi(c.URLParams["page"])
+	if err != nil {
+		log.Panic("Cannot convert page string to number : " + err.Error())
+		return "", http.StatusNotFound
+	}
+	if page <= 0 {
+		log.Panic("Page number cannot be smaller than 0.")
+		return "", http.StatusNotFound
+	}
+
+	var repositories []model.Repository
+	var db *gorm.DB = controller.GetGORM(c)
+	//FIXME : how to guard on querying for large page #?
+	db.Order("updated desc").Offset(SingleColumnCount * TotalRowCount * page).Limit(SingleColumnCount * TotalRowCount).Find(&repositories)
+	if len(repositories) == 0 {
+		return "", http.StatusNotFound
+	}
+
+	var content map[string]interface{} = map[string]interface{} {
+		"ISINDEX"			   : true,
+		"SITENAME"			   : "PocketCluster Index",
+		"DEFAULT_LANG"         : "utf-8",
+		"SITEURL"              : "https://index.pocketcluster.io",
+		"THEME_STATIC_DIR"     : "theme",
+		"CATEGORIES"		   : model.GetDefaultCategory(),
+		"repositories"		   : &repositories,
+	}
+
+	if SingleColumnCount * TotalRowCount <= len(repositories) {
+		content["nextpagelink"] = "/index.html/" + strconv.Itoa(page + 1)
+	}
+
 	return util.Render("index.html.mustache", "base.html.mustache", content), http.StatusOK
 }

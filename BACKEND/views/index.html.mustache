@@ -1,10 +1,9 @@
-<div class="row marketing">
-    <div class="span4">
-    {{#repo1}}
-        <div class="card" {{^LogoImage}}style="padding-top:10px;"{{/LogoImage}}>
+    <div id="index" class="row marketing">
+        {{#repositories}}
+        <div class="span4 card" {{^LogoImage}}style="padding-top:10px;"{{/LogoImage}}>
             {{#LogoImage}}
             <div class="card-media" >
-                <a class="card-media-container" href="{{SITEURL}}/{{Stub}}.html" >
+                <a class="card-media-container" href="{{SITEURL}}/{{Slug}}.html" >
                     <img src="{{LogoImage}}" alt="{{Title}}" />
                 </a>
             </div>
@@ -21,56 +20,42 @@
                 <p>{{Summary}}</p>
             </div>
         </div>
-    {{/repo1}}
+        {{/repositories}}
     </div>
 
-    <div class="span4">
-    {{#repo2}}
-        <div class="card" {{^LogoImage}}style="padding-top:10px;"{{/LogoImage}}>
-            {{#LogoImage}}
-                <div class="card-media" >
-                    <a class="card-media-container" href="{{SITEURL}}/{{Stub}}.html" >
-                        <img src="{{LogoImage}}" alt="{{Title}}" />
-                    </a>
-                </div>
-            {{/LogoImage}}
+{{#nextpagelink}}
+    <nav id="pagination">
+        <a href="{{nextpagelink}}">Next >></a>
+    </nav>
+{{/nextpagelink}}
 
-            <div class="card-body" {{^LogoImage}}style="margin-top:0px;"{{/LogoImage}}>
-                <h2><a href="{{SITEURL}}/{{Slug}}.html">{{Title}}</a></h2>
-                <span style="display:inline-block;padding-bottom:5px;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 8 8" style="vertical-align:middle;">
-                        <path d="M4 0l-1 3h-3l2.5 2-1 3 2.5-2 2.5 2-1-3 2.5-2h-3l-1-3z" />
-                    </svg>
-                    <strong style="vertical-align:middle;">{{StarCount}}</strong>
-                </span>
-                <p>{{Summary}}</p>
-            </div>
-        </div>
-    {{/repo2}}
-    </div>
+    <script type="text/javascript" src="{{SITEURL}}/{{THEME_STATIC_DIR}}/js/imagesLoaded.js"></script>
+    <script type="text/javascript" src="{{SITEURL}}/{{THEME_STATIC_DIR}}/js/masonry.js"></script>
+    <script type="text/javascript" src="{{SITEURL}}/{{THEME_STATIC_DIR}}/js/jquery.infinitescroll.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        var grid = $('#index');
+        grid.imagesLoaded(function () {
+            grid.masonry({
+                columnWidth: '.card',
+                itemSelector: '.card'
+            });
+        });
+        grid.infinitescroll({
+            navSelector: '#pagination',
+            nextSelector: '#pagination a',
+            itemSelector: '.card',
+            loadingText: 'Loading...'
+        },
+        function(elem) {
+            grid.masonry('appended', elem);
+            grid.imagesLoaded(function () {
+                grid.masonry({
+                    columnWidth: '.card',
+                    itemSelector: '.card'
+                });
+            });
+        });
 
-    <div class="span4">
-    {{#repo3}}
-        <div class="card" {{^LogoImage}}style="padding-top:10px;"{{/LogoImage}}>
-            {{#LogoImage}}
-                <div class="card-media" >
-                    <a class="card-media-container" href="{{SITEURL}}/{{Stub}}.html" >
-                        <img src="{{LogoImage}}" alt="{{Title}}" />
-                    </a>
-                </div>
-            {{/LogoImage}}
-
-            <div class="card-body" {{^LogoImage}}style="margin-top:0px;"{{/LogoImage}}>
-                <h2><a href="{{SITEURL}}/{{Slug}}.html">{{Title}}</a></h2>
-                <span style="display:inline-block;padding-bottom:5px;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 8 8" style="vertical-align:middle;">
-                        <path d="M4 0l-1 3h-3l2.5 2-1 3 2.5-2 2.5 2-1-3 2.5-2h-3l-1-3z" />
-                    </svg>
-                    <strong style="vertical-align:middle;">{{StarCount}}</strong>
-                </span>
-                <p>{{Summary}}</p>
-            </div>
-        </div>
-    {{/repo3}}
-    </div>
-</div>
+    });
+    </script>
