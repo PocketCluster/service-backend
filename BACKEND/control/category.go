@@ -3,13 +3,13 @@ package control
 import (
 	"net/http"
 	"strings"
+	"strconv"
+	"log"
 
 	"github.com/zenazn/goji/web"
 	"github.com/jinzhu/gorm"
 	"github.com/stkim1/BACKEND/util"
 	"github.com/stkim1/BACKEND/model"
-	"strconv"
-	"log"
 )
 
 // Category route
@@ -46,7 +46,7 @@ func (controller *Controller) Category(c web.C, r *http.Request) (string, int) {
 		content["nextpagelink"] = "/category/" + category + ".html/2"
 	}
 
-	return util.Render("index.html.mustache", "base.html.mustache", content), http.StatusOK
+	return util.RenderLayout("index.html.mustache", "base.html.mustache", content), http.StatusOK
 }
 
 // Category route
@@ -94,5 +94,5 @@ func (controller *Controller) CategoryPaged(c web.C, r *http.Request) (string, i
 		content["nextpagelink"] = "/category/" + category + ".html/" + strconv.Itoa(page + 1)
 	}
 
-	return util.Render("index.html.mustache", "base.html.mustache", content), http.StatusOK
+	return util.RenderLayout("index.html.mustache", "base.html.mustache", content), http.StatusOK
 }

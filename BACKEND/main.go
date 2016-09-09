@@ -31,8 +31,9 @@ func main() {
 
 	// Setup Routers
 	controller := &control.Controller{}
-	// sitemap
-	goji.Get("/sitemap.xml", application.Route(controller, "Sitemap"))
+
+	// admin
+	goji.Get("/pocketcluster/dashboard/:mode", application.Route(controller, "Admin"))
 /*
 	// Sign In routes
 	goji.Get("/signin", application.Route(controller, "SignIn"))
@@ -45,6 +46,9 @@ func main() {
 	// KTHXBYE
 	goji.Get("/logout", application.Route(controller, "Logout"))
 */
+
+	// sitemap
+	goji.Get("/sitemap.xml", application.Route(controller, "Sitemap"))
 
 	// Home page
 	// FIXME: all three regexp fail. WTF? (https://github.com/zenazn/goji/issues/75) & (https://github.com/zenazn/goji/blob/master/web/regexp_pattern.go#L56)

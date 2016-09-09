@@ -31,7 +31,7 @@ func (controller *Controller) Index(c web.C, r *http.Request) (string, int) {
 		"nextpagelink" 		   : "/index.html/2",
 	}
 
-	return util.Render("index.html.mustache", "base.html.mustache", content), http.StatusOK
+	return util.RenderLayout("index.html.mustache", "base.html.mustache", content), http.StatusOK
 }
 
 func (controller *Controller) IndexPaged(c web.C, r *http.Request) (string, int) {
@@ -67,5 +67,5 @@ func (controller *Controller) IndexPaged(c web.C, r *http.Request) (string, int)
 		content["nextpagelink"] = "/index.html/" + strconv.Itoa(page + 1)
 	}
 
-	return util.Render("index.html.mustache", "base.html.mustache", content), http.StatusOK
+	return util.RenderLayout("index.html.mustache", "base.html.mustache", content), http.StatusOK
 }

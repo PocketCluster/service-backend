@@ -68,5 +68,5 @@ func (controller *Controller) Repository(c web.C, r *http.Request) (string, int)
     }
     content["readme"] = string(readme)
 
-    return util.Render("repo.html.mustache", "base.html.mustache", content), http.StatusOK
+    return util.RenderLayout("repo.html.mustache", "base.html.mustache", content), http.StatusOK
 }
