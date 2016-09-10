@@ -1,0 +1,169 @@
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-3 col-md-2 sidebar">
+                <ul class="nav nav-sidebar">
+                    <li>
+                        <a href="/pocketcluster/dashboard/overview">Overview</a>
+                    </li>
+                    <li class="active">
+                        <a href="#">Repository</a>
+                    </li>
+                </ul>
+                <!--ul class="nav nav-sidebar">
+                    <li>
+                        <a href="/pocketcluster/dashboard/scrapping">Scrapping status</a>
+                    </li>
+                </ul-->
+            </div>
+
+            <!-- Tab Panel -->
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" role="tabpanel">
+
+                <div class="page-header">
+                    <h1>Repository Management</h1>
+                    <p class="lead">You can add, update, and remove a repository from the pages below.</p>
+                </div>
+
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#add" aria-controls="add" role="tab" data-toggle="tab">Add</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#update" aria-controls="update" role="tab" data-toggle="tab">Update</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#remove" aria-controls="remove" role="tab" data-toggle="tab">Remove</a>
+                    </li>
+                </ul><!-- Nav tabs -->
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+
+                    <!-- tab add -->
+                    <div id="add" class="tab-pane active" role="tabpanel">
+
+                        <div class="sub-header">
+                            <h2 >Add a repository</h2>
+                            <p class="lead">Add a new repository. If it already exists, than please update one.</p>
+                        </div>
+
+                        <form action="#" method="post">
+                            <div class="form-group">
+                                <label for="add-url">Github</label>
+                                <div class="input-group">
+                                    <span id="add-url-prefix" class="input-group-addon">https://github.com/</span>
+                                    <input id="add-url" name="add-url" class="form-control" placeholder="username/repository" aria-describedby="add-url-prefix">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="add-category">Category</label>
+                                <select id="add-category" name="add-category" class="form-control">
+                                    <option value="example">Example : that demonstrates how to use frameworks, libraries, and/or toolsets.</option>
+                                    <option value="toolset">Toolset</option>
+                                    <option value="model">Model</option>
+                                    <option value="library">Library</option>
+                                    <option value="framework">Framework</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="add-summary">Summary</label>
+                                <input id="add-summary" name="add-summary" type="text" class="form-control" placeholder="Description">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="add-project-page">Project Page (optional)</label>
+                                <div class="input-group">
+                                    <span id="add-project-page-prefix" class="input-group-addon">https://</span>
+                                    <input id="add-project-page" name="add-project-page" class="form-control" placeholder="project page link" aria-describedby="add-project-page-prefix">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="add-logo">Logo Image Link (optional)</label>
+                                <div class="input-group">
+                                    <span id="add-logo-prefix" class="input-group-addon">https://</span>
+                                    <input id="add-logo" name="add-logo" class="form-control" placeholder="logo image link" aria-describedby="add-logo-prefix">
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="text-align:center;">
+                                <input type="submit" value="Preview" class="btn btn-default" />
+                                <input type="submit" value="Submit" class="btn btn-primary" />
+                            </div>
+                        </form>
+                    </div><!-- tab add -->
+
+                    <!-- tab update -->
+                    <div id="update" class="tab-pane" role="tabpanel">
+
+                        <div class="sub-header">
+                            <h2 >Update a repository</h2>
+                            <p class="lead">Update an existing repository.</p>
+                        </div>
+
+                        <form action="#" method="post">
+                            <div class="form-group">
+                                <label for="update-url">Github</label>
+                                <div class="input-group">
+                                    <span id="update-url-prefix" class="input-group-addon">https://github.com/</span>
+                                    <input id="update-url" name="update-url" class="form-control" placeholder="username/repository" aria-describedby="update-url-prefix">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="update-category">Category</label>
+                                <select id="update-category" name="update-category" class="form-control">
+                                    <option value="example">Example : examples that demonstrates how to use frameworks, libraries, and toolsets, or train models further.</option>
+                                    <option value="toolset">Toolset</option>
+                                    <option value="model">Model</option>
+                                    <option value="library">Library</option>
+                                    <option value="framework">Framework</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="update-summary">Summary</label>
+                                <input id="update-summary" name="update-summary" type="text" class="form-control" placeholder="Description">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="update-project-page">Project Page (optional)</label>
+                                <div class="input-group">
+                                    <span id="update-project-page-prefix" class="input-group-addon">https://</span>
+                                    <input id="update-project-page" name="update-project-page" class="form-control" placeholder="project page link" aria-describedby="update-project-page-prefix">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="update-logo">Logo Image Link (optional)</label>
+                                <div class="input-group">
+                                    <span id="update-logo-prefix" class="input-group-addon">https://</span>
+                                    <input id="update-logo" name="update-logo" class="form-control" placeholder="logo image link" aria-describedby="update-logo-prefix">
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="text-align:center;">
+                                <input type="submit" value="Update" class="btn btn-primary"></submit>
+                            </div>
+                        </form>
+                    </div><!-- tab update -->
+
+                    <!-- tab remove -->
+                    <div id="remove" class="tab-pane" role="tabpanel">
+                        <h2 class="sub-header">Remove a repository</h2>
+                    </div><!-- tab remove -->
+
+                </div><!-- Tab panes -->
+
+            </div><!-- Tab Panel -->
+
+        </div><!-- row -->
+
+    </div><!-- container-fluid -->
+
+    <!-- javascript -->
+    <script type="text/javascript" src="{{SITEURL}}/{{THEME_STATIC_DIR}}/js/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript" src="{{SITEURL}}/{{THEME_STATIC_DIR}}/js/bootstrap-3.3.7.min.js"></script>
