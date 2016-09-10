@@ -1,113 +1,113 @@
 package framework
 
 import (
-	"html/template"
-	"io"
-	"net/http"
-	"reflect"
-	"crypto/sha256"
+    "html/template"
+    "io"
+    "net/http"
+    "reflect"
+    "crypto/sha256"
 
-	"github.com/golang/glog"
-	"github.com/gorilla/sessions"
-	"github.com/pelletier/go-toml"
-	"github.com/zenazn/goji/web"
+    "github.com/golang/glog"
+    "github.com/gorilla/sessions"
+    "github.com/pelletier/go-toml"
+    "github.com/zenazn/goji/web"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+    "github.com/jinzhu/gorm"
+    _ "github.com/jinzhu/gorm/dialects/sqlite"
 
-	"github.com/stkim1/BACKEND/model"
+    "github.com/stkim1/BACKEND/model"
 )
 
 type CsrfProtection struct {
-	Key    string
-	Cookie string
-	Header string
-	Secure bool
+    Key    string
+    Cookie string
+    Header string
+    Secure bool
 }
 
 type Application struct {
-	Config         *toml.TomlTree
-	Template       *template.Template
-	Store          *sessions.CookieStore
-	GORM           *gorm.DB
-	CsrfProtection *CsrfProtection
+    Config         *toml.TomlTree
+    Template       *template.Template
+    Store          *sessions.CookieStore
+    GORM           *gorm.DB
+    CsrfProtection *CsrfProtection
 }
 
 func (application *Application) Init(filename *string) {
 
-	config, err := toml.LoadFile(*filename)
-	if err != nil {
-		glog.Fatalf("TOML load failed: %s\n", err)
-	}
+    config, err := toml.LoadFile(*filename)
+    if err != nil {
+        glog.Fatalf("TOML load failed: %s\n", err)
+    }
 
-	hash := sha256.New()
-	io.WriteString(hash, config.Get("cookie.mac_secret").(string))
-	application.Store = sessions.NewCookieStore(hash.Sum(nil))
-	application.Store.Options = &sessions.Options{
-		Path:     "/",
-		HttpOnly: true,
-		Secure:   config.Get("cookie.secure").(bool),
-	}
+    hash := sha256.New()
+    io.WriteString(hash, config.Get("cookie.mac_secret").(string))
+    application.Store = sessions.NewCookieStore(hash.Sum(nil))
+    application.Store.Options = &sessions.Options{
+        Path:     "/",
+        HttpOnly: true,
+        Secure:   config.Get("cookie.secure").(bool),
+    }
 
-	dbConfig := config.Get("database").(*toml.TomlTree)
-	db, err := gorm.Open(dbConfig.Get("database").(string), dbConfig.Get("filename").(string))
-	if err != nil {
-		panic("failed to connect database")
-	}
-	// Migrate the schema
-	db.AutoMigrate(&model.Author{}, &model.Repository{}, &model.RepoCommit{}, &model.RepoVersion{}, &model.RepoLanguage{}, &model.RepoContributor{});
+    dbConfig := config.Get("database").(*toml.TomlTree)
+    db, err := gorm.Open(dbConfig.Get("database").(string), dbConfig.Get("filename").(string))
+    if err != nil {
+        panic("failed to connect database")
+    }
+    // Migrate the schema
+    db.AutoMigrate(&model.Author{}, &model.Repository{}, &model.RepoCommit{}, &model.RepoVersion{}, &model.RepoLanguage{}, &model.RepoContributor{});
 
-	// set relation
-	// db.Model(&model.Repository{}).Related(&model.RepoVersion{})
-	// db.Model(&model.Repository{}).Related(&model.RepoCommit{})
-	// db.Model(&model.Repository{}).Related(&model.RepoLanguage{})
-	application.GORM = db;
+    // set relation
+    // db.Model(&model.Repository{}).Related(&model.RepoVersion{})
+    // db.Model(&model.Repository{}).Related(&model.RepoCommit{})
+    // db.Model(&model.Repository{}).Related(&model.RepoLanguage{})
+    application.GORM = db;
 
-	application.CsrfProtection = &CsrfProtection{
-		Key:    config.Get("csrf.key").(string),
-		Cookie: config.Get("csrf.cookie").(string),
-		Header: config.Get("csrf.header").(string),
-		Secure: config.Get("cookie.secure").(bool),
-	}
+    application.CsrfProtection = &CsrfProtection{
+        Key:    config.Get("csrf.key").(string),
+        Cookie: config.Get("csrf.cookie").(string),
+        Header: config.Get("csrf.header").(string),
+        Secure: config.Get("cookie.secure").(bool),
+    }
 
-	application.Config = config
+    application.Config = config
 }
 
 func (application *Application) Close() {
-	glog.Info("Bye!")
+    glog.Info("Bye!")
 }
 
 func (application *Application) Route(controller interface{}, route string) interface{} {
-	fn := func(c web.C, w http.ResponseWriter, r *http.Request) {
-		c.Env["Content-Type"] = "text/html"
+    fn := func(c web.C, w http.ResponseWriter, r *http.Request) {
+        c.Env["Content-Type"] = "text/html"
 
-		methodValue := reflect.ValueOf(controller).MethodByName(route)
-		methodInterface := methodValue.Interface()
-		method := methodInterface.(func(c web.C, r *http.Request) (string, int))
+        methodValue := reflect.ValueOf(controller).MethodByName(route)
+        methodInterface := methodValue.Interface()
+        method := methodInterface.(func(c web.C, r *http.Request) (string, int))
 
-		body, code := method(c, r)
+        body, code := method(c, r)
 
-		if session, exists := c.Env["Session"]; exists {
-			err := session.(*sessions.Session).Save(r, w)
-			if err != nil {
-				glog.Errorf("Can't save session: %v", err)
-			}
-		}
+        if session, exists := c.Env["Session"]; exists {
+            err := session.(*sessions.Session).Save(r, w)
+            if err != nil {
+                glog.Errorf("Can't save session: %v", err)
+            }
+        }
 
-		switch code {
-		case http.StatusOK:
-			if _, exists := c.Env["Content-Type"]; exists {
-				w.Header().Set("Content-Type", c.Env["Content-Type"].(string))
-			}
-			io.WriteString(w, body)
-		case http.StatusNotFound:
-			http.Error(w, http.StatusText(404), 404)
-		case http.StatusBadRequest:
-			// FIXME : replace "error" with err.Error()
-			http.Error(w, "error", http.StatusBadRequest)
-		case http.StatusSeeOther, http.StatusFound:
-			http.Redirect(w, r, body, code)
-		}
-	}
-	return fn
+        switch code {
+        case http.StatusOK:
+            if _, exists := c.Env["Content-Type"]; exists {
+                w.Header().Set("Content-Type", c.Env["Content-Type"].(string))
+            }
+            io.WriteString(w, body)
+        case http.StatusNotFound:
+            http.Error(w, http.StatusText(404), 404)
+        case http.StatusBadRequest:
+            // FIXME : replace "error" with err.Error()
+            http.Error(w, "error", http.StatusBadRequest)
+        case http.StatusSeeOther, http.StatusFound:
+            http.Redirect(w, r, body, code)
+        }
+    }
+    return fn
 }

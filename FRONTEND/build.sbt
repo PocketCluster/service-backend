@@ -12,7 +12,7 @@ libraryDependencies ++= Seq(
 //  This is to include all the JS dependencies in one file. We don't do this for now.
 skip in packageJSDependencies := false
 jsDependencies ++= Seq(
-  "org.webjars" % "jquery" % "2.1.4" / "2.1.4/jquery.js"
+  "org.webjars" % "jquery" % "2.2.4" / "2.2.4/jquery.js"
   ,RuntimeDOM
 )
 

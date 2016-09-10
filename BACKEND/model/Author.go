@@ -1,7 +1,7 @@
 package model
 
 import (
-	"github.com/jinzhu/gorm"
+    "github.com/jinzhu/gorm"
 )
 
 /*
@@ -26,24 +26,24 @@ import (
   }
  */
 type Author struct{
-	gorm.Model
-	// Is this from Github/Gitlab/Bitbucket
-	Service     	string
-	// Profile Type : Organization/Personal/etc
-	Type            string
-	// two abbreviate chars + numbering : gh23247808
-	AuthorId 		string
-	// Author Full Name
-	Login			string
-	// Author Full Name
-	Name			string
+    gorm.Model
+    // Is this from Github/Gitlab/Bitbucket
+    Service         string
+    // Profile Type : Organization/Personal/etc
+    Type            string
+    // two abbreviate chars + numbering : gh23247808
+    AuthorId        string
+    // Author Full Name
+    Login           string
+    // Author Full Name
+    Name            string
 
-	// home Page Link
-	HomeURL			string
-	// service profile Page
-	ProfileURL		string
-	// Avatar Link
-	AvatarURL		string
-	// If this author is deceased
-	Deceased		bool
+    // home Page Link
+    HomeURL         string
+    // service profile Page
+    ProfileURL      string
+    // Avatar Link
+    AvatarURL       string
+    // If this author is deceased
+    Deceased        bool
 }

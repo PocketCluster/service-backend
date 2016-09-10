@@ -7,7 +7,7 @@
 		revision="1.0"
 		conf="runtime-internal"
 		confs="compile, runtime, test, provided, optional, compile-internal, runtime-internal, test-internal, plugin, sources, docs, pom, scala-tool, phantom-js-jetty"
-		date="20160907011415"/>
+		date="20160910111425"/>
 	<dependencies>
 		<module organisation="be.doeraene" name="scalajs-jquery_sjs0.6_2.11">
 			<revision name="0.9.0" status="release" pubdate="20160215061542" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://scala-js.org/" downloaded="false" searched="false" default="false" conf="default, compile, runtime, default(compile), master" position="4">
@@ -55,16 +55,16 @@
 			</revision>
 		</module>
 		<module organisation="org.webjars" name="jquery">
-			<revision name="2.1.4" status="release" pubdate="20150430144100" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://webjars.org" downloaded="false" searched="false" default="false" conf="default, compile, runtime, default(compile), master" position="1">
+			<revision name="2.2.4" status="release" pubdate="20160521230344" resolver="sbt-chain" artresolver="sbt-chain" homepage="http://webjars.org" downloaded="false" searched="false" default="false" conf="default, compile, runtime, default(compile), master" position="1">
 				<license name="MIT License" url="https://github.com/jquery/jquery/blob/master/MIT-LICENSE.txt"/>
-				<metadata-artifact status="no" details="" size="3628" time="0" location="/Users/almightykim/.ivy2/cache/org.webjars/jquery/ivy-2.1.4.xml" searched="false" origin-is-local="false" origin-location="https://jcenter.bintray.com/org/webjars/jquery/2.1.4/jquery-2.1.4.pom"/>
-				<caller organisation="index-front" name="index-front$sources_sjs0.6_2.11" conf="compile, runtime-internal, runtime, optional" rev="2.1.4" rev-constraint-default="2.1.4" rev-constraint-dynamic="2.1.4" callerrev="1.0"/>
+				<metadata-artifact status="no" details="" size="3628" time="0" location="/Users/almightykim/.ivy2/cache/org.webjars/jquery/ivy-2.2.4.xml" searched="false" origin-is-local="false" origin-location="https://jcenter.bintray.com/org/webjars/jquery/2.2.4/jquery-2.2.4.pom"/>
+				<caller organisation="index-front" name="index-front$sources_sjs0.6_2.11" conf="compile, runtime-internal, runtime, optional" rev="2.2.4" rev-constraint-default="2.2.4" rev-constraint-dynamic="2.2.4" callerrev="1.0"/>
 				<artifacts>
-					<artifact name="jquery" type="jar" ext="jar" status="no" details="" size="158370" time="0" location="/Users/almightykim/.ivy2/cache/org.webjars/jquery/jars/jquery-2.1.4.jar">
-						<origin-location is-local="false" location="https://jcenter.bintray.com/org/webjars/jquery/2.1.4/jquery-2.1.4.jar"/>
+					<artifact name="jquery" type="jar" ext="jar" status="no" details="" size="162588" time="0" location="/Users/almightykim/.ivy2/cache/org.webjars/jquery/jars/jquery-2.2.4.jar">
+						<origin-location is-local="false" location="https://jcenter.bintray.com/org/webjars/jquery/2.2.4/jquery-2.2.4.jar"/>
 					</artifact>
-					<artifact name="jquery" type="src" ext="jar" extra-classifier="sources" status="no" details="" size="3886" time="0" location="/Users/almightykim/.ivy2/cache/org.webjars/jquery/srcs/jquery-2.1.4-sources.jar">
-						<origin-location is-local="false" location="https://jcenter.bintray.com/org/webjars/jquery/2.1.4/jquery-2.1.4-sources.jar"/>
+					<artifact name="jquery" type="src" ext="jar" extra-classifier="sources" status="successful" details="" size="3886" time="7996" location="/Users/almightykim/.ivy2/cache/org.webjars/jquery/srcs/jquery-2.2.4-sources.jar">
+						<origin-location is-local="false" location="https://jcenter.bintray.com/org/webjars/jquery/2.2.4/jquery-2.2.4-sources.jar"/>
 					</artifact>
 				</artifacts>
 			</revision>
