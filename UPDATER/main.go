@@ -16,7 +16,6 @@ import (
 
 
 func AccessGithubAPI(db *gorm.DB, repo *model.Repository) error {
-    //log.Print("Updating " + repo.RepoPage)
 
     // URL CHECK
     if len(repo.RepoPage) == 0 {
@@ -25,7 +24,7 @@ func AccessGithubAPI(db *gorm.DB, repo *model.Repository) error {
 
     // GITHUB API REQUEST
     apiResp, err := http.Get(control.GetGithubAPILink(repo.RepoPage)); if err != nil {
-        return errors.New("Cannot Access API " + err.Error())
+        return errors.New("Cannot Access Repo API " + err.Error())
     }
     defer apiResp.Body.Close()
 
@@ -37,7 +36,7 @@ func AccessGithubAPI(db *gorm.DB, repo *model.Repository) error {
 
     // CONTRIBUTOR DATA FROM THE REPO
     contribResp, err := http.Get(control.GetGithubAPILink(repo.RepoPage + "/contributors")); if err != nil {
-        return errors.New("Cannot Access API " + err.Error())
+        return errors.New("Cannot Access Contributors API " + err.Error())
     }
     defer contribResp.Body.Close()
 
@@ -99,10 +98,25 @@ func main() {
     }
 
     log.Print("Update process started at " + time.Now().Format("Jan. 2 2006 3:04 PM"))
-
+/*
+    client := &http.Client{
+        Transport: &http.Transport{
+            TLSClientConfig: &tls.Config{InsecureSkipVerify: true}, // disable verify
+            Dial: (&net.Dialer{
+                Timeout:   60 * time.Second,
+                KeepAlive: 60 * time.Second,
+            }).Dial,
+            // We use ABSURDLY large keys, and should probably not.
+            TLSHandshakeTimeout:   60 * time.Second,
+            ResponseHeaderTimeout: 60 * time.Second,
+            ExpectContinueTimeout: 1 * time.Second,
+        },
+    }
+*/
     var repos []model.Repository
     db.Find(&repos)
     for _, repo := range repos {
+        //log.Print("Updating " + repo.RepoPage)
         if err := AccessGithubAPI(db, &repo); err != nil {
             log.Print("Updating " + repo.RepoPage + " failed! Reason : " + err.Error())
         }
