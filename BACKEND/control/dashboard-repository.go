@@ -12,6 +12,7 @@ import (
     "github.com/zenazn/goji/web"
     "github.com/jinzhu/gorm"
     "github.com/stkim1/BACKEND/model"
+    "github.com/stkim1/BACKEND/util"
     //github.com/google/go-github
 )
 
@@ -86,9 +87,9 @@ func (Controller *Controller) DashboardRepository(c web.C, r *http.Request) (str
 func Submit(db *gorm.DB, requests map[string]string, githubData map[string]interface{}, contribData []map[string]interface{}) (map[string]interface{}, error) {
 
     // title
-    title       := requests["name"]
+    title       := requests["add-repo-title"]
     // Description
-    description := requests["description"]
+    description := requests["add-repo-desc"]
     // get Slug
     slug        := requests["add-repo-slug"]
     // Category
@@ -108,7 +109,7 @@ func Submit(db *gorm.DB, requests map[string]string, githubData map[string]inter
 
     // let's quickly Check database if this repo exists
     var repo []model.Repository
-    db.Find(&repo, "repo_id = ? AND slug = ?", repoID, slug); if len(repo) != 0 {
+    db.Where("repo_id = ? AND slug = ?", repoID, slug).Find(&repo); if len(repo) != 0 {
         return map[string]interface{}{
             "status"             :"duplicated",
             "reason"             :"The repository already exists",
@@ -126,9 +127,11 @@ func Submit(db *gorm.DB, requests map[string]string, githubData map[string]inter
     authorID := "gh" + strconv.FormatInt(int64(aid), 10)
     // find owner
     var users []model.Author
-    if db.Find(&users, "author_id = ?", authorID); len(users) == 0 {
+    if db.Where("author_id = ?", authorID).Find(&users); len(users) == 0 {
         userType, ok    := ownerData["type"].(string); if !ok {
             return nil, errors.New("Cannot parse Owner type")
+        } else {
+            userType = strings.ToLower(userType)
         }
         userLogin, ok   := ownerData["login"].(string); if !ok {
             return nil, errors.New("Cannot parse Owner login name")
@@ -140,7 +143,7 @@ func Submit(db *gorm.DB, requests map[string]string, githubData map[string]inter
             return nil, errors.New("Cannot parse Owner avatar URL")
         }
 
-        _ = model.Author{
+        repoAuthor := model.Author{
             Service     :"github",
             Type        :userType,
             AuthorId    :authorID,
@@ -150,6 +153,7 @@ func Submit(db *gorm.DB, requests map[string]string, githubData map[string]inter
             AvatarURL   :avatarUrl,
             Deceased    :false,
         }
+        db.Save(&repoAuthor)
     }
 
     /* ------------------------------------------- Handle Repository information ------------------------------------ */
@@ -184,7 +188,7 @@ func Submit(db *gorm.DB, requests map[string]string, githubData map[string]inter
         return nil, errors.New("Cannot parse when the repo's created " + err.Error())
     }
 
-    _ = model.Repository{
+    repoAdded := model.Repository{
         RepoId          :repoID,
         AuthorId        :authorID,
         Deceased        :false,
@@ -207,6 +211,10 @@ func Submit(db *gorm.DB, requests map[string]string, githubData map[string]inter
         Created         :createdDate,
         Updated         :updatedDate,
     }
+    db.Save(&repoAdded)
+
+    // upon successful repo save, save readme to file
+    util.GithubReadmeScrap(repoPage, slug + ".html")
 
     /* ------------------------------------------- Handle Contributor information ----------------------------------- */
 
@@ -222,9 +230,11 @@ func Submit(db *gorm.DB, requests map[string]string, githubData map[string]inter
 
         // find this user
         var users []model.Author
-        if db.Find(&users, "author_id = ?", contribID); len(users) == 0 {
+        if db.Where("author_id = ?", contribID).Find(&users); len(users) == 0 {
             userType, ok    := contrib["type"].(string); if !ok {
                 return nil, errors.New("Cannot parse Owner type")
+            } else {
+                userType = strings.ToLower(userType)
             }
             userLogin, ok   := contrib["login"].(string); if !ok {
                 return nil, errors.New("Cannot parse Owner login name")
@@ -235,7 +245,7 @@ func Submit(db *gorm.DB, requests map[string]string, githubData map[string]inter
             avatarUrl, ok   := contrib["avatar_url"].(string); if !ok {
                 return nil, errors.New("Cannot parse Owner avatar URL")
             }
-            _ = model.Author{
+            contribAuthor := model.Author{
                 Service     :"github",
                 Type        :userType,
                 AuthorId    :contribID,
@@ -245,20 +255,22 @@ func Submit(db *gorm.DB, requests map[string]string, githubData map[string]inter
                 AvatarURL   :avatarUrl,
                 Deceased    :false,
             }
+            db.Save(&contribAuthor)
         }
 
         var repoContrib []model.RepoContributor
-        if db.Find(&repoContrib, "repo_id = ? AND author_id = ?", repoID, contribID); len(repoContrib) == 0 {
-            _ = model.RepoContributor{
+        if db.Where("repo_id = ? AND author_id = ?", repoID, contribID).Find(&repoContrib); len(repoContrib) == 0 {
+            contribInfo := model.RepoContributor{
                 RepoId      :repoID,
                 AuthorId    :contribID,
                 Contribution:int(cfactor),
             }
+            db.Save(&contribInfo)
         }
     }
+
     return map[string]interface{}{
         "status"             :"ok",
-        "reason"             :"",
     }, nil
 }
 

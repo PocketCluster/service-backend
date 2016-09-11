@@ -4596,23 +4596,6 @@ $c_LRepository$.prototype.previewRepository__Lorg_scalajs_dom_raw_Event__Z = (fu
   requests.update__O__O__V("add-repo-desc", $objectToString((0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-desc").val()));
   requests.update__O__O__V("add-project-page", $objectToString((0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-project-page").val()));
   requests.update__O__O__V("add-repo-logo", $objectToString((0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-logo").val()));
-  var jsx$2 = $g.JSON;
-  var this$5 = $m_sjs_js_JSConverters$JSRichGenMap$();
-  var result = $m_sjs_js_Dictionary$().empty__sjs_js_Dictionary();
-  requests.foreach__F1__V(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this, result$1) {
-    return (function(x0$1$2) {
-      var x0$1 = $as_T2(x0$1$2);
-      if ((x0$1 !== null)) {
-        var key = $as_T(x0$1.$$und1$f);
-        var value = x0$1.$$und2$f;
-        result$1[key] = value
-      } else {
-        throw new $c_s_MatchError().init___O(x0$1)
-      }
-    })
-  })(this$5, result)));
-  var jsx$1 = jsx$2.stringify(result);
-  var formdata = $as_T(jsx$1);
   var xhr = new $g.XMLHttpRequest();
   xhr.open("POST", "/pocketcluster/dashboard/repository/preview");
   xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
@@ -4622,15 +4605,12 @@ $c_LRepository$.prototype.previewRepository__Lorg_scalajs_dom_raw_Event__Z = (fu
         try {
           var dict = $g.JSON.parse($as_T(xhr$1.responseText));
           var b = new $c_scm_MapBuilder().init___sc_GenMap($m_sci_Map$EmptyMap$());
-          var this$8 = new $c_sjs_js_WrappedDictionary$DictionaryIterator().init___sjs_js_Dictionary(dict);
-          while (this$8.hasNext__Z()) {
-            var arg1 = this$8.next__T2();
+          var this$6 = new $c_sjs_js_WrappedDictionary$DictionaryIterator().init___sjs_js_Dictionary(dict);
+          while (this$6.hasNext__Z()) {
+            var arg1 = this$6.next__T2();
             b.$$plus$eq__T2__scm_MapBuilder(arg1)
           };
           var results = $as_sci_Map(b.elems$1);
-          var this$10 = $m_s_Console$();
-          var this$11 = $as_Ljava_io_PrintStream(this$10.outVar$2.v$1);
-          this$11.java$lang$JSConsoleBasedPrintStream$$printString__T__V((results + "\n"));
           (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-id").val($as_T(results.apply__O__O("add-repo-id")));
           (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-title").val($as_T(results.apply__O__O("add-repo-title")));
           (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-slug").val($as_T(results.apply__O__O("add-repo-slug")));
@@ -4641,9 +4621,9 @@ $c_LRepository$.prototype.previewRepository__Lorg_scalajs_dom_raw_Event__Z = (fu
             var e$4 = $as_jl_Exception(e$3);
             e$4.printStackTrace__Ljava_io_PrintStream__V($m_jl_System$().err$1);
             var x = (void 0);
-            var this$13 = $m_s_Console$();
-            var this$14 = $as_Ljava_io_PrintStream(this$13.outVar$2.v$1);
-            this$14.java$lang$JSConsoleBasedPrintStream$$printString__T__V((x + "\n"));
+            var this$8 = $m_s_Console$();
+            var this$9 = $as_Ljava_io_PrintStream(this$8.outVar$2.v$1);
+            this$9.java$lang$JSConsoleBasedPrintStream$$printString__T__V((x + "\n"));
             return (void 0)
           } else {
             throw e$2
@@ -4658,11 +4638,28 @@ $c_LRepository$.prototype.previewRepository__Lorg_scalajs_dom_raw_Event__Z = (fu
     return (void 0)
   });
   xhr.ontimeout = (function(e$2$1) {
-    var this$16 = $m_s_Console$();
-    var this$17 = $as_Ljava_io_PrintStream(this$16.outVar$2.v$1);
-    this$17.java$lang$JSConsoleBasedPrintStream$$printString__T__V("timeout!!!\n")
+    var this$11 = $m_s_Console$();
+    var this$12 = $as_Ljava_io_PrintStream(this$11.outVar$2.v$1);
+    this$12.java$lang$JSConsoleBasedPrintStream$$printString__T__V("timeout!!!\n")
   });
-  xhr.send(formdata);
+  var jsx$2 = $g.JSON;
+  var this$14 = $m_sjs_js_JSConverters$JSRichGenMap$();
+  var result = $m_sjs_js_Dictionary$().empty__sjs_js_Dictionary();
+  requests.foreach__F1__V(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this, result$1) {
+    return (function(x0$1$2) {
+      var x0$1 = $as_T2(x0$1$2);
+      if ((x0$1 !== null)) {
+        var key = $as_T(x0$1.$$und1$f);
+        var value = x0$1.$$und2$f;
+        result$1[key] = value
+      } else {
+        throw new $c_s_MatchError().init___O(x0$1)
+      }
+    })
+  })(this$14, result)));
+  var jsx$1 = jsx$2.stringify(result);
+  var s = $as_T(jsx$1);
+  xhr.send(s);
   return false
 });
 $c_LRepository$.prototype.submitRepository__Z = (function() {
@@ -4692,8 +4689,45 @@ $c_LRepository$.prototype.submitRepository__Z = (function() {
   requests.update__O__O__V("add-repo-logo", $objectToString((0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-logo").val()));
   requests.update__O__O__V("add-repo-title", $objectToString((0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-title").val()));
   requests.update__O__O__V("add-repo-slug", $objectToString((0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-slug").val()));
+  var xhr = new $g.XMLHttpRequest();
+  xhr.open("POST", "/pocketcluster/dashboard/repository/submit");
+  xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+  xhr.onload = (function(xhr$2) {
+    return (function(e$2) {
+      if (($uI(xhr$2.status) === 200)) {
+        var dict = $g.JSON.parse($as_T(xhr$2.responseText));
+        var b = new $c_scm_MapBuilder().init___sc_GenMap($m_sci_Map$EmptyMap$());
+        var this$7 = new $c_sjs_js_WrappedDictionary$DictionaryIterator().init___sjs_js_Dictionary(dict);
+        while (this$7.hasNext__Z()) {
+          var arg1 = this$7.next__T2();
+          b.$$plus$eq__T2__scm_MapBuilder(arg1)
+        };
+        var results = $as_sci_Map(b.elems$1);
+        var x1 = $as_T(results.apply__O__O("status"));
+        if ((x1 === "ok")) {
+          (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("div#add-repo-status").removeClass("panel-warning").addClass("panel-success").css("visibility", "visible");
+          return (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("div#add-repo-status div.panel-body").text("Everything went ok! Reload page!")
+        } else if ((x1 === "duplicated")) {
+          (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("div#add-repo-status").removeClass("panel-success").addClass("panel-warning").css("visibility", "visible");
+          return (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("div#add-repo-status div.panel-body").text($as_T(results.apply__O__O("reason")))
+        } else {
+          throw new $c_s_MatchError().init___O(x1)
+        }
+      } else {
+        return (void 0)
+      }
+    })
+  })(xhr);
+  xhr.onprogress = (function(prog$2) {
+    return (void 0)
+  });
+  xhr.ontimeout = (function(e$2$1) {
+    var this$13 = $m_s_Console$();
+    var this$14 = $as_Ljava_io_PrintStream(this$13.outVar$2.v$1);
+    this$14.java$lang$JSConsoleBasedPrintStream$$printString__T__V("timeout!!!\n")
+  });
   var jsx$2 = $g.JSON;
-  var this$6 = $m_sjs_js_JSConverters$JSRichGenMap$();
+  var this$16 = $m_sjs_js_JSConverters$JSRichGenMap$();
   var result = $m_sjs_js_Dictionary$().empty__sjs_js_Dictionary();
   requests.foreach__F1__V(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this, result$1) {
     return (function(x0$1$2) {
@@ -4706,57 +4740,10 @@ $c_LRepository$.prototype.submitRepository__Z = (function() {
         throw new $c_s_MatchError().init___O(x0$1)
       }
     })
-  })(this$6, result)));
+  })(this$16, result)));
   var jsx$1 = jsx$2.stringify(result);
-  var formdata = $as_T(jsx$1);
-  $g.console.log(formdata);
-  var xhr = new $g.XMLHttpRequest();
-  xhr.open("POST", "/pocketcluster/dashboard/repository/submit");
-  xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-  xhr.onload = (function(xhr$2) {
-    return (function(e$5) {
-      if (($uI(xhr$2.status) === 200)) {
-        try {
-          var dict = $g.JSON.parse($as_T(xhr$2.responseText));
-          var b = new $c_scm_MapBuilder().init___sc_GenMap($m_sci_Map$EmptyMap$());
-          var this$12 = new $c_sjs_js_WrappedDictionary$DictionaryIterator().init___sjs_js_Dictionary(dict);
-          while (this$12.hasNext__Z()) {
-            var arg1 = this$12.next__T2();
-            b.$$plus$eq__T2__scm_MapBuilder(arg1)
-          };
-          var results = $as_sci_Map(b.elems$1);
-          (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-id").val($as_T(results.apply__O__O("add-repo-id")));
-          (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-title").val($as_T(results.apply__O__O("add-repo-title")));
-          (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-slug").val($as_T(results.apply__O__O("add-repo-slug")));
-          return (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-desc").val($as_T(results.apply__O__O("add-repo-desc")))
-        } catch (e$2) {
-          var e$3 = $m_sjsr_package$().wrapJavaScriptException__O__jl_Throwable(e$2);
-          if ($is_jl_Exception(e$3)) {
-            var e$4 = $as_jl_Exception(e$3);
-            e$4.printStackTrace__Ljava_io_PrintStream__V($m_jl_System$().err$1);
-            var x = (void 0);
-            var this$14 = $m_s_Console$();
-            var this$15 = $as_Ljava_io_PrintStream(this$14.outVar$2.v$1);
-            this$15.java$lang$JSConsoleBasedPrintStream$$printString__T__V((x + "\n"));
-            return (void 0)
-          } else {
-            throw e$2
-          }
-        }
-      } else {
-        return (void 0)
-      }
-    })
-  })(xhr);
-  xhr.onprogress = (function(prog$2) {
-    return (void 0)
-  });
-  xhr.ontimeout = (function(e$2$1) {
-    var this$17 = $m_s_Console$();
-    var this$18 = $as_Ljava_io_PrintStream(this$17.outVar$2.v$1);
-    this$18.java$lang$JSConsoleBasedPrintStream$$printString__T__V("timeout!!!\n")
-  });
-  xhr.send(formdata);
+  var s = $as_T(jsx$1);
+  xhr.send(s);
   return false
 });
 $c_LRepository$.prototype.$$js$exported$meth$main__O = (function() {

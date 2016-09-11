@@ -1,9 +1,7 @@
-import org.scalajs.dom.raw.FormData
-import org.scalajs.dom.{Element, Event, Node, ProgressEvent, XMLHttpRequest, html}
+import org.scalajs.dom._
 import org.scalajs.jquery.jQuery
 
 import scala.collection.mutable
-import scala.scalajs.js
 import scala.scalajs.js.{Dictionary, JSApp, JSON}
 import scala.scalajs.js.annotation.JSExport
 import scala.scalajs.js.Dynamic.global
@@ -43,8 +41,6 @@ object Repository extends JSApp {
         requests("add-project-page")  = jQuery("input#add-project-page").value().toString
         requests("add-repo-logo")     = jQuery("input#add-repo-logo").value().toString
 
-        val formdata = JSON.stringify(requests.toJSDictionary)
-
         val xhr = new XMLHttpRequest()
         xhr.open("POST", "/pocketcluster/dashboard/repository/preview")
         xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
@@ -52,7 +48,6 @@ object Repository extends JSApp {
             if (xhr.status == 200) {
                 try {
                     val results = JSON.parse(xhr.responseText).asInstanceOf[Dictionary[String]].toMap[String, String]
-                    println(results)
                     jQuery("input#add-repo-id").value(results("add-repo-id").toString)
                     jQuery("input#add-repo-title").value(results("add-repo-title").toString)
                     jQuery("input#add-repo-slug").value(results("add-repo-slug").toString)
@@ -66,7 +61,7 @@ object Repository extends JSApp {
         xhr.ontimeout = { (e: Event) =>
             println("timeout!!!")
         }
-        xhr.send(formdata)
+        xhr.send(JSON.stringify(requests.toJSDictionary))
         return false
     }
 
@@ -99,22 +94,21 @@ object Repository extends JSApp {
         requests("add-repo-title")    = jQuery("input#add-repo-title").value().toString
         requests("add-repo-slug")     = jQuery("input#add-repo-slug").value().toString
 
-        val formdata = JSON.stringify(requests.toJSDictionary)
-        global.console.log(formdata)
-
         val xhr = new XMLHttpRequest()
         xhr.open("POST", "/pocketcluster/dashboard/repository/submit")
         xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
         xhr.onload = { (e: Event) =>
             if (xhr.status == 200) {
-                try {
-                    val results = JSON.parse(xhr.responseText).asInstanceOf[Dictionary[String]].toMap[String, String]
-                    jQuery("input#add-repo-id").value(results("add-repo-id").toString)
-                    jQuery("input#add-repo-title").value(results("add-repo-title").toString)
-                    jQuery("input#add-repo-slug").value(results("add-repo-slug").toString)
-                    jQuery("input#add-repo-desc").value(results("add-repo-desc").toString)
-                } catch {
-                    case e:Exception => println(e.printStackTrace())
+                val results = JSON.parse(xhr.responseText).asInstanceOf[Dictionary[String]].toMap[String, String]
+                results("status") match {
+                    case "ok" =>         {
+                        jQuery("div#add-repo-status").removeClass("panel-warning").addClass("panel-success").css("visibility", "visible")
+                        jQuery("div#add-repo-status div.panel-body").text("Everything went ok! Reload page!")
+                    }
+                    case "duplicated" => {
+                        jQuery("div#add-repo-status").removeClass("panel-success").addClass("panel-warning").css("visibility", "visible")
+                        jQuery("div#add-repo-status div.panel-body").text(results("reason"))
+                    }
                 }
             }
         }
@@ -122,8 +116,7 @@ object Repository extends JSApp {
         xhr.ontimeout = { (e: Event) =>
             println("timeout!!!")
         }
-
-        xhr.send(formdata)
+        xhr.send(JSON.stringify(requests.toJSDictionary))
         return false
     }
 
