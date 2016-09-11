@@ -36,11 +36,11 @@ func (controller *Controller) Repository(c web.C, r *http.Request) (string, int)
     db.Where("author_id = ?", repo.AuthorId).First(&owner)
 
     var content map[string]interface{} = map[string]interface{} {
-        "ISINDEX"			   : false,
-        "SITENAME"			   : "PocketCluster Index",
+        "ISINDEX"              : false,
+        "SITENAME"             : "PocketCluster Index",
         "SITEURL"              : "https://index.pocketcluster.io",
         "THEME_STATIC_DIR"     : "theme",
-        "CATEGORIES"		   : model.GetActivatedCategory(repo.Category),
+        "CATEGORIES"           : model.GetActivatedCategory(repo.Category),
         "title"                : repo.Title,
         "repo"                 : &repo,
         "owner"                : &owner,
@@ -68,5 +68,5 @@ func (controller *Controller) Repository(c web.C, r *http.Request) (string, int)
     }
     content["readme"] = string(readme)
 
-    return util.Render("repo.html.mustache", "base.html.mustache", content), http.StatusOK
+    return util.RenderLayout("repo.html.mustache", "base.html.mustache", content), http.StatusOK
 }

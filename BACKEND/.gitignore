@@ -26,6 +26,7 @@ _testmain.go
 readme/*
 Godeps/*
 vendor/*
+pc-index.db
 
 ### SCALA.JS ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and Webstorm

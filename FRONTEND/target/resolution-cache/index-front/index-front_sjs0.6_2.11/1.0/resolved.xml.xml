@@ -4,7 +4,7 @@
 		module="index-front_sjs0.6_2.11"
 		revision="1.0"
 		status="integration"
-		publication="20160907013709"
+		publication="20160910111628"
 	>
 		<description>
 		INDEX-FRONT
@@ -37,7 +37,7 @@
 		<dependency org="org.scala-lang" name="scala-library" rev="2.11.8" conf="scala-tool->default,optional(default);compile->default(compile)"/>
 		<dependency org="org.eclipse.jetty" name="jetty-websocket" rev="8.1.16.v20140903" conf="phantom-js-jetty->default(compile)"/>
 		<dependency org="org.eclipse.jetty" name="jetty-server" rev="8.1.16.v20140903" conf="phantom-js-jetty->default(compile)"/>
-		<dependency org="org.webjars" name="jquery" rev="2.1.4" conf="compile->default(compile)"/>
+		<dependency org="org.webjars" name="jquery" rev="2.2.4" conf="compile->default(compile)"/>
 		<dependency org="org.scala-js" name="scalajs-compiler_2.11.8" rev="0.6.11" conf="plugin->default(compile)"/>
 		<dependency org="org.scala-js" name="scalajs-library_2.11" rev="0.6.11" conf="compile->default(compile)"/>
 		<dependency org="org.scala-js" name="scalajs-test-interface_2.11" rev="0.6.11" conf="test->default(compile)"/>

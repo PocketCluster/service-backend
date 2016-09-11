@@ -22,3 +22,5 @@ reload
 run
 fastOptJS
 ~fastOptJS
+fastOptJS
+~fastOptJS

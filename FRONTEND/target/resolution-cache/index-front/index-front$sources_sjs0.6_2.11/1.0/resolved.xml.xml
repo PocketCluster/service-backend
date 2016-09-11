@@ -4,7 +4,7 @@
 		module="index-front$sources_sjs0.6_2.11"
 		revision="1.0"
 		status="integration"
-		publication="20160907011415"
+		publication="20160910111425"
 	/>
 	<configurations>
 		<conf name="compile" visibility="public" description=""/>
@@ -28,7 +28,7 @@
 		<dependency org="org.scala-lang" name="scala-library" rev="2.11.8" transitive="false" conf="compile->default(compile);runtime->default(compile);test->default(compile);compile-internal->default(compile);runtime-internal->default(compile);test-internal->default(compile);plugin->default(compile);scala-tool->default(compile)" info.apiURL="http://www.scala-lang.org/api/2.11.8/">
 			<artifact name="scala-library" type="src" ext="jar" conf="sources" e:classifier="sources"/>
 		</dependency>
-		<dependency org="org.webjars" name="jquery" rev="2.1.4" transitive="false" conf="compile->default(compile);runtime->default(compile);test->default(compile);compile-internal->default(compile);runtime-internal->default(compile);test-internal->default(compile)">
+		<dependency org="org.webjars" name="jquery" rev="2.2.4" transitive="false" conf="compile->default(compile);runtime->default(compile);test->default(compile);compile-internal->default(compile);runtime-internal->default(compile);test-internal->default(compile)">
 			<artifact name="jquery" type="src" ext="jar" conf="sources" e:classifier="sources"/>
 		</dependency>
 		<dependency org="org.scala-js" name="scalajs-library_2.11" rev="0.6.11" transitive="false" conf="compile->default(compile);runtime->default(compile);test->default(compile);compile-internal->default(compile);runtime-internal->default(compile);test-internal->default(compile)" info.apiURL="http://www.scala-js.org/api/scalajs-library/0.6.11/">
