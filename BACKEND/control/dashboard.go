@@ -3,7 +3,6 @@ package control
 import (
     "net/http"
     "log"
-    "net"
     "strings"
 
     "github.com/zenazn/goji/web"
@@ -13,18 +12,12 @@ import (
 // Category route
 func (controller *Controller) DashboardFront(c web.C, r *http.Request) (string, int) {
 
-    ip, _, err := net.SplitHostPort(r.RemoteAddr)
-    if err != nil {
-        log.Printf("userip: %q is not IP:port", r.RemoteAddr)
+    // access control based on IP
+    ipAddress := getIPAdress(r)
+    if ipAddress != "198.199.115.209" {
+        log.Panic("Cannot display page without proper access from VPN")
         return "", http.StatusNotFound
     }
-
-    clientIP := net.ParseIP(ip)
-    if clientIP == nil {
-        log.Printf("userip: %q is not IP:port", r.RemoteAddr)
-        return "", http.StatusNotFound
-    }
-    //forward := r.Header.Get("X-Forwarded-For")
 
     var content map[string]interface{} = map[string]interface{} {
         "ISINDEX"              : false,

@@ -17,6 +17,29 @@ import (
 )
 
 func (Controller *Controller) DashboardRepository(c web.C, r *http.Request) (string, int) {
+
+/*
+    // access control based on IP
+    ip, _, err := net.SplitHostPort(r.RemoteAddr)
+    if err != nil {
+        log.Printf("userip: %q is not IP:port", r.RemoteAddr)
+        return "", http.StatusNotFound
+    }
+
+    clientIP := net.ParseIP(ip)
+    if clientIP == nil {
+        log.Printf("userip: %q is not IP:port", r.RemoteAddr)
+        return "", http.StatusNotFound
+    }
+    forwarded := r.Header.Get("X-Forwarded-For")
+    log.Print("Client IP " + string(clientIP) + " forwarded " + forwarded)
+ */
+    ipAddress := getIPAdress(r)
+    if ipAddress != "198.199.115.209" {
+        log.Panic("Cannot display page without proper access from VPN")
+        return "", http.StatusNotFound
+    }
+
     requests := map[string]string{}
     decoder := json.NewDecoder(r.Body)
     err := decoder.Decode(&requests); if err != nil {
@@ -111,8 +134,8 @@ func Submit(db *gorm.DB, requests map[string]string, githubData map[string]inter
     var repo []model.Repository
     db.Where("repo_id = ? AND slug = ?", repoID, slug).Find(&repo); if len(repo) != 0 {
         return map[string]interface{}{
-            "status"             :"duplicated",
-            "reason"             :"The repository already exists",
+            "status"    :"duplicated",
+            "reason"    :"The repository already exists",
         }, nil
     }
 
