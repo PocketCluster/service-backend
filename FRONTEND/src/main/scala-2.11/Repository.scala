@@ -4,23 +4,9 @@ import org.scalajs.jquery.jQuery
 import scala.collection.mutable
 import scala.scalajs.js.{Dictionary, JSApp, JSON}
 import scala.scalajs.js.annotation.JSExport
-import scala.scalajs.js.Dynamic.global
 import scala.scalajs.js.JSConverters.JSRichGenMap
 
 object Repository extends JSApp {
-    def appendPar(targetNode: Node, text: String): Unit = {
-        jQuery("body").append("<p>[" + text + "]</p>")
-    }
-
-    //@JSExport
-    def addClickedMessage(): Unit = {
-        jQuery("body").append("<p>You clicked the button!</p>")
-    }
-
-    def setupUI(): Unit = {
-        jQuery("#click-me-button").click(addClickedMessage _)
-        jQuery("body").append("<p>Hello World</p>")
-    }
 
     @JSExport
     def previewRepository(click: Event) : Boolean = {
@@ -120,8 +106,6 @@ object Repository extends JSApp {
         return false
     }
 
-    def main(): Unit = {
-        //jQuery(setupUI _)
-    }
+    def main(): Unit = {}
 
 }

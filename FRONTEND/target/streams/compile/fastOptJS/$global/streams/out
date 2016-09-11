@@ -1,16 +1,16 @@
 [0m[[0minfo[0m] [0mFast optimizing /Users/almightykim/Workspace/INDEX-WEB/FRONTEND/target/scala-2.11/index-front-fastopt.js[0m
-[0m[[0mdebug[0m] [0mLinker: Compute reachability: 26623 us[0m
-[0m[[0mdebug[0m] [0mLinker: Assemble LinkedClasses: 10653 us[0m
-[0m[[0mdebug[0m] [0mBasic Linking: 38663 us[0m
+[0m[[0mdebug[0m] [0mLinker: Compute reachability: 30268 us[0m
+[0m[[0mdebug[0m] [0mLinker: Assemble LinkedClasses: 9332 us[0m
+[0m[[0mdebug[0m] [0mBasic Linking: 41050 us[0m
 [0m[[0mdebug[0m] [0mInc. optimizer: Batch mode: false[0m
-[0m[[0mdebug[0m] [0mInc. optimizer: Incremental part: 2407 us[0m
-[0m[[0mdebug[0m] [0mInc. optimizer: Optimizing 1 methods.[0m
-[0m[[0mdebug[0m] [0mInc. optimizer: Optimizer part: 2498 us[0m
-[0m[[0mdebug[0m] [0mInc. optimizer: 6127 us[0m
-[0m[[0mdebug[0m] [0mRefiner: Compute reachability: 25558 us[0m
-[0m[[0mdebug[0m] [0mRefiner: Assemble LinkedClasses: 3080 us[0m
-[0m[[0mdebug[0m] [0mRefiner: 28723 us[0m
+[0m[[0mdebug[0m] [0mInc. optimizer: Incremental part: 2322 us[0m
+[0m[[0mdebug[0m] [0mInc. optimizer: Optimizing 0 methods.[0m
+[0m[[0mdebug[0m] [0mInc. optimizer: Optimizer part: 74 us[0m
+[0m[[0mdebug[0m] [0mInc. optimizer: 3384 us[0m
+[0m[[0mdebug[0m] [0mRefiner: Compute reachability: 20726 us[0m
+[0m[[0mdebug[0m] [0mRefiner: Assemble LinkedClasses: 1689 us[0m
+[0m[[0mdebug[0m] [0mRefiner: 22477 us[0m
 [0m[[0mdebug[0m] [0mEmitter: Class tree cache stats: reused: 1 -- invalidated: 317[0m
-[0m[[0mdebug[0m] [0mEmitter: Method tree cache stats: resued: 1281 -- invalidated: 1[0m
-[0m[[0mdebug[0m] [0mEmitter (write output): 20524 us[0m
+[0m[[0mdebug[0m] [0mEmitter: Method tree cache stats: resued: 1282 -- invalidated: 0[0m
+[0m[[0mdebug[0m] [0mEmitter (write output): 19916 us[0m
 [0m[[0mdebug[0m] [0mGlobal IR cache stats: reused: 6 -- invalidated: 1 -- trees read: 1[0m
