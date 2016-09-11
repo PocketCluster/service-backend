@@ -5,6 +5,7 @@ import (
     "github.com/zenazn/goji/web"
     "github.com/jinzhu/gorm"
     "github.com/stkim1/BACKEND/model"
+    "strings"
 )
 
 type Controller struct {
@@ -78,4 +79,13 @@ func GetAssignedRepoColumn(repoCount int) ([]*model.Repository, []*model.Reposit
         repo3 = make([]*model.Repository, remain)
     }
     return repo1, repo2, repo3
+}
+
+const GithubClientIdentity string = "c74abcf03e61e209b3c3"
+const GithubClientSecret string = "da0f7d33d02552282e72a7e594d39ba76f96d478"
+
+func GetGithubAPILink(githubLink string) string {
+    URL := strings.Replace(githubLink , "https://github.com/", "https://api.github.com/repos/", -1)
+    URL += "?client_id=" + GithubClientIdentity + "&client_secret=" + GithubClientSecret
+    return URL
 }

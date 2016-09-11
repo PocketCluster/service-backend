@@ -1,16 +1,16 @@
 [0m[[0minfo[0m] [0mFast optimizing /Users/almightykim/Workspace/INDEX-WEB/FRONTEND/target/scala-2.11/index-front-fastopt.js[0m
-[0m[[0mdebug[0m] [0mLinker: Compute reachability: 101061 us[0m
-[0m[[0mdebug[0m] [0mLinker: Assemble LinkedClasses: 180105 us[0m
-[0m[[0mdebug[0m] [0mBasic Linking: 291923 us[0m
-[0m[[0mdebug[0m] [0mInc. optimizer: Batch mode: true[0m
-[0m[[0mdebug[0m] [0mInc. optimizer: Incremental part: 92014 us[0m
-[0m[[0mdebug[0m] [0mInc. optimizer: Optimizing 816 methods.[0m
-[0m[[0mdebug[0m] [0mInc. optimizer: Optimizer part: 169261 us[0m
-[0m[[0mdebug[0m] [0mInc. optimizer: 269253 us[0m
-[0m[[0mdebug[0m] [0mRefiner: Compute reachability: 31355 us[0m
-[0m[[0mdebug[0m] [0mRefiner: Assemble LinkedClasses: 5852 us[0m
-[0m[[0mdebug[0m] [0mRefiner: 38570 us[0m
-[0m[[0mdebug[0m] [0mEmitter: Class tree cache stats: reused: 0 -- invalidated: 51[0m
-[0m[[0mdebug[0m] [0mEmitter: Method tree cache stats: resued: 0 -- invalidated: 115[0m
-[0m[[0mdebug[0m] [0mEmitter (write output): 132059 us[0m
-[0m[[0mdebug[0m] [0mGlobal IR cache stats: reused: 0 -- invalidated: 7 -- trees read: 253[0m
+[0m[[0mdebug[0m] [0mLinker: Compute reachability: 28957 us[0m
+[0m[[0mdebug[0m] [0mLinker: Assemble LinkedClasses: 10460 us[0m
+[0m[[0mdebug[0m] [0mBasic Linking: 40982 us[0m
+[0m[[0mdebug[0m] [0mInc. optimizer: Batch mode: false[0m
+[0m[[0mdebug[0m] [0mInc. optimizer: Incremental part: 2605 us[0m
+[0m[[0mdebug[0m] [0mInc. optimizer: Optimizing 1 methods.[0m
+[0m[[0mdebug[0m] [0mInc. optimizer: Optimizer part: 3286 us[0m
+[0m[[0mdebug[0m] [0mInc. optimizer: 7272 us[0m
+[0m[[0mdebug[0m] [0mRefiner: Compute reachability: 23534 us[0m
+[0m[[0mdebug[0m] [0mRefiner: Assemble LinkedClasses: 2502 us[0m
+[0m[[0mdebug[0m] [0mRefiner: 26119 us[0m
+[0m[[0mdebug[0m] [0mEmitter: Class tree cache stats: reused: 1 -- invalidated: 317[0m
+[0m[[0mdebug[0m] [0mEmitter: Method tree cache stats: resued: 1281 -- invalidated: 1[0m
+[0m[[0mdebug[0m] [0mEmitter (write output): 20904 us[0m
+[0m[[0mdebug[0m] [0mGlobal IR cache stats: reused: 6 -- invalidated: 1 -- trees read: 1[0m

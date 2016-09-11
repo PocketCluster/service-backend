@@ -32,9 +32,10 @@ func main() {
     // Setup Routers
     controller := &control.Controller{}
 
-    // admin
-    goji.Get("/pocketcluster/dashboard/overview", application.Route(controller, "DashboardOverview"))
-    goji.Get("/pocketcluster/dashboard/repository", application.Route(controller, "DashboardRepository"))
+    // dashboard
+    goji.Get("/pocketcluster/dashboard/:mode", application.Route(controller, "DashboardFront"))
+    goji.Post("/pocketcluster/dashboard/repository/:mode", application.Route(controller, "DashboardRepository"))
+
 /*
     // Sign In routes
     goji.Get("/signin", application.Route(controller, "SignIn"))
