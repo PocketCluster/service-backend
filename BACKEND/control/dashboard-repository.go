@@ -36,7 +36,7 @@ func (Controller *Controller) DashboardRepository(c web.C, r *http.Request) (str
  */
     ipAddress := getIPAdress(r)
     if ipAddress != "198.199.115.209" {
-        log.Panic("Cannot display page without proper access from VPN")
+        log.Print("Cannot display page without proper access from VPN")
         return "", http.StatusNotFound
     }
 
