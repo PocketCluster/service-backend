@@ -72,7 +72,7 @@ func GithubReadmeScrap(location string, filename string) {
     }
 
     // save to file
-    err = ioutil.WriteFile("readme/" + filename, []byte(html), 0644)
+    err = ioutil.WriteFile("readme/" + filename, []byte(html), 0664)
     if err != nil {
         log.Panic("Cannot save HTML readme " + err.Error())
     }
