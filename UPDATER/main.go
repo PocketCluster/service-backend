@@ -86,12 +86,12 @@ func AccessGithubAPI(db *gorm.DB, repo *model.Repository) error {
     repo.Updated         = updatedDate
     db.Save(repo)
 
-    util.GithubReadmeScrap(repo.RepoPage, repo.Slug + ".html")
+    util.GithubReadmeScrap(repo.RepoPage, "/www-server/readme/" + repo.Slug + ".html")
     return nil
 }
 
 func main() {
-    db, err := gorm.Open("sqlite3", "pc-index.db")
+    db, err := gorm.Open("sqlite3", "/www-server/pc-index.db")
     if err != nil {
         log.Panic("failed to connect database " + err.Error() )
         return

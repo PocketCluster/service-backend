@@ -237,7 +237,7 @@ func Submit(db *gorm.DB, requests map[string]string, githubData map[string]inter
     db.Save(&repoAdded)
 
     // upon successful repo save, save readme to file
-    util.GithubReadmeScrap(repoPage, slug + ".html")
+    util.GithubReadmeScrap(repoPage, "/www-server/readme/" + slug + ".html")
 
     /* ------------------------------------------- Handle Contributor information ----------------------------------- */
 
