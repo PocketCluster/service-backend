@@ -43,7 +43,7 @@ func (controller *Controller) Category(c web.C, r *http.Request) (string, int) {
     }
 
     if SingleColumnCount * TotalRowCount <= len(repositories) {
-        content["nextpagelink"] = "/category/" + category + ".html/2"
+        content["nextpagelink"] = "/category/" + category + "2.html"
     }
 
     return util.RenderLayout("index.html.mustache", "base.html.mustache", content), http.StatusOK
@@ -91,7 +91,7 @@ func (controller *Controller) CategoryPaged(c web.C, r *http.Request) (string, i
     }
 
     if SingleColumnCount * TotalRowCount <= len(repositories) {
-        content["nextpagelink"] = "/category/" + category + ".html/" + strconv.Itoa(page + 1)
+        content["nextpagelink"] = "/category/" + category + strconv.Itoa(page + 1) + ".html"
     }
 
     return util.RenderLayout("index.html.mustache", "base.html.mustache", content), http.StatusOK
