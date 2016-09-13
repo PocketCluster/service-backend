@@ -28,7 +28,7 @@ func (controller *Controller) Index(c web.C, r *http.Request) (string, int) {
         "THEME_STATIC_DIR"     : "theme",
         "CATEGORIES"           : model.GetDefaultCategory(),
         "repositories"         : &repositories,
-        "nextpagelink"         : "/index.html/2",
+        "nextpagelink"         : "/index2.html",
     }
 
     return util.RenderLayout("index.html.mustache", "base.html.mustache", content), http.StatusOK
@@ -64,7 +64,7 @@ func (controller *Controller) IndexPaged(c web.C, r *http.Request) (string, int)
     }
 
     if SingleColumnCount * TotalRowCount <= len(repositories) {
-        content["nextpagelink"] = "/index.html/" + strconv.Itoa(page + 1)
+        content["nextpagelink"] = "/index" + strconv.Itoa(page + 1) + ".html"
     }
 
     return util.RenderLayout("index.html.mustache", "base.html.mustache", content), http.StatusOK

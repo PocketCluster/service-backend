@@ -57,12 +57,12 @@ func main() {
     //goji.Get(regexp.MustCompile(`^/index.html\?page=(?P<page>\d+)$`), application.Route(controller, "IndexPaged"))
     //goji.Get(regexp.MustCompile(`^/index.html\?page=(?P<page>[0-9]+)$`), application.Route(controller, "IndexPaged"))
     //goji.Get(regexp.MustCompile(`^/index.html[?]page=(?P<page>[0-9]+)$`), application.Route(controller, "IndexPaged"))
-    goji.Get(regexp.MustCompile(`^/index.html/(?P<page>[0-9]+)$`), application.Route(controller, "IndexPaged"))
-    goji.Get("/", application.Route(controller, "Index"))
+    goji.Get(regexp.MustCompile(`^/index(?P<page>[0-9]+).html$`), application.Route(controller, "IndexPaged"))
     goji.Get("/index.html", application.Route(controller, "Index"))
+    goji.Get("/", application.Route(controller, "Index"))
 
     // Category Index
-    goji.Get(regexp.MustCompile(`^/category/(?P<cat>[a-z]+).html/(?P<page>[0-9]+)$`), application.Route(controller, "CategoryPaged"))
+    goji.Get(regexp.MustCompile(`^/category/(?P<cat>[a-z]+)(?P<page>[0-9]+).html$`), application.Route(controller, "CategoryPaged"))
     goji.Get(regexp.MustCompile(`^/category/(?P<cat>[a-z]+).html$`), application.Route(controller, "Category"))
 
     // Respotory
