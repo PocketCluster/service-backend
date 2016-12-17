@@ -1,11 +1,14 @@
 package control
 
 import (
+    "errors"
     "net/http"
-    "log"
     "strings"
 
+    log "github.com/Sirupsen/logrus"
     "github.com/zenazn/goji/web"
+    "github.com/gravitational/trace"
+
     "github.com/stkim1/BACKEND/util"
 )
 
@@ -28,7 +31,7 @@ func (controller *Controller) DashboardFront(c web.C, r *http.Request) (string, 
     }
 
     mode := strings.ToLower(c.URLParams["mode"]); if len(mode) == 0 || !(mode == "overview" || mode == "repository") {
-        log.Panic("Cannot display page without a proper mode")
+        log.Error(trace.Wrap(errors.New("Cannot display page without a proper mode")))
         return "", http.StatusNotFound
     }
 

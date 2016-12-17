@@ -1,16 +1,16 @@
 [general]
-public_path   = "public"
-template_path = "views"
+public_path     = "public"
+template_path   = "views"
 
 [cookie]
-mac_secret = "secret string which has over 256-bit entropy"
-secure     = false
+mac_secret      = "secret string which has over 256-bit entropy"
+secure          = false
 
 [database]
-database = "sqlite3"
-filename = "pc-index.db"
+database        = "sqlite3"
+filename        = "pc-index.db"
 
 [csrf]
-key    = "csrf_token"
-cookie = "XSRF-TOKEN"
-header = "X-XSRF-TOKEN"
+key             = "csrf_token"
+cookie          = "XSRF-TOKEN"
+header          = "X-XSRF-TOKEN"

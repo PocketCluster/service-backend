@@ -1,28 +1,58 @@
 package control
 
 import (
+    "bytes"
+    "fmt"
+    "strings"
+    "net"
+    "net/http"
+
     "github.com/gorilla/sessions"
     "github.com/zenazn/goji/web"
     "github.com/jinzhu/gorm"
+    "github.com/google/go-github/github"
+
     "github.com/stkim1/BACKEND/model"
-    "strings"
-    "net"
-    "bytes"
-    "net/http"
 )
 
-type Controller struct {
+/* ------- GITHUG API CONTROL ------- */
+const (
+    githubClientIdentity string     = "c74abcf03e61e209b3c3"
+    githubClientSecret string       = "da0f7d33d02552282e72a7e594d39ba76f96d478"
+)
+
+func NewController() *Controller {
+    return &Controller{
+        githubClient:   githubV3Client(),
+    }
 }
 
-func (controller *Controller) GetSession(c web.C) *sessions.Session {
+type Controller struct {
+    githubClient        *github.Client
+}
+
+func (ctl *Controller) GetRepoMeta(repoURL string) (*github.Repository, *github.Response, error) {
+    // TODO : check if URL is in correct form
+    if len(repoURL) == 0 {
+        return nil, nil, fmt.Errorf("[ERR] Invalid repository URL address")
+    }
+    url := strings.Split(strings.Replace(repoURL , "https://github.com/", "", -1), "/")
+    user, repo := url[0], url[1]
+    if len(user) == 0 || len(repo) == 0{
+        return nil, nil, fmt.Errorf("[ERR] Invalid repository format")
+    }
+    return ctl.githubClient.Repositories.Get(user, repo)
+}
+
+func (ctl *Controller) GetSession(c web.C) *sessions.Session {
     return c.Env["Session"].(*sessions.Session)
 }
 
-func (controller *Controller) GetGORM(c web.C) *gorm.DB {
+func (ctl *Controller) GetGORM(c web.C) *gorm.DB {
     return c.Env["GORM"].(*gorm.DB)
 }
 
-func (controller *Controller) IsXhr(c web.C) bool {
+func (ctl *Controller) IsXhr(c web.C) bool {
     return c.Env["IsXhr"].(bool)
 }
 
@@ -83,13 +113,9 @@ func GetAssignedRepoColumn(repoCount int) ([]*model.Repository, []*model.Reposit
     return repo1, repo2, repo3
 }
 
-/* ------- GITHUG API CONTROL ------- */
-const GithubClientIdentity string = "c74abcf03e61e209b3c3"
-const GithubClientSecret string = "da0f7d33d02552282e72a7e594d39ba76f96d478"
-
 func GetGithubAPILink(githubLink string) string {
     URL := strings.Replace(githubLink , "https://github.com/", "https://api.github.com/repos/", -1)
-    URL += "?client_id=" + GithubClientIdentity + "&client_secret=" + GithubClientSecret
+    URL += "?client_id=" + githubClientIdentity + "&client_secret=" + githubClientSecret
     return URL
 }
 
@@ -168,4 +194,12 @@ func getIPAdress(r *http.Request) string {
         }
     }
     return ""
+}
+
+func githubV3Client() *github.Client {
+    tp := &github.UnauthenticatedRateLimitedTransport{
+        ClientID:     githubClientIdentity,
+        ClientSecret: githubClientSecret,
+    }
+    return github.NewClient(tp.Client())
 }

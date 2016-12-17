@@ -8,6 +8,7 @@ import (
     "github.com/gorilla/context"
     "github.com/zenazn/goji"
     "github.com/zenazn/goji/graceful"
+
     "github.com/stkim1/BACKEND/framework"
     "github.com/stkim1/BACKEND/control"
 )
@@ -30,11 +31,11 @@ func main() {
     goji.Use(context.ClearHandler)
 
     // Setup Routers
-    controller := &control.Controller{}
+    controller := control.NewController()
 
     // dashboard
-    goji.Get("/pocketcluster/dashboard/:mode", application.Route(controller, "DashboardFront"))
-    goji.Post("/pocketcluster/dashboard/repository/:mode", application.Route(controller, "DashboardRepository"))
+    goji.Get("/pocketcluster/dashboard/:mode", application.AddRoute(controller, controller.DashboardFront))
+    goji.Post("/pocketcluster/dashboard/repository/:mode", application.AddRoute(controller, controller.DashboardRepository))
 
 /*
     // Sign In routes

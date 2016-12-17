@@ -111,3 +111,34 @@ func (application *Application) Route(controller interface{}, route string) inte
     }
     return fn
 }
+
+func (application *Application) AddRoute(controller interface{}, method func(c web.C, r *http.Request) (string, int)) interface{} {
+    fn := func(c web.C, w http.ResponseWriter, r *http.Request) {
+        c.Env["Content-Type"] = "text/html"
+
+        body, code := method(c, r)
+
+        if session, exists := c.Env["Session"]; exists {
+            err := session.(*sessions.Session).Save(r, w)
+            if err != nil {
+                glog.Errorf("Can't save session: %v", err)
+            }
+        }
+
+        switch code {
+        case http.StatusOK:
+            if _, exists := c.Env["Content-Type"]; exists {
+                w.Header().Set("Content-Type", c.Env["Content-Type"].(string))
+            }
+            io.WriteString(w, body)
+        case http.StatusNotFound:
+            http.Error(w, http.StatusText(404), 404)
+        case http.StatusBadRequest:
+            // FIXME : replace "error" with err.Error()
+            http.Error(w, "error", http.StatusBadRequest)
+        case http.StatusSeeOther, http.StatusFound:
+            http.Redirect(w, r, body, code)
+        }
+    }
+    return fn
+}

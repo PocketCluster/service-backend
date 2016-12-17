@@ -9,9 +9,9 @@ import (
 type Repository struct{
     gorm.Model
     // two abbreviate chars + numbering : gh23247808
-    RepoId             string    `gorm:"index;size:255"`
+    RepoId             string       `gorm:"index;size:255"`
     // Primary author of this repository. use Authors.author_id
-    AuthorId           string  `gorm:"index;size:255"`
+    AuthorId           string       `gorm:"index;size:255"`
     // If this repo is deceased
     Deceased           bool
     // Is this from Github/Gitlab/Bitbucket?
@@ -49,7 +49,7 @@ type Repository struct{
     // Framework/Library/Example/etc
     Category           string
     // Short Description
-    Summary            string                `sql:"type:text"`
+    Summary            string       `sql:"type:text"`
 
     // Created Date
     Created            time.Time

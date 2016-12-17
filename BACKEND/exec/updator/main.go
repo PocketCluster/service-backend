@@ -14,7 +14,6 @@ import (
     "github.com/stkim1/BACKEND/control"
 )
 
-
 func AccessGithubAPI(db *gorm.DB, repo *model.Repository) error {
 
     // URL CHECK
