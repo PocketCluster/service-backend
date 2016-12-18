@@ -14,7 +14,7 @@ import (
 
 // Category route
 func (ctrl *Controller) DashboardFront(c web.C, r *http.Request) (string, int) {
-    if ctrl.IsSafeConnection(r) {
+    if !ctrl.IsSafeConnection(r) {
         return "", http.StatusNotFound
     }
 

@@ -20,7 +20,7 @@ import (
 )
 
 func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, int) {
-    if ctrl.IsSafeConnection(r) {
+    if !ctrl.IsSafeConnection(r) {
         return "", http.StatusNotFound
     }
 
@@ -208,14 +208,14 @@ func submitRepo(repodb *gorm.DB, config *config.Config, requests map[string]stri
         if err != nil {
             continue
         }
-        contribID   := "gh" + strconv.Itoa(cid)
+        contribID := "gh" + strconv.Itoa(cid)
 
         // how many times this contributor has worked
         cid, err = util.SafeGetInt(contrib.Contributions)
         if err != nil {
             continue
         }
-        cfactor     := cid
+        cfactor := cid
 
         // find this user
         var users []model.Author
@@ -252,7 +252,7 @@ func submitRepo(repodb *gorm.DB, config *config.Config, requests map[string]stri
     }
 
     return map[string]interface{}{
-        "status"             :"ok",
+        "status" :"ok",
     }, nil
 }
 
@@ -260,6 +260,7 @@ func submitRepo(repodb *gorm.DB, config *config.Config, requests map[string]stri
 func getPreview(repodb *gorm.DB, requests map[string]string, repo *github.Repository) (map[string]interface{}, error) {
     var (
         slug, repoID, description string
+        response map[string]interface{} = make(map[string]interface{})
     )
 
     // Make Slug
@@ -280,10 +281,8 @@ func getPreview(repodb *gorm.DB, requests map[string]string, repo *github.Reposi
     var repoFound []model.Repository
     repodb.Where("repo_id = ? AND slug = ?", repoID, slug).Find(&repoFound);
     if len(repoFound) != 0 {
-        return map[string]interface{}{
-            "status":   "duplicated",
-            "reason":   "The repository already exists",
-        }, nil
+        response["status"] = "duplicated"
+        response["reason"] = "The repository already exists"
     }
 
     // Description
@@ -293,10 +292,9 @@ func getPreview(repodb *gorm.DB, requests map[string]string, repo *github.Reposi
         description = *repo.Description
     }
 
-    return map[string]interface{}{
-        "add-repo-id":       repoID,
-        "add-repo-title":    repo.Name,
-        "add-repo-slug":     slug,
-        "add-repo-desc":     description,
-    }, nil
+    response["add-repo-id"]    = repoID
+    response["add-repo-title"] = repo.Name
+    response["add-repo-slug"]  = slug
+    response["add-repo-desc"]  = description
+    return response, nil
 }
