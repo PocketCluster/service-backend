@@ -1,0 +1,26 @@
+general:
+  template_path: "/www-server/views/"
+  readme_path: "/www-server/readme/"
+  server_port: 8000
+site:
+  site_name: "PocketCluster Index"
+  site_url: "https://index.pocketcluster.io"
+  theme_link: "https://index.pocketcluster.io/theme"
+cookie:
+  mac_secret: "secret string which has over 256-bit entropy"
+  secure: false
+database:
+  database_type: "sqlite3"
+  database_path: "/www-server/pc-index.db"
+csrf:
+  key: "csrf_token"
+  coockie: "XSRF-TOKEN"
+  header: "X-XSRF-TOKEN"
+github:
+  client_id: "c74abcf03e61e209b3c3"
+  client_secret: "da0f7d33d02552282e72a7e594d39ba76f96d478"
+vpn:
+  conn_check: true
+  vpn_host: "198.199.115.209"
+update:
+  force_readme: false

@@ -38,6 +38,16 @@ object Repository extends JSApp {
                     jQuery("input#add-repo-title").value(results("add-repo-title").toString)
                     jQuery("input#add-repo-slug").value(results("add-repo-slug").toString)
                     jQuery("input#add-repo-desc").value(results("add-repo-desc").toString)
+
+                    if (results.contains("status")) {
+                        results("status") match {
+                            case "duplicated" => {
+                                jQuery("div#add-repo-status").removeClass("panel-success").addClass("panel-warning").css("visibility", "visible")
+                                jQuery("div#add-repo-status div.panel-body").text(results("reason"))
+                            }
+                        }
+                    }
+
                 } catch {
                     case e:Exception => println(e.printStackTrace())
                 }

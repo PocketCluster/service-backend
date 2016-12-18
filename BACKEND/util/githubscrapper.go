@@ -1,10 +1,11 @@
 package util
 
 import (
-    "log"
     "strings"
     "io/ioutil"
 
+    log "github.com/Sirupsen/logrus"
+    "github.com/gravitational/trace"
     "github.com/PuerkitoBio/goquery"
 )
 
@@ -13,7 +14,8 @@ func GithubReadmeScrap(location string, filename string) {
 
     doc, err := goquery.NewDocument(location)
     if err != nil {
-        log.Fatal(err)
+        log.Error(trace.Wrap(err))
+        return
     }
 
     readme := doc.Find("#readme").Clone()
@@ -68,12 +70,12 @@ func GithubReadmeScrap(location string, filename string) {
     // read html
     html, err := readme.Html()
     if err != nil {
-        log.Panic("Cannot read HTML")
+        log.Error(trace.Wrap(err, "Cannot read HTML"))
     }
 
     // save to file
     err = ioutil.WriteFile(filename, []byte(html), 0664)
     if err != nil {
-        log.Panic("Cannot save HTML readme " + err.Error())
+        log.Error(trace.Wrap(err, "Cannot save HTML readme "))
     }
 }
