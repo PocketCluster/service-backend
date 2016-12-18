@@ -30,7 +30,7 @@ func accessGithubAPI(repoDB *gorm.DB, ctrl *control.Controller, repoModel *model
     /* ------------------------------------------- Handle Repository information ------------------------------------ */
     repoData, _, err := ctrl.GetGithubRepoMeta(repoModel.RepoPage)
     if err != nil {
-        return trace.Wrap(err, "Cannot access repository data")
+        return trace.Wrap(err, "Cannot access repository data " + repoModel.RepoPage)
     }
 
     branch         := util.SafeGetString(repoData.DefaultBranch)
@@ -54,34 +54,36 @@ func accessGithubAPI(repoDB *gorm.DB, ctrl *control.Controller, repoModel *model
 
     /* ------------------------------------------- Handle Contributor information ----------------------------------- */
     // contributors
-    contributors, _, err := ctrl.GetGithubContributors(repoModel.RepoPage)
+    ctribs, _, err := ctrl.GetGithubContributorsStat(repoModel.RepoPage)
     if err != nil {
-        return trace.Wrap(err, "Cannot access contributors data")
+        return trace.Wrap(err, "Cannot access contributors data " + repoModel.RepoPage + err.Error())
     }
 
-    for _, contrib := range contributors {
+    for _, contrib := range ctribs {
+        // contributor
+        cauthor := contrib.Author
+
         // user id
-        cid, err := util.SafeGetInt(contrib.ID)
+        cid, err := util.SafeGetInt(cauthor.ID)
         if err != nil {
             continue
         }
         contribID := "gh" + strconv.Itoa(cid)
 
         // how many times this contributor has worked
-        cid, err = util.SafeGetInt(contrib.Contributions)
+        cfactor, err := util.SafeGetInt(contrib.Total)
         if err != nil {
             continue
         }
-        cfactor := cid
 
         // find this user
         var users []model.Author
         repoDB.Where("author_id = ?", contribID).Find(&users)
         if len(users) == 0 {
-            authorType    := strings.ToLower(util.SafeGetString(contrib.Type))
-            login         := util.SafeGetString(contrib.Login)
-            profileURL    := util.SafeGetString(contrib.HTMLURL)
-            avatarURL     := util.SafeGetString(contrib.AvatarURL)
+            authorType    := strings.ToLower(util.SafeGetString(cauthor.Type))
+            login         := util.SafeGetString(cauthor.Login)
+            profileURL    := util.SafeGetString(cauthor.HTMLURL)
+            avatarURL     := util.SafeGetString(cauthor.AvatarURL)
 
             contribAuthor := model.Author{
                 Service:        "github",
@@ -105,6 +107,9 @@ func accessGithubAPI(repoDB *gorm.DB, ctrl *control.Controller, repoModel *model
                 Contribution:   cfactor,
             }
             repoDB.Save(&contribInfo)
+        } else {
+            repoContrib[0].Contribution = cfactor
+            repoDB.Save(&repoContrib[0])
         }
     }
 
