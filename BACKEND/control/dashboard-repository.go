@@ -64,7 +64,7 @@ func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, i
         return string(json), http.StatusOK
     } else {
         // Decode contributor API
-        contribs, _, err := ctrl.GetGithubContributors(repoURL)
+        contribs, _, err := ctrl.GetGithubContributorsStat(repoURL)
         if err != nil {
             log.Error(trace.Wrap(err, "Retrieving repository failed"))
             return "", http.StatusNotFound
@@ -82,23 +82,23 @@ func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, i
     }
 }
 
-func submitRepo(repodb *gorm.DB, config *config.Config, requests map[string]string, repo *github.Repository, contributors []*github.Contributor) (map[string]interface{}, error) {
+func submitRepo(repoDB *gorm.DB, config *config.Config, reqs map[string]string, repoData *github.Repository, ctribs []*github.ContributorStats) (map[string]interface{}, error) {
 
     var (
         // title
-        title string            = requests["add-repo-title"]
+        title string            = reqs["add-repo-title"]
         // Description
-        description string      = requests["add-repo-desc"]
+        description string      = reqs["add-repo-desc"]
         // get Slug
-        slug string             = requests["add-repo-slug"]
+        slug string             = reqs["add-repo-slug"]
         // Category
-        category string         = strings.ToLower(requests["add-repo-category"])
+        category string         = strings.ToLower(reqs["add-repo-category"])
         // Project Page
-        projectPage string      = requests["add-project-page"]
+        projectPage string      = reqs["add-project-page"]
         // logo image
-        logoImage string        = requests["add-logo-image"]
+        logoImage string        = reqs["add-logo-image"]
         // repo Page
-        repoPage  string        = requests["add-repo-url"]
+        repoPage  string        = reqs["add-repo-url"]
     )
 
     /* -------------------------------------------- Submit Error Checking ------------------------------------------- */
@@ -106,14 +106,14 @@ func submitRepo(repodb *gorm.DB, config *config.Config, requests map[string]stri
     /* -------------------------------------------------------------------------------------------------------------- */
 
     // Build repo id
-    rid, err := util.SafeGetInt(repo.ID)
+    rid, err := util.SafeGetInt(repoData.ID)
     if err != nil {
-        return nil, errors.New("Cannot parse repository id")
+        return nil, trace.Wrap(err, "Cannot parse repository id")
     }
     repoID := "gh" + strconv.Itoa(rid)
 
     // owner info
-    var owner *github.User = repo.Owner
+    var owner *github.User = repoData.Owner
     if owner == nil {
         return nil, errors.New("Cannot parse Owner info of the repo")
     }
@@ -121,13 +121,13 @@ func submitRepo(repodb *gorm.DB, config *config.Config, requests map[string]stri
     // owner id
     aid, err := util.SafeGetInt(owner.ID)
     if err != nil {
-        return nil, fmt.Errorf("Cannot parse Owner[%s] id from repo.Owner.ID : %s", owner.Login, err.Error())
+        return nil, trace.Wrap(err, fmt.Sprintf("Cannot parse Owner[%s] id from repo.Owner.ID", util.SafeGetString(owner.Login)))
     }
-    authorID    := "gh" + strconv.Itoa(aid)
+    authorID := "gh" + strconv.Itoa(aid)
 
     // let's quickly Check database if this repo exists
     var repoFound []model.Repository
-    repodb.Where("repo_id = ? AND slug = ?", repoID, slug).Find(&repoFound);
+    repoDB.Where("repo_id = ? AND slug = ?", repoID, slug).Find(&repoFound);
     if len(repoFound) != 0 {
         return map[string]interface{}{
             "status"    :"duplicated",
@@ -137,9 +137,9 @@ func submitRepo(repodb *gorm.DB, config *config.Config, requests map[string]stri
 
     /* ------------------------------------------- Handle Owner information ----------------------------------------- */
     // find and match owner
-    var foundUsers []model.Author
-    repodb.Where("author_id = ?", authorID).Find(&foundUsers);
-    if len(foundUsers) == 0 {
+    var foundAuthor []model.Author
+    repoDB.Where("author_id = ?", authorID).Find(&foundAuthor);
+    if len(foundAuthor) == 0 {
         authorType    := strings.ToLower(util.SafeGetString(owner.Type))
         login         := util.SafeGetString(owner.Login)
         name          := util.SafeGetString(owner.Name)
@@ -156,20 +156,20 @@ func submitRepo(repodb *gorm.DB, config *config.Config, requests map[string]stri
             AvatarURL:  avatarURL,
             Deceased:   false,
         }
-        repodb.Save(&repoAuthor)
+        repoDB.Save(&repoAuthor)
     }
 
     /* ------------------------------------------- Handle Repository information ------------------------------------ */
-    repoName        := util.SafeGetString(repo.FullName)
-    branch          := util.SafeGetString(repo.DefaultBranch)
-    forked          := util.SafeGetBool(repo.Fork)
-    starCount       := int64(*repo.StargazersCount)
-    forkCount       := int64(*repo.ForksCount)
-    watchCount      := int64(*repo.SubscribersCount)
-    createdDate     := repo.CreatedAt.Time
-    updatedDate     := repo.UpdatedAt.Time
+    repoName        := util.SafeGetString(repoData.FullName)
+    branch          := util.SafeGetString(repoData.DefaultBranch)
+    forked          := util.SafeGetBool(repoData.Fork)
+    starCount       := int64(*repoData.StargazersCount)
+    forkCount       := int64(*repoData.ForksCount)
+    watchCount      := int64(*repoData.SubscribersCount)
+    createdDate     := repoData.CreatedAt.Time
+    updatedDate     := repoData.UpdatedAt.Time
     wikiPage        := ""
-    if *repo.HasWiki {
+    if *repoData.HasWiki {
         wikiPage    = repoPage + "/wiki"
     }
 
@@ -196,22 +196,25 @@ func submitRepo(repodb *gorm.DB, config *config.Config, requests map[string]stri
         Created:        createdDate,
         Updated:        updatedDate,
     }
-    repodb.Save(&repoAdded)
+    repoDB.Save(&repoAdded)
 
     // upon successful repo save, save readme to file
     util.GithubReadmeScrap(repoPage, config.General.ReadmePath + slug + ".html")
 
     /* ------------------------------------------- Handle Contributor information ----------------------------------- */
-    for _, contrib := range contributors {
+    for _, ctrb := range ctribs {
+        // contributor
+        cauthor := ctrb.Author
+
         // user id
-        cid, err := util.SafeGetInt(contrib.ID)
+        cid, err := util.SafeGetInt(cauthor.ID)
         if err != nil {
             continue
         }
         contribID := "gh" + strconv.Itoa(cid)
 
         // how many times this contributor has worked
-        cid, err = util.SafeGetInt(contrib.Contributions)
+        cid, err = util.SafeGetInt(ctrb.Total)
         if err != nil {
             continue
         }
@@ -219,12 +222,12 @@ func submitRepo(repodb *gorm.DB, config *config.Config, requests map[string]stri
 
         // find this user
         var users []model.Author
-        repodb.Where("author_id = ?", contribID).Find(&users)
+        repoDB.Where("author_id = ?", contribID).Find(&users)
         if len(users) == 0 {
-            authorType      := strings.ToLower(util.SafeGetString(contrib.Type))
-            login           := util.SafeGetString(contrib.Login)
-            profileUrl      := util.SafeGetString(contrib.HTMLURL)
-            avatarUrl       := util.SafeGetString(contrib.AvatarURL)
+            authorType      := strings.ToLower(util.SafeGetString(cauthor.Type))
+            login           := util.SafeGetString(cauthor.Login)
+            profileUrl      := util.SafeGetString(cauthor.HTMLURL)
+            avatarUrl       := util.SafeGetString(cauthor.AvatarURL)
 
             contribAuthor := model.Author{
                 Service     :"github",
@@ -236,18 +239,18 @@ func submitRepo(repodb *gorm.DB, config *config.Config, requests map[string]stri
                 AvatarURL   :avatarUrl,
                 Deceased    :false,
             }
-            repodb.Save(&contribAuthor)
+            repoDB.Save(&contribAuthor)
         }
 
         var repoContrib []model.RepoContributor
-        repodb.Where("repo_id = ? AND author_id = ?", repoID, contribID).Find(&repoContrib)
+        repoDB.Where("repo_id = ? AND author_id = ?", repoID, contribID).Find(&repoContrib)
         if len(repoContrib) == 0 {
             contribInfo := model.RepoContributor{
                 RepoId      :repoID,
                 AuthorId    :contribID,
                 Contribution:int(cfactor),
             }
-            repodb.Save(&contribInfo)
+            repoDB.Save(&contribInfo)
         }
     }
 

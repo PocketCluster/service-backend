@@ -63,6 +63,19 @@ func (ctrl *Controller) GetGithubContributors(repoURL string) ([]*github.Contrib
     return ctrl.githubClient.Repositories.ListContributors(owner, repo, opts)
 }
 
+func (ctrl *Controller) GetGithubContributorsStat(repoURL string) ([]*github.ContributorStats, *github.Response, error) {
+    // TODO : check if URL is in correct form
+    if len(repoURL) == 0 {
+        return nil, nil, fmt.Errorf("[ERR] Invalid repository URL address")
+    }
+    url := strings.Split(strings.Replace(repoURL , githubWebURL, "", -1), "/")
+    owner, repo := url[0], url[1]
+    if len(owner) == 0 || len(repo) == 0{
+        return nil, nil, fmt.Errorf("[ERR] Invalid repository URL format")
+    }
+    return ctrl.githubClient.Repositories.ListContributorsStats(owner, repo)
+}
+
 func (ctrl *Controller) GetSession(c web.C) *sessions.Session {
     return c.Env["Session"].(*sessions.Session)
 }
