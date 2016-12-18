@@ -203,22 +203,33 @@ func submitRepo(repoDB *gorm.DB, config *config.Config, reqs map[string]string, 
 
     /* ------------------------------------------- Handle Contributor information ----------------------------------- */
     for _, ctrb := range ctribs {
+        // contribution
+        if ctrb == nil {
+            log.Error(trace.Wrap(errors.New("Null contribution data. WTF?")))
+            continue
+        }
+
         // contributor
         cauthor := ctrb.Author
+        if cauthor == nil {
+            log.Error(trace.Wrap(errors.New("Null contributor info")))
+            continue
+        }
 
         // user id
         cid, err := util.SafeGetInt(cauthor.ID)
         if err != nil {
+            log.Error(trace.Wrap(err, "Cannot parse the contributor id"))
             continue
         }
         contribID := "gh" + strconv.Itoa(cid)
 
         // how many times this contributor has worked
-        cid, err = util.SafeGetInt(ctrb.Total)
+        cfactor, err := util.SafeGetInt(ctrb.Total)
         if err != nil {
+            log.Error(trace.Wrap(err, "Cannot parse contribution count"))
             continue
         }
-        cfactor := cid
 
         // find this user
         var users []model.Author
@@ -246,9 +257,9 @@ func submitRepo(repoDB *gorm.DB, config *config.Config, reqs map[string]string, 
         repoDB.Where("repo_id = ? AND author_id = ?", repoID, contribID).Find(&repoContrib)
         if len(repoContrib) == 0 {
             contribInfo := model.RepoContributor{
-                RepoId      :repoID,
-                AuthorId    :contribID,
-                Contribution:int(cfactor),
+                RepoId:         repoID,
+                AuthorId:       contribID,
+                Contribution:   cfactor,
             }
             repoDB.Save(&contribInfo)
         }
