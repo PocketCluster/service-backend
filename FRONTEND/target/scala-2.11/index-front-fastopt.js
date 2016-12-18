@@ -4615,15 +4615,16 @@ $c_LRepository$.prototype.previewRepository__Lorg_scalajs_dom_raw_Event__Z = (fu
           (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-title").val($as_T(results.apply__O__O("add-repo-title")));
           (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-slug").val($as_T(results.apply__O__O("add-repo-slug")));
           (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-desc").val($as_T(results.apply__O__O("add-repo-desc")));
-          var x1 = $as_T(results.apply__O__O("status"));
-          if ((x1 === "ok")) {
-            (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("div#add-repo-status").removeClass("panel-warning").addClass("panel-success").css("visibility", "visible");
-            return (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("div#add-repo-status div.panel-body").text("Everything went ok! Reload page!")
-          } else if ((x1 === "duplicated")) {
-            (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("div#add-repo-status").removeClass("panel-success").addClass("panel-warning").css("visibility", "visible");
-            return (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("div#add-repo-status div.panel-body").text($as_T(results.apply__O__O("reason")))
+          if ($s_sc_MapLike$class__contains__sc_MapLike__O__Z(results, "status")) {
+            var x1 = $as_T(results.apply__O__O("status"));
+            if ((x1 === "duplicated")) {
+              (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("div#add-repo-status").removeClass("panel-success").addClass("panel-warning").css("visibility", "visible");
+              return (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("div#add-repo-status div.panel-body").text($as_T(results.apply__O__O("reason")))
+            } else {
+              throw new $c_s_MatchError().init___O(x1)
+            }
           } else {
-            throw new $c_s_MatchError().init___O(x1)
+            return (void 0)
           }
         } catch (e$2) {
           var e$3 = $m_sjsr_package$().wrapJavaScriptException__O__jl_Throwable(e$2);
@@ -4631,9 +4632,9 @@ $c_LRepository$.prototype.previewRepository__Lorg_scalajs_dom_raw_Event__Z = (fu
             var e$4 = $as_jl_Exception(e$3);
             e$4.printStackTrace__Ljava_io_PrintStream__V($m_jl_System$().err$1);
             var x = (void 0);
-            var this$12 = $m_s_Console$();
-            var this$13 = $as_Ljava_io_PrintStream(this$12.outVar$2.v$1);
-            this$13.java$lang$JSConsoleBasedPrintStream$$printString__T__V((x + "\n"));
+            var this$10 = $m_s_Console$();
+            var this$11 = $as_Ljava_io_PrintStream(this$10.outVar$2.v$1);
+            this$11.java$lang$JSConsoleBasedPrintStream$$printString__T__V((x + "\n"));
             return (void 0)
           } else {
             throw e$2
@@ -4648,12 +4649,12 @@ $c_LRepository$.prototype.previewRepository__Lorg_scalajs_dom_raw_Event__Z = (fu
     return (void 0)
   });
   xhr.ontimeout = (function(e$2$1) {
-    var this$15 = $m_s_Console$();
-    var this$16 = $as_Ljava_io_PrintStream(this$15.outVar$2.v$1);
-    this$16.java$lang$JSConsoleBasedPrintStream$$printString__T__V("timeout!!!\n")
+    var this$13 = $m_s_Console$();
+    var this$14 = $as_Ljava_io_PrintStream(this$13.outVar$2.v$1);
+    this$14.java$lang$JSConsoleBasedPrintStream$$printString__T__V("timeout!!!\n")
   });
   var jsx$2 = $g.JSON;
-  var this$18 = $m_sjs_js_JSConverters$JSRichGenMap$();
+  var this$16 = $m_sjs_js_JSConverters$JSRichGenMap$();
   var result = $m_sjs_js_Dictionary$().empty__sjs_js_Dictionary();
   requests.foreach__F1__V(new $c_sjsr_AnonFunction1().init___sjs_js_Function1((function($this, result$1) {
     return (function(x0$1$2) {
@@ -4666,7 +4667,7 @@ $c_LRepository$.prototype.previewRepository__Lorg_scalajs_dom_raw_Event__Z = (fu
         throw new $c_s_MatchError().init___O(x0$1)
       }
     })
-  })(this$18, result)));
+  })(this$16, result)));
   var jsx$1 = jsx$2.stringify(result);
   var s = $as_T(jsx$1);
   xhr.send(s);

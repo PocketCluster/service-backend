@@ -1,16 +1,16 @@
 [info] Fast optimizing /Users/almightykim/Workspace/INDEX-WEB/FRONTEND/target/scala-2.11/index-front-fastopt.js
-[debug] Linker: Compute reachability: 104206 us
-[debug] Linker: Assemble LinkedClasses: 205749 us
-[debug] Basic Linking: 317229 us
+[debug] Linker: Compute reachability: 133907 us
+[debug] Linker: Assemble LinkedClasses: 222403 us
+[debug] Basic Linking: 365057 us
 [debug] Inc. optimizer: Batch mode: true
-[debug] Inc. optimizer: Incremental part: 122516 us
+[debug] Inc. optimizer: Incremental part: 116282 us
 [debug] Inc. optimizer: Optimizing 2807 methods.
-[debug] Inc. optimizer: Optimizer part: 344187 us
-[debug] Inc. optimizer: 491514 us
-[debug] Refiner: Compute reachability: 37984 us
-[debug] Refiner: Assemble LinkedClasses: 7689 us
-[debug] Refiner: 46919 us
+[debug] Inc. optimizer: Optimizer part: 392058 us
+[debug] Inc. optimizer: 519020 us
+[debug] Refiner: Compute reachability: 35827 us
+[debug] Refiner: Assemble LinkedClasses: 9603 us
+[debug] Refiner: 46826 us
 [debug] Emitter: Class tree cache stats: reused: 0 -- invalidated: 318
 [debug] Emitter: Method tree cache stats: resued: 0 -- invalidated: 1282
-[debug] Emitter (write output): 550824 us
+[debug] Emitter (write output): 325772 us
 [debug] Global IR cache stats: reused: 0 -- invalidated: 7 -- trees read: 457
