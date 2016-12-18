@@ -48,6 +48,10 @@ type VPN struct {
     VpnHost         string    `yaml:"vpn_host"`
 }
 
+type Update struct {
+    ForceReadme     bool      `yaml:"force_readme"`
+}
+
 type Config struct {
     General         `yaml:"general",inline,flow`
     Site            `yaml:"site",inline,flow`
@@ -56,6 +60,7 @@ type Config struct {
     CSRF            `yaml:"csrf",inline,flow`
     Github          `yaml:"github",inline,flow`
     VPN             `yaml:"vpn",inline,flow`
+    Update          `yaml:"update",inline,flow`
 }
 
 func NewConfig(filepath string) (*Config, error) {

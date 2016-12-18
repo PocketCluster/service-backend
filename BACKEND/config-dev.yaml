@@ -22,3 +22,5 @@ github:
 vpn:
   conn_check: false
   vpn_host: "198.199.115.209"
+update:
+  force_readme: false
