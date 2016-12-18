@@ -3,10 +3,10 @@ package control
 import (
     "encoding/json"
     "errors"
+    "fmt"
     "net/http"
     "strings"
     "strconv"
-    "time"
 
     log "github.com/Sirupsen/logrus"
     "github.com/gravitational/trace"
@@ -16,28 +16,11 @@ import (
 
     "github.com/stkim1/BACKEND/model"
     "github.com/stkim1/BACKEND/util"
+    "github.com/stkim1/BACKEND/config"
 )
 
-func (ctl *Controller) DashboardRepository(c web.C, r *http.Request) (string, int) {
-/*
-    // access control based on IP
-    ip, _, err := net.SplitHostPort(r.RemoteAddr)
-    if err != nil {
-        log.Printf("userip: %q is not IP:port", r.RemoteAddr)
-        return "", http.StatusNotFound
-    }
-
-    clientIP := net.ParseIP(ip)
-    if clientIP == nil {
-        log.Printf("userip: %q is not IP:port", r.RemoteAddr)
-        return "", http.StatusNotFound
-    }
-    forwarded := r.Header.Get("X-Forwarded-For")
-    log.Print("Client IP " + string(clientIP) + " forwarded " + forwarded)
- */
-    ipAddress := getIPAdress(r)
-    if ipAddress != "198.199.115.209" {
-        log.Print("Cannot display page without proper access from VPN")
+func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, int) {
+    if ctrl.IsSafeConnection(r) {
         return "", http.StatusNotFound
     }
 
@@ -56,87 +39,96 @@ func (ctl *Controller) DashboardRepository(c web.C, r *http.Request) (string, in
     }
 
     // GITHUB API REQUEST
-    if len(requests["add-repo-url"]) == 0 {
+    repoURL := requests["add-repo-url"]
+    if len(repoURL) == 0 {
         log.Error(trace.Wrap(errors.New("Repository URL [add-repo-url] cannot be null")))
         return "{}", http.StatusNotFound
     }
-    repo, _, err := ctl.GetRepoMeta(requests["add-repo-url"])
+    repo, _, err := ctrl.GetGithubRepoMeta(repoURL)
     if err != nil {
-        log.Info(trace.Wrap(err, "Retrieving repository failed"))
+        log.Error(trace.Wrap(err, "Retrieving repository failed"))
         return "", http.StatusNotFound
     }
 
     if mode == "preview" {
-        json, err:= json.Marshal(getPreview(requests, repo));
+        response, err := getPreview(ctrl.GetGORM(c), requests, repo)
+        if err != nil {
+            log.Error(trace.Wrap(err, "Cannot preview repo info"))
+            return "{}", http.StatusNotFound
+        }
+        json, err:= json.Marshal(response);
         if err != nil {
             log.Error(trace.Wrap(err))
             return "{}", http.StatusNotFound
         }
         return string(json), http.StatusOK
     } else {
-        apiResp, err := http.Get(GetGithubAPILink(requests["add-repo-url"])); if err != nil {
-            log.Panic("Cannot Access API " + err.Error())
-            return "{}", http.StatusNotFound
-        }
-        defer apiResp.Body.Close()
-
-        // Decode Github API
-        var githubData map[string]interface{}
-        if err = json.NewDecoder(apiResp.Body).Decode(&githubData); err != nil {
-            log.Panic("Cannot decode Github API body to JSON : " + err.Error())
-            return "{}", http.StatusNotFound
-        }
-        // Contributor Data
-        contribResp, err := http.Get(GetGithubAPILink(requests["add-repo-url"] + "/contributors")); if err != nil {
-            log.Panic("Cannot Access API " + err.Error())
-            return "{}", http.StatusNotFound
-        }
-        defer contribResp.Body.Close()
-
         // Decode contributor API
-        var contribData []map[string]interface{}
-        if err = json.NewDecoder(contribResp.Body).Decode(&contribData); err != nil {
-            log.Panic("Cannot decode Github API body to JSON : " + err.Error())
-            return "{}", http.StatusNotFound
+        contribs, _, err := ctrl.GetGithubContributors(repoURL)
+        if err != nil {
+            log.Error(trace.Wrap(err, "Retrieving repository failed"))
+            return "", http.StatusNotFound
         }
-        responses, err := Submit(ctl.GetGORM(c), requests, githubData, contribData); if err != nil {
-            log.Panic("Cannot submit the repo info : " + err.Error())
+        responses, err := submitRepo(ctrl.GetGORM(c), ctrl.Config, requests, repo, contribs)
+        if err != nil {
+            log.Error(trace.Wrap(err, "Cannot submit the repo info"))
             return "{}", http.StatusNotFound
         }
         json, err:= json.Marshal(responses); if err != nil {
-            log.Panic("Cannot marshal json " + err.Error())
+            log.Error(trace.Wrap(err, "Cannot marshal json"))
             return "{}", http.StatusNotFound
         }
         return string(json), http.StatusOK
     }
 }
 
-func Submit(db *gorm.DB, requests map[string]string, githubData map[string]interface{}, contribData []map[string]interface{}) (map[string]interface{}, error) {
+func submitRepo(repodb *gorm.DB, config *config.Config, requests map[string]string, repo *github.Repository, contributors []*github.Contributor) (map[string]interface{}, error) {
 
-    // title
-    title       := requests["add-repo-title"]
-    // Description
-    description := requests["add-repo-desc"]
-    // get Slug
-    slug        := requests["add-repo-slug"]
-    // Category
-    category    := strings.ToLower(requests["add-repo-category"])
-    // Project Page
-    projectPage := requests["add-project-page"]
-    // logo image
-    logoImage   := requests["add-logo-image"]
-    // repo Page
-    repoPage    := requests["add-repo-url"]
+    var (
+        // title
+        title string            = requests["add-repo-title"]
+        // Description
+        description string      = requests["add-repo-desc"]
+        // get Slug
+        slug string             = requests["add-repo-slug"]
+        // Category
+        category string         = strings.ToLower(requests["add-repo-category"])
+        // Project Page
+        projectPage string      = requests["add-project-page"]
+        // logo image
+        logoImage string        = requests["add-logo-image"]
+        // repo Page
+        repoPage  string        = requests["add-repo-url"]
+    )
 
-    // get repo id
-    gid, ok := githubData["id"].(float64); if !ok {
-        return nil, errors.New("Cannot parse Github ID")
+    /* -------------------------------------------- Submit Error Checking ------------------------------------------- */
+    /*                      These are the checks that prevents errors in submit process                               */
+    /* -------------------------------------------------------------------------------------------------------------- */
+
+    // Build repo id
+    rid, err := util.SafeGetInt(repo.ID)
+    if err != nil {
+        return nil, errors.New("Cannot parse repository id")
     }
-    repoID := "gh" + strconv.FormatInt(int64(gid), 10)
+    repoID := "gh" + strconv.Itoa(rid)
+
+    // owner info
+    var owner *github.User = repo.Owner
+    if owner == nil {
+        return nil, errors.New("Cannot parse Owner info of the repo")
+    }
+
+    // owner id
+    aid, err := util.SafeGetInt(owner.ID)
+    if err != nil {
+        return nil, fmt.Errorf("Cannot parse Owner[%s] id from repo.Owner.ID : %s", owner.Login, err.Error())
+    }
+    authorID    := "gh" + strconv.Itoa(aid)
 
     // let's quickly Check database if this repo exists
-    var repo []model.Repository
-    db.Where("repo_id = ? AND slug = ?", repoID, slug).Find(&repo); if len(repo) != 0 {
+    var repoFound []model.Repository
+    repodb.Where("repo_id = ? AND slug = ?", repoID, slug).Find(&repoFound);
+    if len(repoFound) != 0 {
         return map[string]interface{}{
             "status"    :"duplicated",
             "reason"    :"The repository already exists",
@@ -144,155 +136,118 @@ func Submit(db *gorm.DB, requests map[string]string, githubData map[string]inter
     }
 
     /* ------------------------------------------- Handle Owner information ----------------------------------------- */
-    ownerData, ok := githubData["owner"].(map[string]interface{}); if !ok {
-        return nil, errors.New("Cannot parse Owner info of the repo")
-    }
-    // owner id
-    aid, ok := ownerData["id"].(float64); if !ok {
-        return nil, errors.New("Cannot parse Owner ID")
-    }
-    authorID := "gh" + strconv.FormatInt(int64(aid), 10)
-    // find owner
-    var users []model.Author
-    if db.Where("author_id = ?", authorID).Find(&users); len(users) == 0 {
-        userType, ok    := ownerData["type"].(string); if !ok {
-            return nil, errors.New("Cannot parse Owner type")
-        } else {
-            userType = strings.ToLower(userType)
-        }
-        userLogin, ok   := ownerData["login"].(string); if !ok {
-            return nil, errors.New("Cannot parse Owner login name")
-        }
-        profileUrl, ok  := ownerData["html_url"].(string); if !ok {
-            return nil, errors.New("Cannot parse Owner profile page")
-        }
-        avatarUrl, ok   := ownerData["avatar_url"].(string); if !ok {
-            return nil, errors.New("Cannot parse Owner avatar URL")
-        }
+    // find and match owner
+    var foundUsers []model.Author
+    repodb.Where("author_id = ?", authorID).Find(&foundUsers);
+    if len(foundUsers) == 0 {
+        authorType    := strings.ToLower(util.SafeGetString(owner.Type))
+        login         := util.SafeGetString(owner.Login)
+        name          := util.SafeGetString(owner.Name)
+        profileURL    := util.SafeGetString(owner.HTMLURL)
+        avatarURL     := util.SafeGetString(owner.AvatarURL)
 
         repoAuthor := model.Author{
-            Service     :"github",
-            Type        :userType,
-            AuthorId    :authorID,
-            Login       :userLogin,
-            Name        :"",
-            ProfileURL  :profileUrl,
-            AvatarURL   :avatarUrl,
-            Deceased    :false,
+            Service:    "github",
+            Type:       authorType,
+            AuthorId:   authorID,
+            Login:      login,
+            Name:       name,
+            ProfileURL: profileURL,
+            AvatarURL:  avatarURL,
+            Deceased:   false,
         }
-        db.Save(&repoAuthor)
+        repodb.Save(&repoAuthor)
     }
 
     /* ------------------------------------------- Handle Repository information ------------------------------------ */
-    repoName, ok    := githubData["full_name"].(string); if !ok {
-        return nil, errors.New("Cannot parse repo's full name")
-    }
-    branch, ok      := githubData["default_branch"].(string); if !ok {
-        return nil, errors.New("Cannot parse repo's default branch")
-    }
-    forked, ok      := githubData["fork"].(bool); if !ok {
-        return nil, errors.New("Cannot parse if the repo is forked")
-    }
-    starCount, ok   := githubData["stargazers_count"].(float64); if !ok {
-        return nil, errors.New("Cannot parse the repo's star count")
-    }
-    forkCount, ok   := githubData["forks_count"].(float64); if !ok {
-        return nil, errors.New("Cannot parse the repo's fork count")
-    }
-    watchCount, ok  := githubData["subscribers_count"].(float64); if !ok {
-        return nil, errors.New("Cannot parse the repo's watch count")
-    }
-    created, ok      := githubData["created_at"].(string); if !ok {
-        return nil, errors.New("Cannot parse when the repo's created")
-    }
-    createdDate, err := time.Parse(time.RFC3339, created); if err != nil {
-        return nil, errors.New("Cannot parse when the repo's created " + err.Error())
-    }
-    updated, ok      := githubData["updated_at"].(string); if !ok {
-        return nil, errors.New("Cannot parse when the repo's updated")
-    }
-    updatedDate, err := time.Parse(time.RFC3339, updated); if err != nil {
-        return nil, errors.New("Cannot parse when the repo's created " + err.Error())
+    repoName        := util.SafeGetString(repo.FullName)
+    branch          := util.SafeGetString(repo.DefaultBranch)
+    forked          := util.SafeGetBool(repo.Fork)
+    starCount       := int64(*repo.StargazersCount)
+    forkCount       := int64(*repo.ForksCount)
+    watchCount      := int64(*repo.SubscribersCount)
+    createdDate     := repo.CreatedAt.Time
+    updatedDate     := repo.UpdatedAt.Time
+    wikiPage        := ""
+    if *repo.HasWiki {
+        wikiPage    = repoPage + "/wiki"
     }
 
     repoAdded := model.Repository{
-        RepoId          :repoID,
-        AuthorId        :authorID,
-        Deceased        :false,
-        Service         :"github",
-        Title           :title,
-        RepoName        :repoName,
-        LogoImage       :logoImage,
-        Branch          :branch,
-        Forked          :forked,
-        StarCount       :int64(starCount),
-        ForkCount       :int64(forkCount),
-        WatchCount      :int64(watchCount),
-        ProjectPage     :projectPage,
-        WikiPage        :"",
-        RepoPage        :repoPage,
-        Slug            :slug,
-        Tags            :"",
-        Category        :category,
-        Summary         :description,
-        Created         :createdDate,
-        Updated         :updatedDate,
+        RepoId:         repoID,
+        AuthorId:       authorID,
+        Deceased:       false,
+        Service:        "github",
+        Title:          title,
+        RepoName:       repoName,
+        LogoImage:      logoImage,
+        Branch:         branch,
+        Forked:         forked,
+        StarCount:      starCount,
+        ForkCount:      forkCount,
+        WatchCount:     watchCount,
+        ProjectPage:    projectPage,
+        WikiPage:       wikiPage,
+        RepoPage:       repoPage,
+        Slug:           slug,
+        Tags:           "",
+        Category:       category,
+        Summary:        description,
+        Created:        createdDate,
+        Updated:        updatedDate,
     }
-    db.Save(&repoAdded)
+    repodb.Save(&repoAdded)
 
     // upon successful repo save, save readme to file
-    util.GithubReadmeScrap(repoPage, "/www-server/readme/" + slug + ".html")
+    util.GithubReadmeScrap(repoPage, config.General.ReadmePath + slug + ".html")
 
     /* ------------------------------------------- Handle Contributor information ----------------------------------- */
-
-    for _, contrib := range contribData {
+    for _, contrib := range contributors {
         // user id
-        cid, ok     := contrib["id"].(float64); if !ok {
-            return nil, errors.New("Cannot parse User ID")
+        cid, err := util.SafeGetInt(contrib.ID)
+        if err != nil {
+            continue
         }
-        contribID := "gh" + strconv.FormatInt(int64(cid), 10)
-        cfactor, ok := contrib["contributions"].(float64); if !ok {
-            return nil, errors.New("Cannot parse Contribution Factor")
+        contribID   := "gh" + strconv.Itoa(cid)
+
+        // how many times this contributor has worked
+        cid, err = util.SafeGetInt(contrib.Contributions)
+        if err != nil {
+            continue
         }
+        cfactor     := cid
 
         // find this user
         var users []model.Author
-        if db.Where("author_id = ?", contribID).Find(&users); len(users) == 0 {
-            userType, ok    := contrib["type"].(string); if !ok {
-                return nil, errors.New("Cannot parse Owner type")
-            } else {
-                userType = strings.ToLower(userType)
-            }
-            userLogin, ok   := contrib["login"].(string); if !ok {
-                return nil, errors.New("Cannot parse Owner login name")
-            }
-            profileUrl, ok  := contrib["html_url"].(string); if !ok {
-                return nil, errors.New("Cannot parse Owner profile page")
-            }
-            avatarUrl, ok   := contrib["avatar_url"].(string); if !ok {
-                return nil, errors.New("Cannot parse Owner avatar URL")
-            }
+        repodb.Where("author_id = ?", contribID).Find(&users)
+        if len(users) == 0 {
+            authorType      := strings.ToLower(util.SafeGetString(contrib.Type))
+            login           := util.SafeGetString(contrib.Login)
+            profileUrl      := util.SafeGetString(contrib.HTMLURL)
+            avatarUrl       := util.SafeGetString(contrib.AvatarURL)
+
             contribAuthor := model.Author{
                 Service     :"github",
-                Type        :userType,
+                Type        :authorType,
                 AuthorId    :contribID,
-                Login       :userLogin,
+                Login       :login,
                 Name        :"",
                 ProfileURL  :profileUrl,
                 AvatarURL   :avatarUrl,
                 Deceased    :false,
             }
-            db.Save(&contribAuthor)
+            repodb.Save(&contribAuthor)
         }
 
         var repoContrib []model.RepoContributor
-        if db.Where("repo_id = ? AND author_id = ?", repoID, contribID).Find(&repoContrib); len(repoContrib) == 0 {
+        repodb.Where("repo_id = ? AND author_id = ?", repoID, contribID).Find(&repoContrib)
+        if len(repoContrib) == 0 {
             contribInfo := model.RepoContributor{
                 RepoId      :repoID,
                 AuthorId    :contribID,
                 Contribution:int(cfactor),
             }
-            db.Save(&contribInfo)
+            repodb.Save(&contribInfo)
         }
     }
 
@@ -302,7 +257,7 @@ func Submit(db *gorm.DB, requests map[string]string, githubData map[string]inter
 }
 
 // TODO check if this already exists
-func getPreview(requests map[string]string, repo *github.Repository) map[string]interface{} {
+func getPreview(repodb *gorm.DB, requests map[string]string, repo *github.Repository) (map[string]interface{}, error) {
     var (
         slug, repoID, description string
     )
@@ -315,19 +270,33 @@ func getPreview(requests map[string]string, repo *github.Repository) map[string]
     slug = strings.Replace(slug, ".", "-", -1)
 
     // Build repo id
-    repoID = "gh" + strconv.FormatInt(int64(*repo.ID), 10)
+    rid, err := util.SafeGetInt(repo.ID)
+    if err != nil {
+        return nil, errors.New("Cannot parse repository id")
+    }
+    repoID = "gh" + strconv.Itoa(rid)
+
+    // let's quickly Check database if this repo exists
+    var repoFound []model.Repository
+    repodb.Where("repo_id = ? AND slug = ?", repoID, slug).Find(&repoFound);
+    if len(repoFound) != 0 {
+        return map[string]interface{}{
+            "status":   "duplicated",
+            "reason":   "The repository already exists",
+        }, nil
+    }
 
     // Description
-    if repo.Description == nil || len(description) == 0 {
+    if repo.Description == nil || len(*repo.Description) == 0 {
         description = requests["add-repo-desc"]
     } else {
         description = *repo.Description
     }
 
     return map[string]interface{}{
-        "add-repo-id"        :repoID,
-        "add-repo-title"     :repo.Name,
-        "add-repo-slug"      :slug,
-        "add-repo-desc"      :description,
-    }
+        "add-repo-id":       repoID,
+        "add-repo-title":    repo.Name,
+        "add-repo-slug":     slug,
+        "add-repo-desc":     description,
+    }, nil
 }

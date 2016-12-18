@@ -8,25 +8,26 @@ import (
     "net/http"
     "strings"
 
+    log "github.com/Sirupsen/logrus"
+    "github.com/gravitational/trace"
     "github.com/go-utils/uslice"
-    "github.com/golang/glog"
     "github.com/gorilla/sessions"
     "github.com/zenazn/goji/web"
 )
 
 // Makes sure controllers can have access to session
-func (application *Application) ApplySessions(c *web.C, h http.Handler) http.Handler {
+func (a *Application) ApplySessions(c *web.C, h http.Handler) http.Handler {
     fn := func(w http.ResponseWriter, r *http.Request) {
-        session, _ := application.Store.Get(r, "session")
+        session, _ := a.Store.Get(r, "session")
         c.Env["Session"] = session
         h.ServeHTTP(w, r)
     }
     return http.HandlerFunc(fn)
 }
 
-func (application *Application) ApplyDbMap(c *web.C, h http.Handler) http.Handler {
+func (a *Application) ApplyDbMap(c *web.C, h http.Handler) http.Handler {
     fn := func(w http.ResponseWriter, r *http.Request) {
-        c.Env["GORM"] = application.GORM
+        c.Env["GORM"] = a.GORM
         h.ServeHTTP(w, r)
     }
     return http.HandlerFunc(fn)
@@ -53,7 +54,7 @@ func (application *Application) ApplyAuth(c *web.C, h http.Handler) http.Handler
 }
 */
 
-func (application *Application) ApplyIsXhr(c *web.C, h http.Handler) http.Handler {
+func (a *Application) ApplyIsXhr(c *web.C, h http.Handler) http.Handler {
     fn := func(w http.ResponseWriter, r *http.Request) {
         if r.Header.Get("X-Requested-With") == "XMLHttpRequest" {
             c.Env["IsXhr"] = true
@@ -80,21 +81,22 @@ func isCsrfProtectionMethodForNoXhr(method string) bool {
     return uslice.StrHas(csrfProtectionMethodForNoXhr, strings.ToUpper(method))
 }
 
-func (application *Application) ApplyCsrfProtection(c *web.C, h http.Handler) http.Handler {
+func (a *Application) ApplyCsrfProtection(c *web.C, h http.Handler) http.Handler {
     fn := func(w http.ResponseWriter, r *http.Request) {
         session := c.Env["Session"].(*sessions.Session)
-        csrfProtection := application.CsrfProtection
+        csrfProtection := a.CsrfProtection
         if _, ok := session.Values["CsrfToken"]; !ok {
             hash := sha256.New()
             buffer := make([]byte, 32)
             _, err := rand.Read(buffer)
             if err != nil {
-                glog.Fatalf("crypt/rand.Read failed: %s", err)
+                log.Error(trace.Wrap(err, "crypt/rand.Read failed"))
             }
             hash.Write(buffer)
             session.Values["CsrfToken"] = fmt.Sprintf("%x", hash.Sum(nil))
-            if err = session.Save(r, w); err != nil {
-                glog.Fatal("session.Save() failed")
+            err = session.Save(r, w);
+            if err != nil {
+                log.Error(trace.Wrap(err, "session.Save() failed"))
             }
         }
         c.Env["CsrfKey"] = csrfProtection.Key

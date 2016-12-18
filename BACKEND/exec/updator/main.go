@@ -1,11 +1,13 @@
 package main
 
 import (
-    "log"
     "encoding/json"
     "net/http"
     "time"
     "errors"
+
+    log "github.com/Sirupsen/logrus"
+    "github.com/gravitational/trace"
 
     "github.com/jinzhu/gorm"
     _ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -14,23 +16,24 @@ import (
     "github.com/stkim1/BACKEND/control"
 )
 
-func AccessGithubAPI(db *gorm.DB, repo *model.Repository) error {
+func AccessGithubAPI(repoDB *gorm.DB, repo *model.Repository) error {
 
     // URL CHECK
     if len(repo.RepoPage) == 0 {
-        return errors.New("Cannot begin update a repo with empty URL")
+        return trace.Wrap(errors.New("Cannot begin update a repo with empty URL"))
     }
 
     // GITHUB API REQUEST
     apiResp, err := http.Get(control.GetGithubAPILink(repo.RepoPage)); if err != nil {
-        return errors.New("Cannot Access Repo API " + err.Error())
+        return trace.Wrap(err, "Cannot Access Repo API")
     }
     defer apiResp.Body.Close()
 
     // DECODE GITHUB API REQUEST
     var githubData map[string]interface{}
-    if err = json.NewDecoder(apiResp.Body).Decode(&githubData); err != nil {
-        return errors.New("Cannot decode Github API body to JSON : " + err.Error())
+    err = json.NewDecoder(apiResp.Body).Decode(&githubData)
+    if err != nil {
+        return trace.Wrap(err, "Cannot decode Github API body to JSON ")
     }
 
     // CONTRIBUTOR DATA FROM THE REPO
@@ -83,7 +86,7 @@ func AccessGithubAPI(db *gorm.DB, repo *model.Repository) error {
     repo.ForkCount       = int64(forkCount)
     repo.WatchCount      = int64(watchCount)
     repo.Updated         = updatedDate
-    db.Save(repo)
+    repoDB.Save(repo)
 
     util.GithubReadmeScrap(repo.RepoPage, "/www-server/readme/" + repo.Slug + ".html")
     return nil
@@ -92,11 +95,11 @@ func AccessGithubAPI(db *gorm.DB, repo *model.Repository) error {
 func main() {
     db, err := gorm.Open("sqlite3", "/www-server/pc-index.db")
     if err != nil {
-        log.Panic("failed to connect database " + err.Error() )
+        log.Error(trace.Wrap(err, "Failed to connect database"))
         return
     }
 
-    log.Print("Update process started at " + time.Now().Format("Jan. 2 2006 3:04 PM"))
+    log.Info("Update process started at " + time.Now().Format("Jan. 2 2006 3:04 PM"))
 /*
     client := &http.Client{
         Transport: &http.Transport{
@@ -121,5 +124,5 @@ func main() {
         }
     }
 
-    log.Print("Update process ended at " + time.Now().Format("Jan. 2 2006 3:04 PM"))
+    log.Info("Update process ended at " + time.Now().Format("Jan. 2 2006 3:04 PM"))
 }

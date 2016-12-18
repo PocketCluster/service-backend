@@ -7,52 +7,58 @@ import (
     "reflect"
     "crypto/sha256"
 
-    "github.com/golang/glog"
+    log "github.com/Sirupsen/logrus"
+    "github.com/gravitational/trace"
     "github.com/gorilla/sessions"
-    "github.com/pelletier/go-toml"
     "github.com/zenazn/goji/web"
 
     "github.com/jinzhu/gorm"
     _ "github.com/jinzhu/gorm/dialects/sqlite"
 
     "github.com/stkim1/BACKEND/model"
+    "github.com/stkim1/BACKEND/control"
+    "github.com/stkim1/BACKEND/config"
 )
 
-type CsrfProtection struct {
+func NewApplication(config *config.Config, control *control.Controller) *Application {
+    app := &Application{
+        Config:         config,
+        Controller:     control,
+    }
+    app.init()
+    return app
+}
+
+type csrfProtection struct {
     Key    string
     Cookie string
     Header string
     Secure bool
 }
 
+// Application-wide resource management
 type Application struct {
-    Config         *toml.TomlTree
+    Controller     *control.Controller
+    Config         *config.Config
     Template       *template.Template
     Store          *sessions.CookieStore
     GORM           *gorm.DB
-    CsrfProtection *CsrfProtection
+    CsrfProtection *csrfProtection
 }
 
-func (application *Application) Init(filename *string) {
-
-    config, err := toml.LoadFile(*filename)
-    if err != nil {
-        glog.Fatalf("TOML load failed: %s\n", err)
-    }
-
+func (a *Application) init() {
     hash := sha256.New()
-    io.WriteString(hash, config.Get("cookie.mac_secret").(string))
-    application.Store = sessions.NewCookieStore(hash.Sum(nil))
-    application.Store.Options = &sessions.Options{
+    io.WriteString(hash, a.Config.Cookie.MacSecret)
+    a.Store = sessions.NewCookieStore(hash.Sum(nil))
+    a.Store.Options = &sessions.Options{
         Path:     "/",
         HttpOnly: true,
-        Secure:   config.Get("cookie.secure").(bool),
+        Secure:   a.Config.Cookie.Secure,
     }
 
-    dbConfig := config.Get("database").(*toml.TomlTree)
-    db, err := gorm.Open(dbConfig.Get("database").(string), dbConfig.Get("filename").(string))
+    db, err := gorm.Open(a.Config.Database.DatabaseType, a.Config.Database.DatabasePath)
     if err != nil {
-        panic("failed to connect database")
+        log.Error(trace.Wrap(err,"Failed to open database"))
     }
     // Migrate the schema
     db.AutoMigrate(&model.Author{}, &model.Repository{}, &model.RepoCommit{}, &model.RepoVersion{}, &model.RepoLanguage{}, &model.RepoContributor{});
@@ -61,23 +67,21 @@ func (application *Application) Init(filename *string) {
     // db.Model(&model.Repository{}).Related(&model.RepoVersion{})
     // db.Model(&model.Repository{}).Related(&model.RepoCommit{})
     // db.Model(&model.Repository{}).Related(&model.RepoLanguage{})
-    application.GORM = db;
+    a.GORM = db;
 
-    application.CsrfProtection = &CsrfProtection{
-        Key:    config.Get("csrf.key").(string),
-        Cookie: config.Get("csrf.cookie").(string),
-        Header: config.Get("csrf.header").(string),
-        Secure: config.Get("cookie.secure").(bool),
+    a.CsrfProtection = &csrfProtection{
+        Key:       a.Config.CSRF.Key,
+        Cookie:    a.Config.CSRF.Cookie,
+        Header:    a.Config.CSRF.Header,
+        Secure:    a.Config.Cookie.Secure,
     }
-
-    application.Config = config
 }
 
-func (application *Application) Close() {
-    glog.Info("Bye!")
+func (a *Application) Close() {
+    log.Info("!!!Application terminating!!!")
 }
 
-func (application *Application) Route(controller interface{}, route string) interface{} {
+func (a *Application) Route(controller interface{}, route string) interface{} {
     fn := func(c web.C, w http.ResponseWriter, r *http.Request) {
         c.Env["Content-Type"] = "text/html"
 
@@ -90,7 +94,7 @@ func (application *Application) Route(controller interface{}, route string) inte
         if session, exists := c.Env["Session"]; exists {
             err := session.(*sessions.Session).Save(r, w)
             if err != nil {
-                glog.Errorf("Can't save session: %v", err)
+                log.Error(trace.Wrap(err, "Can't save session"))
             }
         }
 
@@ -112,7 +116,7 @@ func (application *Application) Route(controller interface{}, route string) inte
     return fn
 }
 
-func (application *Application) AddRoute(controller interface{}, method func(c web.C, r *http.Request) (string, int)) interface{} {
+func (application *Application) AddRoute(method func(c web.C, r *http.Request) (string, int)) interface{} {
     fn := func(c web.C, w http.ResponseWriter, r *http.Request) {
         c.Env["Content-Type"] = "text/html"
 
@@ -121,7 +125,7 @@ func (application *Application) AddRoute(controller interface{}, method func(c w
         if session, exists := c.Env["Session"]; exists {
             err := session.(*sessions.Session).Save(r, w)
             if err != nil {
-                glog.Errorf("Can't save session: %v", err)
+                log.Error(trace.Wrap(err, "Can't save session"))
             }
         }
 

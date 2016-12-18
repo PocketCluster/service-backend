@@ -1,9 +1,12 @@
 package util
 
 import (
-    "log"
     "strings"
     "io/ioutil"
+    "errors"
+
+    log "github.com/Sirupsen/logrus"
+    "github.com/gravitational/trace"
 
     "github.com/PuerkitoBio/goquery"
 )
@@ -13,7 +16,8 @@ func GithubReadmeScrap(location string, filename string) {
 
     doc, err := goquery.NewDocument(location)
     if err != nil {
-        log.Fatal(err)
+        log.Error(trace.Wrap(err))
+        return
     }
 
     readme := doc.Find("#readme").Clone()
@@ -68,12 +72,40 @@ func GithubReadmeScrap(location string, filename string) {
     // read html
     html, err := readme.Html()
     if err != nil {
-        log.Panic("Cannot read HTML")
+        log.Error(trace.Wrap(err, "Cannot read HTML"))
     }
 
     // save to file
     err = ioutil.WriteFile(filename, []byte(html), 0664)
     if err != nil {
-        log.Panic("Cannot save HTML readme " + err.Error())
+        log.Error(trace.Wrap(err, "Cannot save HTML readme "))
     }
+}
+
+func SafeGetString(str *string) string {
+    if str == nil {
+        return ""
+    }
+    if len(*str) == 0 {
+        return ""
+    }
+    return *str
+}
+
+func SafeGetInt(value *int) (int, error) {
+    if value == nil {
+        return 0, errors.New("Cannot read int value")
+    }
+    return *value, nil
+}
+
+func SafeGetBool(value *bool) bool {
+    if value == nil {
+        return false
+    }
+    return *value
+}
+
+func SafeStringJoin(params... string) string {
+    return strings.Join(params, "")
 }

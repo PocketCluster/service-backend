@@ -5,7 +5,10 @@ import (
     "strings"
     "io/ioutil"
     "path"
-    "log"
+    "fmt"
+
+    log "github.com/Sirupsen/logrus"
+    "github.com/gravitational/trace"
 
     "github.com/zenazn/goji/web"
     "github.com/jinzhu/gorm"
@@ -13,14 +16,16 @@ import (
     "github.com/stkim1/BACKEND/model"
 )
 
-func (controller *Controller) Repository(c web.C, r *http.Request) (string, int) {
-    var repositories []model.Repository
-    var owner model.Author;
-    var contribs []model.Author;
-    var repoContribs []model.RepoContributor
-    var db *gorm.DB = controller.GetGORM(c)
-    var slug string = strings.ToLower(c.URLParams["repo"])
-
+func (ctrl *Controller) Repository(c web.C, r *http.Request) (string, int) {
+    var (
+        repositories []model.Repository
+        repo model.Repository
+        owner model.Author;
+        contribs []model.Author;
+        repoContribs []model.RepoContributor
+        db *gorm.DB = ctrl.GetGORM(c)
+        slug string = strings.ToLower(c.URLParams["repo"])
+    )
     if len(slug) == 0 {
         return "", http.StatusNotFound
     }
@@ -28,22 +33,24 @@ func (controller *Controller) Repository(c web.C, r *http.Request) (string, int)
     // Find the repo by slug
     db.Where("slug = ?", slug).First(&repositories)
     if len(repositories) == 0 {
+        log.Error(trace.Wrap(fmt.Errorf("Cannot find the target repository : %s",slug)))
         return "", http.StatusNotFound
     }
-    var repo model.Repository  = repositories[0]
+    repo = repositories[0]
 
     // Find Owner
     db.Where("author_id = ?", repo.AuthorId).First(&owner)
 
     var content map[string]interface{} = map[string]interface{} {
-        "ISINDEX"              : false,
-        "SITENAME"             : "PocketCluster Index",
-        "SITEURL"              : "https://index.pocketcluster.io",
-        "THEME_STATIC_DIR"     : "theme",
-        "CATEGORIES"           : model.GetActivatedCategory(repo.Category),
-        "title"                : repo.Title,
-        "repo"                 : &repo,
-        "owner"                : &owner,
+        "DEFAULT_LANG":  "utf-8",
+        "ISINDEX":       false,
+        "SITENAME":      ctrl.Config.Site.SiteName,
+        "SITEURL":       ctrl.Config.Site.SiteURL,
+        "THEME_LINK":    ctrl.Site.ThemeLink,
+        "CATEGORIES":    model.GetActivatedCategory(repo.Category),
+        "title":         repo.Title,
+        "repo":          &repo,
+        "owner":         &owner,
     }
 
     // Find Contribution relation
@@ -64,9 +71,9 @@ func (controller *Controller) Repository(c web.C, r *http.Request) (string, int)
     // Patch readme
     readme, err := ioutil.ReadFile(path.Join("readme/", slug + ".html"))
     if err != nil {
-        log.Panic("Cnnot read readme")
+        log.Error(trace.Wrap(err, "Cnnot read readme html file"))
     }
     content["readme"] = string(readme)
 
-    return util.RenderLayout("repo.html.mustache", "base.html.mustache", content), http.StatusOK
+    return util.RenderLayout(ctrl.Config.General.TemplatePath, "repo.html.mustache", "base.html.mustache", content), http.StatusOK
 }

@@ -1,41 +1,51 @@
 package main
 
 import (
-    "flag"
+    "os"
     "regexp"
 
-    "github.com/golang/glog"
+    log "github.com/Sirupsen/logrus"
+    "github.com/gravitational/trace"
     "github.com/gorilla/context"
     "github.com/zenazn/goji"
     "github.com/zenazn/goji/graceful"
 
     "github.com/stkim1/BACKEND/framework"
     "github.com/stkim1/BACKEND/control"
+    "github.com/stkim1/BACKEND/config"
 )
 
 func main() {
+    var (
+        app *framework.Application
+        ctrl *control.Controller
+    )
+    cfgPath, ok := os.LookupEnv(config.EnvConfigFilePath)
+    if !ok {
+        cfgPath = "config.yaml"
+    }
+    cfg, err := config.NewConfig(cfgPath)
+    if err != nil {
+        log.Panic(trace.Wrap(err, "Cannot load config"))
+        return
+    }
 
-    filename := flag.String("config", "config.toml", "Path to configuration file")
-    flag.Parse()
-    defer glog.Flush()
-
-    var application = &framework.Application{}
-    application.Init(filename)
+    // Setup Controller
+    ctrl = control.NewController(cfg)
+    // setup Application
+    app = framework.NewApplication(cfg, ctrl)
 
     // Apply middleware
-    //goji.Use(application.ApplySessions)
-    goji.Use(application.ApplyDbMap)
-    //goji.Use(application.ApplyAuth)
-    goji.Use(application.ApplyIsXhr)
-    //goji.Use(application.ApplyCsrfProtection)
+    //goji.Use(app.ApplySessions)
+    goji.Use(app.ApplyDbMap)
+    //goji.Use(app.ApplyAuth)
+    goji.Use(app.ApplyIsXhr)
+    //goji.Use(app.ApplyCsrfProtection)
     goji.Use(context.ClearHandler)
 
-    // Setup Routers
-    controller := control.NewController()
-
     // dashboard
-    goji.Get("/pocketcluster/dashboard/:mode", application.AddRoute(controller, controller.DashboardFront))
-    goji.Post("/pocketcluster/dashboard/repository/:mode", application.AddRoute(controller, controller.DashboardRepository))
+    goji.Get("/pocketcluster/dashboard/:mode",                                       app.AddRoute(ctrl.DashboardFront))
+    goji.Post("/pocketcluster/dashboard/repository/:mode",                           app.AddRoute(ctrl.DashboardRepository))
 
 /*
     // Sign In routes
@@ -51,26 +61,26 @@ func main() {
 */
 
     // sitemap
-    goji.Get("/sitemap.xml", application.Route(controller, "Sitemap"))
+    goji.Get("/sitemap.xml",                                                         app.AddRoute(ctrl.Sitemap))
 
     // Home page
     // FIXME: all three regexp fail. WTF? (https://github.com/zenazn/goji/issues/75) & (https://github.com/zenazn/goji/blob/master/web/regexp_pattern.go#L56)
     //goji.Get(regexp.MustCompile(`^/index.html\?page=(?P<page>\d+)$`), application.Route(controller, "IndexPaged"))
     //goji.Get(regexp.MustCompile(`^/index.html\?page=(?P<page>[0-9]+)$`), application.Route(controller, "IndexPaged"))
     //goji.Get(regexp.MustCompile(`^/index.html[?]page=(?P<page>[0-9]+)$`), application.Route(controller, "IndexPaged"))
-    goji.Get(regexp.MustCompile(`^/index(?P<page>[0-9]+).html$`), application.Route(controller, "IndexPaged"))
-    goji.Get("/index.html", application.Route(controller, "Index"))
-    goji.Get("/", application.Route(controller, "Index"))
+    goji.Get(regexp.MustCompile(`^/index(?P<page>[0-9]+).html$`),                    app.AddRoute(ctrl.IndexPaged))
+    goji.Get("/index.html",                                                          app.AddRoute(ctrl.Index))
+    goji.Get("/",                                                                    app.AddRoute(ctrl.Index))
 
     // Category Index
-    goji.Get(regexp.MustCompile(`^/category/(?P<cat>[a-z]+)(?P<page>[0-9]+).html$`), application.Route(controller, "CategoryPaged"))
-    goji.Get(regexp.MustCompile(`^/category/(?P<cat>[a-z]+).html$`), application.Route(controller, "Category"))
+    goji.Get(regexp.MustCompile(`^/category/(?P<cat>[a-z]+)(?P<page>[0-9]+).html$`), app.AddRoute(ctrl.CategoryPaged))
+    goji.Get(regexp.MustCompile(`^/category/(?P<cat>[a-z]+).html$`),                 app.AddRoute(ctrl.Category))
 
     // Respotory
-    goji.Get(regexp.MustCompile(`^/(?P<repo>[a-z0-9-]+).html$`), application.Route(controller, "Repository"))
+    goji.Get(regexp.MustCompile(`^/(?P<repo>[a-z0-9-]+).html$`),                     app.AddRoute(ctrl.Repository))
 
     graceful.PostHook(func() {
-        application.Close()
+        app.Close()
     })
     goji.Serve()
 }

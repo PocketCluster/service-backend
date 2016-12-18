@@ -10,16 +10,16 @@ import (
     "github.com/sungwoncho/go-sitemap-generator/stm"
 )
 
-func (controller *Controller) Sitemap(c web.C, r *http.Request) (string, int) {
+func (ctrl *Controller) Sitemap(c web.C, r *http.Request) (string, int) {
     c.Env["Content-Type"] = "application/xml"
 
     sm := stm.NewSitemap()
     sm.Create()
-    sm.SetDefaultHost("https://index.pocketcluster.io")
+    sm.SetDefaultHost(ctrl.Config.Site.SiteURL)
     sm.SetVerbose(false)
 
     var repos []model.Repository
-    controller.GetGORM(c).Find(&repos)
+    ctrl.GetGORM(c).Find(&repos)
 
     var buffer bytes.Buffer
     for _, repo := range repos {

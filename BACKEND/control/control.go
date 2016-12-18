@@ -7,52 +7,73 @@ import (
     "net"
     "net/http"
 
+    log "github.com/Sirupsen/logrus"
+    "github.com/gravitational/trace"
     "github.com/gorilla/sessions"
     "github.com/zenazn/goji/web"
     "github.com/jinzhu/gorm"
     "github.com/google/go-github/github"
 
     "github.com/stkim1/BACKEND/model"
+    "github.com/stkim1/BACKEND/config"
 )
 
 /* ------- GITHUG API CONTROL ------- */
 const (
     githubClientIdentity string     = "c74abcf03e61e209b3c3"
     githubClientSecret string       = "da0f7d33d02552282e72a7e594d39ba76f96d478"
+    githubWebURL string             = "https://github.com/"
 )
 
-func NewController() *Controller {
+func NewController(config *config.Config) *Controller {
     return &Controller{
-        githubClient:   githubV3Client(),
+        Config:         config,
+        githubClient:   githubV3Client(config.Github.ClientID, config.Github.ClientSecret),
     }
 }
 
+// Model-View-Control
 type Controller struct {
     githubClient        *github.Client
+    *config.Config
 }
 
-func (ctl *Controller) GetRepoMeta(repoURL string) (*github.Repository, *github.Response, error) {
+func (ctrl *Controller) GetGithubRepoMeta(repoURL string) (*github.Repository, *github.Response, error) {
     // TODO : check if URL is in correct form
     if len(repoURL) == 0 {
         return nil, nil, fmt.Errorf("[ERR] Invalid repository URL address")
     }
-    url := strings.Split(strings.Replace(repoURL , "https://github.com/", "", -1), "/")
-    user, repo := url[0], url[1]
-    if len(user) == 0 || len(repo) == 0{
-        return nil, nil, fmt.Errorf("[ERR] Invalid repository format")
+    url := strings.Split(strings.Replace(repoURL , githubWebURL, "", -1), "/")
+    owner, repo := url[0], url[1]
+    if len(owner) == 0 || len(repo) == 0{
+        return nil, nil, fmt.Errorf("[ERR] Invalid repository URL format")
     }
-    return ctl.githubClient.Repositories.Get(user, repo)
+    return ctrl.githubClient.Repositories.Get(owner, repo)
 }
 
-func (ctl *Controller) GetSession(c web.C) *sessions.Session {
+func (ctrl *Controller) GetGithubContributors(repoURL string) ([]*github.Contributor, *github.Response, error) {
+    // TODO : check if URL is in correct form
+    if len(repoURL) == 0 {
+        return nil, nil, fmt.Errorf("[ERR] Invalid repository URL address")
+    }
+    url := strings.Split(strings.Replace(repoURL , githubWebURL, "", -1), "/")
+    owner, repo := url[0], url[1]
+    if len(owner) == 0 || len(repo) == 0{
+        return nil, nil, fmt.Errorf("[ERR] Invalid repository URL format")
+    }
+    opts := &github.ListContributorsOptions{Anon: "true"}
+    return ctrl.githubClient.Repositories.ListContributors(owner, repo, opts)
+}
+
+func (ctrl *Controller) GetSession(c web.C) *sessions.Session {
     return c.Env["Session"].(*sessions.Session)
 }
 
-func (ctl *Controller) GetGORM(c web.C) *gorm.DB {
+func (ctrl *Controller) GetGORM(c web.C) *gorm.DB {
     return c.Env["GORM"].(*gorm.DB)
 }
 
-func (ctl *Controller) IsXhr(c web.C) bool {
+func (ctrl *Controller) IsXhr(c web.C) bool {
     return c.Env["IsXhr"].(bool)
 }
 
@@ -196,10 +217,41 @@ func getIPAdress(r *http.Request) string {
     return ""
 }
 
-func githubV3Client() *github.Client {
+func githubV3Client(clientID, clientSecret string) *github.Client {
     tp := &github.UnauthenticatedRateLimitedTransport{
-        ClientID:     githubClientIdentity,
-        ClientSecret: githubClientSecret,
+        ClientID:     clientID,
+        ClientSecret: clientSecret,
     }
     return github.NewClient(tp.Client())
+}
+
+func (ctrl *Controller) IsSafeConnection(r *http.Request) bool {
+    if !ctrl.VPN.ConnCheck {
+        return true
+    }
+
+/*
+    // access control based on IP
+    ip, _, err := net.SplitHostPort(r.RemoteAddr)
+    if err != nil {
+        log.Printf("userip: %q is not IP:port", r.RemoteAddr)
+        return "", http.StatusNotFound
+    }
+
+    clientIP := net.ParseIP(ip)
+    if clientIP == nil {
+        log.Printf("userip: %q is not IP:port", r.RemoteAddr)
+        return "", http.StatusNotFound
+    }
+    forwarded := r.Header.Get("X-Forwarded-For")
+    log.Print("Client IP " + string(clientIP) + " forwarded " + forwarded)
+ */
+
+    // access control based on IP
+    ipAddress := getIPAdress(r)
+    if ipAddress != ctrl.Config.VPN.VpnHost {
+        log.Error(trace.Wrap(fmt.Errorf("Cannot display page without proper access from VPN : src[%s]", ipAddress)))
+        return false
+    }
+    return true
 }
