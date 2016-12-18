@@ -68,11 +68,10 @@ func accessGithubAPI(repoDB *gorm.DB, ctrl *control.Controller, repoModel *model
         contribID := "gh" + strconv.Itoa(cid)
 
         // how many times this contributor has worked
-        cid, err = util.SafeGetInt(contrib.Contributions)
+        cfactor, err := util.SafeGetInt(contrib.Contributions)
         if err != nil {
             continue
         }
-        cfactor := cid
 
         // find this user
         var users []model.Author
@@ -105,6 +104,8 @@ func accessGithubAPI(repoDB *gorm.DB, ctrl *control.Controller, repoModel *model
                 Contribution:   cfactor,
             }
             repoDB.Save(&contribInfo)
+        } else {
+            repoContrib[0].Contribution = cfactor
         }
     }
 
