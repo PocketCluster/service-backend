@@ -20,8 +20,6 @@ import (
 
 /* ------- GITHUG API CONTROL ------- */
 const (
-    githubClientIdentity string     = "c74abcf03e61e209b3c3"
-    githubClientSecret string       = "da0f7d33d02552282e72a7e594d39ba76f96d478"
     githubWebURL string             = "https://github.com/"
 )
 
@@ -134,12 +132,6 @@ func GetAssignedRepoColumn(repoCount int) ([]*model.Repository, []*model.Reposit
     return repo1, repo2, repo3
 }
 
-func GetGithubAPILink(githubLink string) string {
-    URL := strings.Replace(githubLink , "https://github.com/", "https://api.github.com/repos/", -1)
-    URL += "?client_id=" + githubClientIdentity + "&client_secret=" + githubClientSecret
-    return URL
-}
-
 /* ------- GETTING IP ADDRESS ------- */
 //ipRange - a structure that holds the start and end of a range of ip addresses
 type ipRange struct {
@@ -229,7 +221,6 @@ func (ctrl *Controller) IsSafeConnection(r *http.Request) bool {
     if !ctrl.VPN.ConnCheck {
         return true
     }
-
 /*
     // access control based on IP
     ip, _, err := net.SplitHostPort(r.RemoteAddr)
@@ -246,7 +237,6 @@ func (ctrl *Controller) IsSafeConnection(r *http.Request) bool {
     forwarded := r.Header.Get("X-Forwarded-For")
     log.Print("Client IP " + string(clientIP) + " forwarded " + forwarded)
  */
-
     // access control based on IP
     ipAddress := getIPAdress(r)
     if ipAddress != ctrl.Config.VPN.VpnHost {
