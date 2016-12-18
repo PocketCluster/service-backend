@@ -17,18 +17,19 @@ import (
 
 // Category route
 func (ctrl *Controller) Category(c web.C, r *http.Request) (string, int) {
-    var repositories []model.Repository
-    var category string = strings.ToLower(c.URLParams["cat"])
+    var (
+        repositories []model.Repository
+        db *gorm.DB        = ctrl.GetGORM(c)
+        category string    = strings.ToLower(strings.TrimSpace(c.URLParams["cat"]))
+        title string       = strings.Title(strings.TrimSpace(c.URLParams["cat"]))
+    )
     if len(category) == 0 {
         return "", http.StatusNotFound
     }
-    //FIXME : Titalize
-    var title string = strings.TrimSpace(c.URLParams["cat"])
     if !model.IsCategoryPresent(category) {
         return "", http.StatusNotFound
     }
 
-    var db *gorm.DB = ctrl.GetGORM(c)
     db.Where("category = ?", category).Order("updated desc").Limit(SingleColumnCount * TotalRowCount).Find(&repositories)
     if len(repositories) == 0 {
         return "", http.StatusNotFound
@@ -54,7 +55,12 @@ func (ctrl *Controller) Category(c web.C, r *http.Request) (string, int) {
 
 // Category route
 func (ctrl *Controller) CategoryPaged(c web.C, r *http.Request) (string, int) {
-    page, err := strconv.Atoi(c.URLParams["page"])
+    var (
+        repositories []model.Repository
+        category string    = strings.ToLower(strings.TrimSpace(c.URLParams["cat"]))
+        title string       = strings.Title(strings.TrimSpace(c.URLParams["cat"]))
+    )
+    page, err := strconv.Atoi(strings.TrimSpace(c.URLParams["page"]))
     if err != nil {
         log.Error(trace.Wrap(err, "Cannot convert page string to number"))
         return "", http.StatusNotFound
@@ -63,14 +69,9 @@ func (ctrl *Controller) CategoryPaged(c web.C, r *http.Request) (string, int) {
         log.Error(trace.Wrap(errors.New("Page number cannot be smaller than 0")))
         return "", http.StatusNotFound
     }
-
-    var repositories []model.Repository
-    var category string = strings.ToLower(c.URLParams["cat"])
     if len(category) == 0 {
         return "", http.StatusNotFound
     }
-    //FIXME : Titalize
-    var title string = strings.TrimSpace(c.URLParams["cat"])
     if !model.IsCategoryPresent(category) {
         return "", http.StatusNotFound
     }
