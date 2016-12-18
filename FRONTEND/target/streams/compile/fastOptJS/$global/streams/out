@@ -1,16 +1,16 @@
-[0m[[0minfo[0m] [0mFast optimizing /Users/almightykim/Workspace/INDEX-WEB/FRONTEND/target/scala-2.11/index-front-fastopt.js[0m
-[0m[[0mdebug[0m] [0mLinker: Compute reachability: 30268 us[0m
-[0m[[0mdebug[0m] [0mLinker: Assemble LinkedClasses: 9332 us[0m
-[0m[[0mdebug[0m] [0mBasic Linking: 41050 us[0m
-[0m[[0mdebug[0m] [0mInc. optimizer: Batch mode: false[0m
-[0m[[0mdebug[0m] [0mInc. optimizer: Incremental part: 2322 us[0m
-[0m[[0mdebug[0m] [0mInc. optimizer: Optimizing 0 methods.[0m
-[0m[[0mdebug[0m] [0mInc. optimizer: Optimizer part: 74 us[0m
-[0m[[0mdebug[0m] [0mInc. optimizer: 3384 us[0m
-[0m[[0mdebug[0m] [0mRefiner: Compute reachability: 20726 us[0m
-[0m[[0mdebug[0m] [0mRefiner: Assemble LinkedClasses: 1689 us[0m
-[0m[[0mdebug[0m] [0mRefiner: 22477 us[0m
-[0m[[0mdebug[0m] [0mEmitter: Class tree cache stats: reused: 1 -- invalidated: 317[0m
-[0m[[0mdebug[0m] [0mEmitter: Method tree cache stats: resued: 1282 -- invalidated: 0[0m
-[0m[[0mdebug[0m] [0mEmitter (write output): 19916 us[0m
-[0m[[0mdebug[0m] [0mGlobal IR cache stats: reused: 6 -- invalidated: 1 -- trees read: 1[0m
+[info] Fast optimizing /Users/almightykim/Workspace/INDEX-WEB/FRONTEND/target/scala-2.11/index-front-fastopt.js
+[debug] Linker: Compute reachability: 104206 us
+[debug] Linker: Assemble LinkedClasses: 205749 us
+[debug] Basic Linking: 317229 us
+[debug] Inc. optimizer: Batch mode: true
+[debug] Inc. optimizer: Incremental part: 122516 us
+[debug] Inc. optimizer: Optimizing 2807 methods.
+[debug] Inc. optimizer: Optimizer part: 344187 us
+[debug] Inc. optimizer: 491514 us
+[debug] Refiner: Compute reachability: 37984 us
+[debug] Refiner: Assemble LinkedClasses: 7689 us
+[debug] Refiner: 46919 us
+[debug] Emitter: Class tree cache stats: reused: 0 -- invalidated: 318
+[debug] Emitter: Method tree cache stats: resued: 0 -- invalidated: 1282
+[debug] Emitter (write output): 550824 us
+[debug] Global IR cache stats: reused: 0 -- invalidated: 7 -- trees read: 457

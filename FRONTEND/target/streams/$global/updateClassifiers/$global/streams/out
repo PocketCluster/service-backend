@@ -6,7 +6,7 @@
 [debug] == resolving dependencies for index-front#index-front$sources_sjs0.6_2.11;1.0 [compile]
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-lang#scala-library;2.11.8 [compile->default(compile)]
 [info] Resolving org.scala-lang#scala-library;2.11.8 ...
-[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@1386aa9
+[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@1a3625e4
 [debug] sbt-chain: module revision found in cache: org.scala-lang#scala-library;2.11.8
 [debug] 	found org.scala-lang#scala-library;2.11.8 in sbt-chain
 [debug] 	[2.11.8] org.scala-lang#scala-library;2.11.8
@@ -15,7 +15,7 @@
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-lang#scala-library;2.11.8 [compile->master]
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.webjars#jquery;2.2.4 [compile->default(compile)]
 [info] Resolving org.webjars#jquery;2.2.4 ...
-[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@dd3bda9
+[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@dc766a0
 [debug] sbt-chain: module revision found in cache: org.webjars#jquery;2.2.4
 [debug] 	found org.webjars#jquery;2.2.4 in sbt-chain
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.webjars#jquery;2.2.4 [compile->runtime]
@@ -23,7 +23,7 @@
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.webjars#jquery;2.2.4 [compile->master]
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-js#scalajs-library_2.11;0.6.11 [compile->default(compile)]
 [info] Resolving org.scala-js#scalajs-library_2.11;0.6.11 ...
-[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@21f4bd0a
+[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@6628d1fa
 [debug] sbt-chain: module revision found in cache: org.scala-js#scalajs-library_2.11;0.6.11
 [debug] 	found org.scala-js#scalajs-library_2.11;0.6.11 in sbt-chain
 [debug] 	[0.6.11] org.scala-js#scalajs-library_2.11;0.6.11
@@ -32,7 +32,7 @@
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-js#scalajs-library_2.11;0.6.11 [compile->master]
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-js#scalajs-dom_sjs0.6_2.11;0.9.0 [compile->default(compile)]
 [info] Resolving org.scala-js#scalajs-dom_sjs0.6_2.11;0.9.0 ...
-[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@4b62e2a9
+[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@58e8bd50
 [debug] sbt-chain: module revision found in cache: org.scala-js#scalajs-dom_sjs0.6_2.11;0.9.0
 [debug] 	found org.scala-js#scalajs-dom_sjs0.6_2.11;0.9.0 in sbt-chain
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-js#scalajs-dom_sjs0.6_2.11;0.9.0 [compile->runtime]
@@ -40,7 +40,7 @@
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-js#scalajs-dom_sjs0.6_2.11;0.9.0 [compile->master]
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->be.doeraene#scalajs-jquery_sjs0.6_2.11;0.9.0 [compile->default(compile)]
 [info] Resolving be.doeraene#scalajs-jquery_sjs0.6_2.11;0.9.0 ...
-[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@73ea8698
+[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@634bb373
 [debug] sbt-chain: module revision found in cache: be.doeraene#scalajs-jquery_sjs0.6_2.11;0.9.0
 [debug] 	found be.doeraene#scalajs-jquery_sjs0.6_2.11;0.9.0 in sbt-chain
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->be.doeraene#scalajs-jquery_sjs0.6_2.11;0.9.0 [compile->runtime]
@@ -155,7 +155,7 @@
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->be.doeraene#scalajs-jquery_sjs0.6_2.11;0.9.0 [test->master]
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-js#scalajs-test-interface_2.11;0.6.11 [test->default(compile)]
 [info] Resolving org.scala-js#scalajs-test-interface_2.11;0.6.11 ...
-[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@4c95c58
+[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@2c24dffd
 [debug] sbt-chain: module revision found in cache: org.scala-js#scalajs-test-interface_2.11;0.6.11
 [debug] 	found org.scala-js#scalajs-test-interface_2.11;0.6.11 in sbt-chain
 [debug] 	[0.6.11] org.scala-js#scalajs-test-interface_2.11;0.6.11
@@ -388,7 +388,7 @@
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-js#scalajs-compiler_2.11.8;0.6.11 [plugin->master]
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-lang#scala-compiler;2.11.8 [plugin->default(compile)]
 [info] Resolving org.scala-lang#scala-compiler;2.11.8 ...
-[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@7bd0a73a
+[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@e4ab137
 [debug] sbt-chain: module revision found in cache: org.scala-lang#scala-compiler;2.11.8
 [debug] 	found org.scala-lang#scala-compiler;2.11.8 in sbt-chain
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-lang#scala-compiler;2.11.8 [plugin->runtime]
@@ -396,7 +396,7 @@
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-lang#scala-compiler;2.11.8 [plugin->master]
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-lang#scala-reflect;2.11.8 [plugin->default(compile)]
 [info] Resolving org.scala-lang#scala-reflect;2.11.8 ...
-[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@6192cb02
+[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@7c7ba5f2
 [debug] sbt-chain: module revision found in cache: org.scala-lang#scala-reflect;2.11.8
 [debug] 	found org.scala-lang#scala-reflect;2.11.8 in sbt-chain
 [debug] 	[2.11.8] org.scala-lang#scala-reflect;2.11.8
@@ -405,7 +405,7 @@
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-lang#scala-reflect;2.11.8 [plugin->master]
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-lang.modules#scala-xml_2.11;1.0.4 [plugin->default(compile)]
 [info] Resolving org.scala-lang.modules#scala-xml_2.11;1.0.4 ...
-[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@261627ce
+[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@48a468b0
 [debug] sbt-chain: module revision found in cache: org.scala-lang.modules#scala-xml_2.11;1.0.4
 [debug] 	found org.scala-lang.modules#scala-xml_2.11;1.0.4 in sbt-chain
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-lang.modules#scala-xml_2.11;1.0.4 [plugin->runtime]
@@ -413,7 +413,7 @@
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-lang.modules#scala-xml_2.11;1.0.4 [plugin->master]
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-lang.modules#scala-parser-combinators_2.11;1.0.4 [plugin->default(compile)]
 [info] Resolving org.scala-lang.modules#scala-parser-combinators_2.11;1.0.4 ...
-[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@106af5bc
+[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@1c30f5fc
 [debug] sbt-chain: module revision found in cache: org.scala-lang.modules#scala-parser-combinators_2.11;1.0.4
 [debug] 	found org.scala-lang.modules#scala-parser-combinators_2.11;1.0.4 in sbt-chain
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-lang.modules#scala-parser-combinators_2.11;1.0.4 [plugin->runtime]
@@ -515,43 +515,162 @@
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.eclipse.jetty#jetty-continuation;8.1.16.v20140903 [phantom-js-jetty->master]
 [debug] 	resolved ivy file produced in cache
 [debug] :: downloading artifacts ::
+[debug] 		tried /Users/almightykim/.ivy2/local/org.scala-lang/scala-library/2.11.8/srcs/scala-library-sources.jar
 [debug] 	[NOT REQUIRED] org.scala-lang#scala-library;2.11.8!scala-library.jar
-[debug] 	[NOT REQUIRED] org.scala-lang#scala-library;2.11.8!scala-library.jar(src)
+[debug] 		tried https://repo1.maven.org/maven2/org/scala-lang/scala-library/2.11.8/scala-library-2.11.8-sources.jar
+[info] downloading https://repo1.maven.org/maven2/org/scala-lang/scala-library/2.11.8/scala-library-2.11.8-sources.jar ...
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/scala-lang/scala-library/2.11.8/scala-library-2.11.8-sources.jar
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/scala-lang/scala-library/2.11.8/scala-library-2.11.8-sources.jar.sha1
+[debug] sha1 OK for https://repo1.maven.org/maven2/org/scala-lang/scala-library/2.11.8/scala-library-2.11.8-sources.jar
+[info] 	[SUCCESSFUL ] org.scala-lang#scala-library;2.11.8!scala-library.jar(src) (1564ms)
 [debug] 	[NOT REQUIRED] org.webjars#jquery;2.2.4!jquery.jar
 [debug] 		tried /Users/almightykim/.ivy2/local/org.webjars/jquery/2.2.4/srcs/jquery-sources.jar
-[debug] 		tried https://jcenter.bintray.com/org/webjars/jquery/2.2.4/jquery-2.2.4-sources.jar
-[info] downloading https://jcenter.bintray.com/org/webjars/jquery/2.2.4/jquery-2.2.4-sources.jar ...
-[debug] 	jcenter: downloading https://jcenter.bintray.com/org/webjars/jquery/2.2.4/jquery-2.2.4-sources.jar
-[debug] CLIENT ERROR: Not Found url=https://jcenter.bintray.com/org/webjars/jquery/2.2.4/jquery-2.2.4-sources.jar.sha1
-[debug] 	jcenter: downloading https://jcenter.bintray.com/org/webjars/jquery/2.2.4/jquery-2.2.4-sources.jar.md5
-[debug] md5 OK for https://jcenter.bintray.com/org/webjars/jquery/2.2.4/jquery-2.2.4-sources.jar
-[info] 	[SUCCESSFUL ] org.webjars#jquery;2.2.4!jquery.jar(src) (7996ms)
+[debug] 		tried https://repo1.maven.org/maven2/org/webjars/jquery/2.2.4/jquery-2.2.4-sources.jar
+[info] downloading https://repo1.maven.org/maven2/org/webjars/jquery/2.2.4/jquery-2.2.4-sources.jar ...
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/webjars/jquery/2.2.4/jquery-2.2.4-sources.jar
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/webjars/jquery/2.2.4/jquery-2.2.4-sources.jar.sha1
+[debug] sha1 OK for https://repo1.maven.org/maven2/org/webjars/jquery/2.2.4/jquery-2.2.4-sources.jar
+[info] 	[SUCCESSFUL ] org.webjars#jquery;2.2.4!jquery.jar(src) (1264ms)
 [debug] 	[NOT REQUIRED] org.scala-js#scalajs-library_2.11;0.6.11!scalajs-library_2.11.jar
-[debug] 	[NOT REQUIRED] org.scala-js#scalajs-library_2.11;0.6.11!scalajs-library_2.11.jar(src)
-[debug] 	[NOT REQUIRED] org.scala-js#scalajs-dom_sjs0.6_2.11;0.9.0!scalajs-dom_sjs0.6_2.11.jar(src)
+[debug] 		tried /Users/almightykim/.ivy2/local/org.scala-js/scalajs-library_2.11/0.6.11/srcs/scalajs-library_2.11-sources.jar
+[debug] 		tried https://repo1.maven.org/maven2/org/scala-js/scalajs-library_2.11/0.6.11/scalajs-library_2.11-0.6.11-sources.jar
+[info] downloading https://repo1.maven.org/maven2/org/scala-js/scalajs-library_2.11/0.6.11/scalajs-library_2.11-0.6.11-sources.jar ...
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/scala-js/scalajs-library_2.11/0.6.11/scalajs-library_2.11-0.6.11-sources.jar
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/scala-js/scalajs-library_2.11/0.6.11/scalajs-library_2.11-0.6.11-sources.jar.sha1
+[debug] sha1 OK for https://repo1.maven.org/maven2/org/scala-js/scalajs-library_2.11/0.6.11/scalajs-library_2.11-0.6.11-sources.jar
+[info] 	[SUCCESSFUL ] org.scala-js#scalajs-library_2.11;0.6.11!scalajs-library_2.11.jar(src) (1400ms)
+[debug] 		tried /Users/almightykim/.ivy2/local/org.scala-js/scalajs-dom_sjs0.6_2.11/0.9.0/srcs/scalajs-dom_sjs0.6_2.11-sources.jar
 [debug] 	[NOT REQUIRED] org.scala-js#scalajs-dom_sjs0.6_2.11;0.9.0!scalajs-dom_sjs0.6_2.11.jar
+[debug] 		tried https://repo1.maven.org/maven2/org/scala-js/scalajs-dom_sjs0.6_2.11/0.9.0/scalajs-dom_sjs0.6_2.11-0.9.0-sources.jar
+[info] downloading https://repo1.maven.org/maven2/org/scala-js/scalajs-dom_sjs0.6_2.11/0.9.0/scalajs-dom_sjs0.6_2.11-0.9.0-sources.jar ...
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/scala-js/scalajs-dom_sjs0.6_2.11/0.9.0/scalajs-dom_sjs0.6_2.11-0.9.0-sources.jar
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/scala-js/scalajs-dom_sjs0.6_2.11/0.9.0/scalajs-dom_sjs0.6_2.11-0.9.0-sources.jar.sha1
+[debug] sha1 OK for https://repo1.maven.org/maven2/org/scala-js/scalajs-dom_sjs0.6_2.11/0.9.0/scalajs-dom_sjs0.6_2.11-0.9.0-sources.jar
+[info] 	[SUCCESSFUL ] org.scala-js#scalajs-dom_sjs0.6_2.11;0.9.0!scalajs-dom_sjs0.6_2.11.jar(src) (2060ms)
 [debug] 	[NOT REQUIRED] be.doeraene#scalajs-jquery_sjs0.6_2.11;0.9.0!scalajs-jquery_sjs0.6_2.11.jar
-[debug] 	[NOT REQUIRED] be.doeraene#scalajs-jquery_sjs0.6_2.11;0.9.0!scalajs-jquery_sjs0.6_2.11.jar(src)
+[debug] 		tried /Users/almightykim/.ivy2/local/be.doeraene/scalajs-jquery_sjs0.6_2.11/0.9.0/srcs/scalajs-jquery_sjs0.6_2.11-sources.jar
+[debug] 		tried https://repo1.maven.org/maven2/be/doeraene/scalajs-jquery_sjs0.6_2.11/0.9.0/scalajs-jquery_sjs0.6_2.11-0.9.0-sources.jar
+[info] downloading https://repo1.maven.org/maven2/be/doeraene/scalajs-jquery_sjs0.6_2.11/0.9.0/scalajs-jquery_sjs0.6_2.11-0.9.0-sources.jar ...
+[debug] 	public: downloading https://repo1.maven.org/maven2/be/doeraene/scalajs-jquery_sjs0.6_2.11/0.9.0/scalajs-jquery_sjs0.6_2.11-0.9.0-sources.jar
+[debug] 	public: downloading https://repo1.maven.org/maven2/be/doeraene/scalajs-jquery_sjs0.6_2.11/0.9.0/scalajs-jquery_sjs0.6_2.11-0.9.0-sources.jar.sha1
+[debug] sha1 OK for https://repo1.maven.org/maven2/be/doeraene/scalajs-jquery_sjs0.6_2.11/0.9.0/scalajs-jquery_sjs0.6_2.11-0.9.0-sources.jar
+[info] 	[SUCCESSFUL ] be.doeraene#scalajs-jquery_sjs0.6_2.11;0.9.0!scalajs-jquery_sjs0.6_2.11.jar(src) (1377ms)
 [debug] 	[NOT REQUIRED] org.scala-js#scalajs-test-interface_2.11;0.6.11!scalajs-test-interface_2.11.jar
-[debug] 	[NOT REQUIRED] org.scala-js#scalajs-test-interface_2.11;0.6.11!scalajs-test-interface_2.11.jar(src)
-[debug] 	[NOT REQUIRED] org.scala-js#scalajs-compiler_2.11.8;0.6.11!scalajs-compiler_2.11.8.jar(src)
+[debug] 		tried /Users/almightykim/.ivy2/local/org.scala-js/scalajs-test-interface_2.11/0.6.11/srcs/scalajs-test-interface_2.11-sources.jar
+[debug] 		tried https://repo1.maven.org/maven2/org/scala-js/scalajs-test-interface_2.11/0.6.11/scalajs-test-interface_2.11-0.6.11-sources.jar
+[info] downloading https://repo1.maven.org/maven2/org/scala-js/scalajs-test-interface_2.11/0.6.11/scalajs-test-interface_2.11-0.6.11-sources.jar ...
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/scala-js/scalajs-test-interface_2.11/0.6.11/scalajs-test-interface_2.11-0.6.11-sources.jar
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/scala-js/scalajs-test-interface_2.11/0.6.11/scalajs-test-interface_2.11-0.6.11-sources.jar.sha1
+[debug] sha1 OK for https://repo1.maven.org/maven2/org/scala-js/scalajs-test-interface_2.11/0.6.11/scalajs-test-interface_2.11-0.6.11-sources.jar
+[info] 	[SUCCESSFUL ] org.scala-js#scalajs-test-interface_2.11;0.6.11!scalajs-test-interface_2.11.jar(src) (1299ms)
+[debug] 		tried /Users/almightykim/.ivy2/local/org.scala-js/scalajs-compiler_2.11.8/0.6.11/srcs/scalajs-compiler_2.11.8-sources.jar
+[debug] 		tried https://repo1.maven.org/maven2/org/scala-js/scalajs-compiler_2.11.8/0.6.11/scalajs-compiler_2.11.8-0.6.11-sources.jar
+[info] downloading https://repo1.maven.org/maven2/org/scala-js/scalajs-compiler_2.11.8/0.6.11/scalajs-compiler_2.11.8-0.6.11-sources.jar ...
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/scala-js/scalajs-compiler_2.11.8/0.6.11/scalajs-compiler_2.11.8-0.6.11-sources.jar
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/scala-js/scalajs-compiler_2.11.8/0.6.11/scalajs-compiler_2.11.8-0.6.11-sources.jar.sha1
+[debug] sha1 OK for https://repo1.maven.org/maven2/org/scala-js/scalajs-compiler_2.11.8/0.6.11/scalajs-compiler_2.11.8-0.6.11-sources.jar
+[info] 	[SUCCESSFUL ] org.scala-js#scalajs-compiler_2.11.8;0.6.11!scalajs-compiler_2.11.8.jar(src) (1840ms)
+[debug] 		tried /Users/almightykim/.ivy2/local/org.scala-lang/scala-compiler/2.11.8/srcs/scala-compiler-sources.jar
 [debug] 	[NOT REQUIRED] org.scala-lang#scala-compiler;2.11.8!scala-compiler.jar
-[debug] 	[NOT REQUIRED] org.scala-lang#scala-compiler;2.11.8!scala-compiler.jar(src)
-[debug] 	[NOT REQUIRED] org.scala-lang#scala-reflect;2.11.8!scala-reflect.jar(src)
+[debug] 		tried https://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.11.8/scala-compiler-2.11.8-sources.jar
+[info] downloading https://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.11.8/scala-compiler-2.11.8-sources.jar ...
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.11.8/scala-compiler-2.11.8-sources.jar
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.11.8/scala-compiler-2.11.8-sources.jar.sha1
+[debug] sha1 OK for https://repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.11.8/scala-compiler-2.11.8-sources.jar
+[info] 	[SUCCESSFUL ] org.scala-lang#scala-compiler;2.11.8!scala-compiler.jar(src) (3356ms)
 [debug] 	[NOT REQUIRED] org.scala-lang#scala-reflect;2.11.8!scala-reflect.jar
-[debug] 	[NOT REQUIRED] org.scala-lang.modules#scala-xml_2.11;1.0.4!scala-xml_2.11.jar(src)
-[debug] 	[NOT REQUIRED] org.scala-lang.modules#scala-xml_2.11;1.0.4!scala-xml_2.11.jar
-[debug] 	[NOT REQUIRED] org.scala-lang.modules#scala-parser-combinators_2.11;1.0.4!scala-parser-combinators_2.11.jar(src)
-[debug] 	[NOT REQUIRED] org.scala-lang.modules#scala-parser-combinators_2.11;1.0.4!scala-parser-combinators_2.11.jar
-[debug] 	[NOT REQUIRED] jline#jline;2.12.1!jline.jar(src)
-[debug] 	[NOT REQUIRED] org.eclipse.jetty#jetty-websocket;8.1.16.v20140903!jetty-websocket.jar(src)
-[debug] 	[NOT REQUIRED] org.eclipse.jetty#jetty-util;8.1.16.v20140903!jetty-util.jar(src)
-[debug] 	[NOT REQUIRED] org.eclipse.jetty#jetty-io;8.1.16.v20140903!jetty-io.jar(src)
-[debug] 	[NOT REQUIRED] org.eclipse.jetty#jetty-http;8.1.16.v20140903!jetty-http.jar(src)
-[debug] 	[NOT REQUIRED] org.eclipse.jetty#jetty-server;8.1.16.v20140903!jetty-server.jar(src)
-[debug] 	[NOT REQUIRED] org.eclipse.jetty.orbit#javax.servlet;3.0.0.v201112011016!javax.servlet.jar(src)
-[debug] 	[NOT REQUIRED] org.eclipse.jetty#jetty-continuation;8.1.16.v20140903!jetty-continuation.jar(src)
-[debug] :: resolution report :: resolve 94ms :: artifacts dl 8015ms
+[debug] 		tried /Users/almightykim/.ivy2/local/org.scala-lang/scala-reflect/2.11.8/srcs/scala-reflect-sources.jar
+[debug] 		tried https://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.11.8/scala-reflect-2.11.8-sources.jar
+[info] downloading https://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.11.8/scala-reflect-2.11.8-sources.jar ...
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.11.8/scala-reflect-2.11.8-sources.jar
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.11.8/scala-reflect-2.11.8-sources.jar.sha1
+[debug] sha1 OK for https://repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.11.8/scala-reflect-2.11.8-sources.jar
+[info] 	[SUCCESSFUL ] org.scala-lang#scala-reflect;2.11.8!scala-reflect.jar(src) (2031ms)
+[debug] 		tried /Users/almightykim/.ivy2/local/org.scala-lang.modules/scala-xml_2.11/1.0.4/srcs/scala-xml_2.11-sources.jar
+[debug] 		tried /Users/almightykim/.ivy2/local/org.scala-lang.modules/scala-xml_2.11/1.0.4/jars/scala-xml_2.11.jar
+[debug] 		tried https://repo1.maven.org/maven2/org/scala-lang/modules/scala-xml_2.11/1.0.4/scala-xml_2.11-1.0.4-sources.jar
+[info] downloading https://repo1.maven.org/maven2/org/scala-lang/modules/scala-xml_2.11/1.0.4/scala-xml_2.11-1.0.4-sources.jar ...
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/scala-lang/modules/scala-xml_2.11/1.0.4/scala-xml_2.11-1.0.4-sources.jar
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/scala-lang/modules/scala-xml_2.11/1.0.4/scala-xml_2.11-1.0.4-sources.jar.sha1
+[debug] sha1 OK for https://repo1.maven.org/maven2/org/scala-lang/modules/scala-xml_2.11/1.0.4/scala-xml_2.11-1.0.4-sources.jar
+[info] 	[SUCCESSFUL ] org.scala-lang.modules#scala-xml_2.11;1.0.4!scala-xml_2.11.jar(src) (1552ms)
+[debug] 		tried https://repo1.maven.org/maven2/org/scala-lang/modules/scala-xml_2.11/1.0.4/scala-xml_2.11-1.0.4.jar
+[info] downloading https://repo1.maven.org/maven2/org/scala-lang/modules/scala-xml_2.11/1.0.4/scala-xml_2.11-1.0.4.jar ...
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/scala-lang/modules/scala-xml_2.11/1.0.4/scala-xml_2.11-1.0.4.jar
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/scala-lang/modules/scala-xml_2.11/1.0.4/scala-xml_2.11-1.0.4.jar.sha1
+[debug] sha1 OK for https://repo1.maven.org/maven2/org/scala-lang/modules/scala-xml_2.11/1.0.4/scala-xml_2.11-1.0.4.jar
+[info] 	[SUCCESSFUL ] org.scala-lang.modules#scala-xml_2.11;1.0.4!scala-xml_2.11.jar (1275ms)
+[debug] 		tried /Users/almightykim/.ivy2/local/org.scala-lang.modules/scala-parser-combinators_2.11/1.0.4/srcs/scala-parser-combinators_2.11-sources.jar
+[debug] 		tried /Users/almightykim/.ivy2/local/org.scala-lang.modules/scala-parser-combinators_2.11/1.0.4/jars/scala-parser-combinators_2.11.jar
+[debug] 		tried https://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.4/scala-parser-combinators_2.11-1.0.4-sources.jar
+[info] downloading https://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.4/scala-parser-combinators_2.11-1.0.4-sources.jar ...
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.4/scala-parser-combinators_2.11-1.0.4-sources.jar
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.4/scala-parser-combinators_2.11-1.0.4-sources.jar.sha1
+[debug] sha1 OK for https://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.4/scala-parser-combinators_2.11-1.0.4-sources.jar
+[info] 	[SUCCESSFUL ] org.scala-lang.modules#scala-parser-combinators_2.11;1.0.4!scala-parser-combinators_2.11.jar(src) (1163ms)
+[debug] 		tried https://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.4/scala-parser-combinators_2.11-1.0.4.jar
+[info] downloading https://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.4/scala-parser-combinators_2.11-1.0.4.jar ...
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.4/scala-parser-combinators_2.11-1.0.4.jar
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.4/scala-parser-combinators_2.11-1.0.4.jar.sha1
+[debug] sha1 OK for https://repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.11/1.0.4/scala-parser-combinators_2.11-1.0.4.jar
+[info] 	[SUCCESSFUL ] org.scala-lang.modules#scala-parser-combinators_2.11;1.0.4!scala-parser-combinators_2.11.jar (1039ms)
+[debug] 		tried /Users/almightykim/.ivy2/local/jline/jline/2.12.1/srcs/jline-sources.jar
+[debug] 		tried https://repo1.maven.org/maven2/jline/jline/2.12.1/jline-2.12.1-sources.jar
+[info] downloading https://repo1.maven.org/maven2/jline/jline/2.12.1/jline-2.12.1-sources.jar ...
+[debug] 	public: downloading https://repo1.maven.org/maven2/jline/jline/2.12.1/jline-2.12.1-sources.jar
+[debug] 	public: downloading https://repo1.maven.org/maven2/jline/jline/2.12.1/jline-2.12.1-sources.jar.sha1
+[debug] sha1 OK for https://repo1.maven.org/maven2/jline/jline/2.12.1/jline-2.12.1-sources.jar
+[info] 	[SUCCESSFUL ] jline#jline;2.12.1!jline.jar(src) (1696ms)
+[debug] 		tried /Users/almightykim/.ivy2/local/org.eclipse.jetty/jetty-websocket/8.1.16.v20140903/srcs/jetty-websocket-sources.jar
+[debug] 		tried https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-websocket/8.1.16.v20140903/jetty-websocket-8.1.16.v20140903-sources.jar
+[info] downloading https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-websocket/8.1.16.v20140903/jetty-websocket-8.1.16.v20140903-sources.jar ...
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-websocket/8.1.16.v20140903/jetty-websocket-8.1.16.v20140903-sources.jar
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-websocket/8.1.16.v20140903/jetty-websocket-8.1.16.v20140903-sources.jar.sha1
+[debug] sha1 OK for https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-websocket/8.1.16.v20140903/jetty-websocket-8.1.16.v20140903-sources.jar
+[info] 	[SUCCESSFUL ] org.eclipse.jetty#jetty-websocket;8.1.16.v20140903!jetty-websocket.jar(src) (1785ms)
+[debug] 		tried /Users/almightykim/.ivy2/local/org.eclipse.jetty/jetty-util/8.1.16.v20140903/srcs/jetty-util-sources.jar
+[debug] 		tried https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-util/8.1.16.v20140903/jetty-util-8.1.16.v20140903-sources.jar
+[info] downloading https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-util/8.1.16.v20140903/jetty-util-8.1.16.v20140903-sources.jar ...
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-util/8.1.16.v20140903/jetty-util-8.1.16.v20140903-sources.jar
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-util/8.1.16.v20140903/jetty-util-8.1.16.v20140903-sources.jar.sha1
+[debug] sha1 OK for https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-util/8.1.16.v20140903/jetty-util-8.1.16.v20140903-sources.jar
+[info] 	[SUCCESSFUL ] org.eclipse.jetty#jetty-util;8.1.16.v20140903!jetty-util.jar(src) (1675ms)
+[debug] 		tried /Users/almightykim/.ivy2/local/org.eclipse.jetty/jetty-io/8.1.16.v20140903/srcs/jetty-io-sources.jar
+[debug] 		tried https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-io/8.1.16.v20140903/jetty-io-8.1.16.v20140903-sources.jar
+[info] downloading https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-io/8.1.16.v20140903/jetty-io-8.1.16.v20140903-sources.jar ...
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-io/8.1.16.v20140903/jetty-io-8.1.16.v20140903-sources.jar
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-io/8.1.16.v20140903/jetty-io-8.1.16.v20140903-sources.jar.sha1
+[debug] sha1 OK for https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-io/8.1.16.v20140903/jetty-io-8.1.16.v20140903-sources.jar
+[info] 	[SUCCESSFUL ] org.eclipse.jetty#jetty-io;8.1.16.v20140903!jetty-io.jar(src) (1682ms)
+[debug] 		tried /Users/almightykim/.ivy2/local/org.eclipse.jetty/jetty-http/8.1.16.v20140903/srcs/jetty-http-sources.jar
+[debug] 		tried https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-http/8.1.16.v20140903/jetty-http-8.1.16.v20140903-sources.jar
+[info] downloading https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-http/8.1.16.v20140903/jetty-http-8.1.16.v20140903-sources.jar ...
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-http/8.1.16.v20140903/jetty-http-8.1.16.v20140903-sources.jar
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-http/8.1.16.v20140903/jetty-http-8.1.16.v20140903-sources.jar.sha1
+[debug] sha1 OK for https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-http/8.1.16.v20140903/jetty-http-8.1.16.v20140903-sources.jar
+[info] 	[SUCCESSFUL ] org.eclipse.jetty#jetty-http;8.1.16.v20140903!jetty-http.jar(src) (1695ms)
+[debug] 		tried /Users/almightykim/.ivy2/local/org.eclipse.jetty/jetty-server/8.1.16.v20140903/srcs/jetty-server-sources.jar
+[debug] 		tried https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-server/8.1.16.v20140903/jetty-server-8.1.16.v20140903-sources.jar
+[info] downloading https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-server/8.1.16.v20140903/jetty-server-8.1.16.v20140903-sources.jar ...
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-server/8.1.16.v20140903/jetty-server-8.1.16.v20140903-sources.jar
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-server/8.1.16.v20140903/jetty-server-8.1.16.v20140903-sources.jar.sha1
+[debug] sha1 OK for https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-server/8.1.16.v20140903/jetty-server-8.1.16.v20140903-sources.jar
+[info] 	[SUCCESSFUL ] org.eclipse.jetty#jetty-server;8.1.16.v20140903!jetty-server.jar(src) (1660ms)
+[debug] 		tried /Users/almightykim/.ivy2/local/org.eclipse.jetty.orbit/javax.servlet/3.0.0.v201112011016/srcs/javax.servlet-sources.jar
+[debug] 		tried https://repo1.maven.org/maven2/org/eclipse/jetty/orbit/javax.servlet/3.0.0.v201112011016/javax.servlet-3.0.0.v201112011016-sources.jar
+[info] downloading https://repo1.maven.org/maven2/org/eclipse/jetty/orbit/javax.servlet/3.0.0.v201112011016/javax.servlet-3.0.0.v201112011016-sources.jar ...
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/eclipse/jetty/orbit/javax.servlet/3.0.0.v201112011016/javax.servlet-3.0.0.v201112011016-sources.jar
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/eclipse/jetty/orbit/javax.servlet/3.0.0.v201112011016/javax.servlet-3.0.0.v201112011016-sources.jar.sha1
+[debug] sha1 OK for https://repo1.maven.org/maven2/org/eclipse/jetty/orbit/javax.servlet/3.0.0.v201112011016/javax.servlet-3.0.0.v201112011016-sources.jar
+[info] 	[SUCCESSFUL ] org.eclipse.jetty.orbit#javax.servlet;3.0.0.v201112011016!javax.servlet.jar(src) (1848ms)
+[debug] 		tried /Users/almightykim/.ivy2/local/org.eclipse.jetty/jetty-continuation/8.1.16.v20140903/srcs/jetty-continuation-sources.jar
+[debug] 		tried https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-continuation/8.1.16.v20140903/jetty-continuation-8.1.16.v20140903-sources.jar
+[info] downloading https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-continuation/8.1.16.v20140903/jetty-continuation-8.1.16.v20140903-sources.jar ...
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-continuation/8.1.16.v20140903/jetty-continuation-8.1.16.v20140903-sources.jar
+[debug] 	public: downloading https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-continuation/8.1.16.v20140903/jetty-continuation-8.1.16.v20140903-sources.jar.sha1
+[debug] sha1 OK for https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-continuation/8.1.16.v20140903/jetty-continuation-8.1.16.v20140903-sources.jar
+[info] 	[SUCCESSFUL ] org.eclipse.jetty#jetty-continuation;8.1.16.v20140903!jetty-continuation.jar(src) (1760ms)
+[debug] :: resolution report :: resolve 54ms :: artifacts dl 35035ms
 [debug] 	report for index-front#index-front$sources_sjs0.6_2.11;1.0 compile produced in /Users/almightykim/Workspace/INDEX-WEB/FRONTEND/target/resolution-cache/reports/index-front-index-front$sources_sjs0.6_2.11-compile.xml
 [debug] 	report for index-front#index-front$sources_sjs0.6_2.11;1.0 runtime produced in /Users/almightykim/Workspace/INDEX-WEB/FRONTEND/target/resolution-cache/reports/index-front-index-front$sources_sjs0.6_2.11-runtime.xml
 [debug] 	report for index-front#index-front$sources_sjs0.6_2.11;1.0 test produced in /Users/almightykim/Workspace/INDEX-WEB/FRONTEND/target/resolution-cache/reports/index-front-index-front$sources_sjs0.6_2.11-test.xml
@@ -566,4 +685,4 @@
 [debug] 	report for index-front#index-front$sources_sjs0.6_2.11;1.0 pom produced in /Users/almightykim/Workspace/INDEX-WEB/FRONTEND/target/resolution-cache/reports/index-front-index-front$sources_sjs0.6_2.11-pom.xml
 [debug] 	report for index-front#index-front$sources_sjs0.6_2.11;1.0 scala-tool produced in /Users/almightykim/Workspace/INDEX-WEB/FRONTEND/target/resolution-cache/reports/index-front-index-front$sources_sjs0.6_2.11-scala-tool.xml
 [debug] 	report for index-front#index-front$sources_sjs0.6_2.11;1.0 phantom-js-jetty produced in /Users/almightykim/Workspace/INDEX-WEB/FRONTEND/target/resolution-cache/reports/index-front-index-front$sources_sjs0.6_2.11-phantom-js-jetty.xml
-[debug] 	resolve done (94ms resolve - 8015ms download)
+[debug] 	resolve done (54ms resolve - 35035ms download)
