@@ -315,9 +315,6 @@ func updateRepo(repoDB *gorm.DB, config *config.Config, reqs map[string]string, 
         repoPage  string        = strings.TrimSpace(reqs["add-repo-url"])
     )
 
-    log.Info("Log Image link : " + logoImage)
-
-
     /* -------------------------------------------- Submit Error Checking ------------------------------------------- */
     /*                      These are the checks that prevents errors in submit process                               */
     /* -------------------------------------------------------------------------------------------------------------- */
