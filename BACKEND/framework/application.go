@@ -116,7 +116,7 @@ func (a *Application) Route(controller interface{}, route string) interface{} {
     return fn
 }
 
-func (application *Application) AddRoute(method func(c web.C, r *http.Request) (string, int)) interface{} {
+func (a *Application) AddRoute(method func(c web.C, r *http.Request) (string, int)) interface{} {
     fn := func(c web.C, w http.ResponseWriter, r *http.Request) {
         c.Env["Content-Type"] = "text/html"
 
