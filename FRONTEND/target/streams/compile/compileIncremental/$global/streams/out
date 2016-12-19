@@ -17,14 +17,14 @@
 [info] Compiling 1 Scala source to /Users/almightykim/Workspace/INDEX-WEB/FRONTEND/target/scala-2.11/classes...
 [debug] Getting compiler-interface from component compiler for Scala 2.11.8
 [debug] Getting compiler-interface from component compiler for Scala 2.11.8
-[debug] Running cached compiler 4672ae47, interfacing (CompilerInterface) with Scala compiler version 2.11.8
+[debug] Running cached compiler 6bd10ecb, interfacing (CompilerInterface) with Scala compiler version 2.11.8
 [debug] Calling Scala compiler with arguments  (CompilerInterface):
 [debug] 	-Xplugin:/Users/almightykim/.ivy2/cache/org.scala-js/scalajs-compiler_2.11.8/jars/scalajs-compiler_2.11.8-0.6.11.jar
 [debug] 	-bootclasspath
 [debug] 	/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/jre/lib/resources.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/jre/lib/rt.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/jre/lib/sunrsasign.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/jre/lib/jsse.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/jre/lib/jce.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/jre/lib/charsets.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/jre/lib/jfr.jar:/Library/Java/JavaVirtualMachines/jdk1.8.0_112.jdk/Contents/Home/jre/classes:/Users/almightykim/.ivy2/cache/org.scala-lang/scala-library/jars/scala-library-2.11.8.jar
 [debug] 	-classpath
 [debug] 	/Users/almightykim/Workspace/INDEX-WEB/FRONTEND/target/scala-2.11/classes:/Users/almightykim/.ivy2/cache/org.webjars/jquery/jars/jquery-2.2.4.jar:/Users/almightykim/.ivy2/cache/org.scala-js/scalajs-library_2.11/jars/scalajs-library_2.11-0.6.11.jar:/Users/almightykim/.ivy2/cache/org.scala-js/scalajs-dom_sjs0.6_2.11/jars/scalajs-dom_sjs0.6_2.11-0.9.0.jar:/Users/almightykim/.ivy2/cache/be.doeraene/scalajs-jquery_sjs0.6_2.11/jars/scalajs-jquery_sjs0.6_2.11-0.9.0.jar
-[debug] Scala compilation took 3.764968603 s
+[debug] Scala compilation took 0.711949646 s
 [debug] New invalidations:
 [debug] 	Set()
 [debug] Initial set of included nodes: Set()

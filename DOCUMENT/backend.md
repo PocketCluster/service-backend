@@ -1,4 +1,10 @@
 #Backend Config
+- Run asset server first
+  
+  ```sh
+  cd INDEX-WEB/STATIC/
+  python ../DOCUMENT/cors_server.py
+  ```
 
 - To run Backend with various options, start with `CONFIG_PATH` variable.
 

@@ -38,13 +38,16 @@ func accessGithubAPI(repoDB *gorm.DB, ctrl *control.Controller, repoModel *model
     forkCount      := int64(*repoData.ForksCount)
     watchCount     := int64(*repoData.SubscribersCount)
     updatedDate    := repoData.UpdatedAt.Time
-    wikiPage       := repoModel.RepoPage + "/wiki"
+    wikiPage       := ""
+    if util.SafeGetBool(repoData.HasWiki) {
+        wikiPage   = repoModel.RepoPage + "/wiki"
+    }
 
     repoModel.StarCount     = starCount
     repoModel.ForkCount     = forkCount
     repoModel.WatchCount    = watchCount
     repoModel.Updated       = updatedDate
-    if util.SafeGetBool(repoData.HasWiki) && repoModel.WikiPage != wikiPage {
+    if repoModel.WikiPage != wikiPage {
         repoModel.WikiPage = wikiPage
     }
     if repoModel.Branch != branch {

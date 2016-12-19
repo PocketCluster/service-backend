@@ -5,7 +5,7 @@ general:
 site:
   site_name: "INDEX DEV"
   site_url: "http://localhost:8000"
-  theme_link: "https://index.pocketcluster.io/theme"
+  theme_link: "http://localhost:9000"
 cookie:
   mac_secret: "secret string which has over 256-bit entropy"
   secure: false
