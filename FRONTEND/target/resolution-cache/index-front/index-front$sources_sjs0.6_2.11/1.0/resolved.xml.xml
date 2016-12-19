@@ -4,7 +4,7 @@
 		module="index-front$sources_sjs0.6_2.11"
 		revision="1.0"
 		status="integration"
-		publication="20161218192609"
+		publication="20161219090445"
 	/>
 	<configurations>
 		<conf name="compile" visibility="public" description=""/>

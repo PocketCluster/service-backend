@@ -4563,7 +4563,8 @@ function $m_sr_Statics$() {
 }
 /** @constructor */
 function $c_LRepository$() {
-  $c_O.call(this)
+  $c_O.call(this);
+  this.update$1 = false
 }
 $c_LRepository$.prototype = new $h_O();
 $c_LRepository$.prototype.constructor = $c_LRepository$;
@@ -4573,6 +4574,7 @@ function $h_LRepository$() {
 }
 $h_LRepository$.prototype = $c_LRepository$.prototype;
 $c_LRepository$.prototype.init___ = (function() {
+  this.update$1 = false;
   return this
 });
 $c_LRepository$.prototype.$$js$exported$meth$previewRepository__Lorg_scalajs_dom_raw_Event__O = (function(click) {
@@ -4592,9 +4594,9 @@ $c_LRepository$.prototype.previewRepository__Lorg_scalajs_dom_raw_Event__Z = (fu
   };
   var requests = $as_scm_Map($m_scm_Map$().apply__sc_Seq__sc_GenMap($m_sci_Nil$()));
   requests.update__O__O__V("add-repo-url", $objectToString((0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-url").val()));
-  requests.update__O__O__V("add-repo-category", $objectToString((0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("select#add-repo-category option:selected").val()));
+  requests.update__O__O__V("add-repo-cat", $objectToString((0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("select#add-repo-cat option:selected").val()));
   requests.update__O__O__V("add-repo-desc", $objectToString((0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-desc").val()));
-  requests.update__O__O__V("add-project-page", $objectToString((0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-project-page").val()));
+  requests.update__O__O__V("add-repo-proj", $objectToString((0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-proj").val()));
   requests.update__O__O__V("add-repo-logo", $objectToString((0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-logo").val()));
   var xhr = new $g.XMLHttpRequest();
   xhr.open("POST", "/pocketcluster/dashboard/repository/preview");
@@ -4618,8 +4620,12 @@ $c_LRepository$.prototype.previewRepository__Lorg_scalajs_dom_raw_Event__Z = (fu
           if ($s_sc_MapLike$class__contains__sc_MapLike__O__Z(results, "status")) {
             var x1 = $as_T(results.apply__O__O("status"));
             if ((x1 === "duplicated")) {
+              $m_LRepository$().update$1 = true;
               (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("div#add-repo-status").removeClass("panel-success").addClass("panel-warning").css("visibility", "visible");
-              return (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("div#add-repo-status div.panel-body").text($as_T(results.apply__O__O("reason")))
+              (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("div#add-repo-status div.panel-body").text($as_T(results.apply__O__O("reason")));
+              (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("select#add-repo-cat").val($as_T(results.apply__O__O("add-repo-cat")));
+              (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-proj").val($as_T(results.apply__O__O("add-repo-proj")));
+              return (0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-logo").val($as_T(results.apply__O__O("add-repo-logo")))
             } else {
               throw new $c_s_MatchError().init___O(x1)
             }
@@ -4694,14 +4700,18 @@ $c_LRepository$.prototype.submitRepository__Z = (function() {
   };
   var requests = $as_scm_Map($m_scm_Map$().apply__sc_Seq__sc_GenMap($m_sci_Nil$()));
   requests.update__O__O__V("add-repo-url", $objectToString((0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-url").val()));
-  requests.update__O__O__V("add-repo-category", $objectToString((0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("select#add-repo-category option:selected").val()));
+  requests.update__O__O__V("add-repo-cat", $objectToString((0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("select#add-repo-cat option:selected").val()));
   requests.update__O__O__V("add-repo-desc", $objectToString((0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-desc").val()));
-  requests.update__O__O__V("add-project-page", $objectToString((0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-project-page").val()));
+  requests.update__O__O__V("add-repo-proj", $objectToString((0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-proj").val()));
   requests.update__O__O__V("add-repo-logo", $objectToString((0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-logo").val()));
   requests.update__O__O__V("add-repo-title", $objectToString((0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-title").val()));
   requests.update__O__O__V("add-repo-slug", $objectToString((0, $m_Lorg_scalajs_jquery_package$().jQuery$1)("input#add-repo-slug").val()));
   var xhr = new $g.XMLHttpRequest();
-  xhr.open("POST", "/pocketcluster/dashboard/repository/submit");
+  var mode = "submit";
+  if (this.update$1) {
+    mode = "update"
+  };
+  xhr.open("POST", ("/pocketcluster/dashboard/repository/" + mode));
   xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
   xhr.onload = (function(xhr$2) {
     return (function(e$2) {
