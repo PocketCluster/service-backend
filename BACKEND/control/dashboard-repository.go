@@ -70,9 +70,9 @@ func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, i
     }
     case "update": {
         // Decode contributor API
-        contribs, _, err := ctrl.GetGithubContributorsStat(repoURL)
+        contribs, _, err := ctrl.GetGithubContributors(repoURL)
         if err != nil {
-            log.Error(trace.Wrap(err, "Retrieving repository failed " + util.SafeGetString(repo.HTMLURL)))
+            log.Error(trace.Wrap(err, "Retrieving repository contribution data failed " + util.SafeGetString(repo.HTMLURL)))
             return "", http.StatusNotFound
         }
         responses, err := updateRepo(ctrl.GetGORM(c), ctrl.Config, requests, repo, contribs)
@@ -88,9 +88,9 @@ func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, i
     }
     case "submit": {
         // Decode contributor API
-        contribs, _, err := ctrl.GetGithubContributorsStat(repoURL)
+        contribs, _, err := ctrl.GetGithubContributors(repoURL)
         if err != nil {
-            log.Error(trace.Wrap(err, "Retrieving repository failed " + util.SafeGetString(repo.HTMLURL)))
+            log.Error(trace.Wrap(err, "Retrieving repository contribution data failed " + util.SafeGetString(repo.HTMLURL)))
             return "", http.StatusNotFound
         }
         responses, err := submitRepo(ctrl.GetGORM(c), ctrl.Config, requests, repo, contribs)
@@ -108,7 +108,7 @@ func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, i
     return "{}", http.StatusNotFound
 }
 
-func submitRepo(repoDB *gorm.DB, config *config.Config, reqs map[string]string, repoData *github.Repository, ctribs []*github.ContributorStats) (map[string]interface{}, error) {
+func submitRepo(repoDB *gorm.DB, config *config.Config, reqs map[string]string, repoData *github.Repository, ctribs []*github.Contributor) (map[string]interface{}, error) {
     //TODO check validity of these variables
     var (
         // title
@@ -228,30 +228,23 @@ func submitRepo(repoDB *gorm.DB, config *config.Config, reqs map[string]string, 
     util.GithubReadmeScrap(repoPage, config.General.ReadmePath + slug + ".html")
 
     /* ------------------------------------------- Handle Contributor information ----------------------------------- */
-    for _, ctrb := range ctribs {
+    for _, cauthor := range ctribs {
         // contribution
-        if ctrb == nil {
-            log.Error(trace.Wrap(errors.New("Null contribution data. WTF?")))
-            continue
-        }
-
-        // contributor
-        cauthor := ctrb.Author
         if cauthor == nil {
-            log.Error(trace.Wrap(errors.New("Null contributor info")))
+            log.Error(trace.Wrap(errors.New("Null contribution data. WTF?")))
             continue
         }
 
         // user id
         cid, err := util.SafeGetInt(cauthor.ID)
         if err != nil {
-            log.Error(trace.Wrap(err, "Cannot parse the contributor id"))
+            log.Error(trace.Wrap(err, "Cannot access contributor ID"))
             continue
         }
         contribID := "gh" + strconv.Itoa(cid)
 
         // how many times this contributor has worked
-        cfactor, err := util.SafeGetInt(ctrb.Total)
+        cfactor, err := util.SafeGetInt(cauthor.Contributions)
         if err != nil {
             log.Error(trace.Wrap(err, "Cannot parse contribution count"))
             continue
@@ -296,7 +289,7 @@ func submitRepo(repoDB *gorm.DB, config *config.Config, reqs map[string]string, 
     }, nil
 }
 
-func updateRepo(repoDB *gorm.DB, config *config.Config, reqs map[string]string, repoData *github.Repository, ctribs []*github.ContributorStats) (map[string]interface{}, error) {
+func updateRepo(repoDB *gorm.DB, config *config.Config, reqs map[string]string, repoData *github.Repository, ctribs []*github.Contributor) (map[string]interface{}, error) {
     //TODO check validity of these variables
     var (
         // title
@@ -428,30 +421,23 @@ func updateRepo(repoDB *gorm.DB, config *config.Config, reqs map[string]string, 
     }
 
     /* ------------------------------------------- Handle Contributor information ----------------------------------- */
-    for _, ctrb := range ctribs {
+    for _, cauthor := range ctribs {
         // contribution
-        if ctrb == nil {
-            log.Error(trace.Wrap(errors.New("Null contribution data. WTF?")))
-            continue
-        }
-
-        // contributor
-        cauthor := ctrb.Author
         if cauthor == nil {
-            log.Error(trace.Wrap(errors.New("Null contributor info")))
+            log.Error(trace.Wrap(errors.New("Null contribution data. WTF?")))
             continue
         }
 
         // user id
         cid, err := util.SafeGetInt(cauthor.ID)
         if err != nil {
-            log.Error(trace.Wrap(err, "Cannot parse the contributor id"))
+            log.Error(trace.Wrap(err, "Cannot access contributor ID"))
             continue
         }
         contribID := "gh" + strconv.Itoa(cid)
 
         // how many times this contributor has worked
-        cfactor, err := util.SafeGetInt(ctrb.Total)
+        cfactor, err := util.SafeGetInt(cauthor.Contributions)
         if err != nil {
             log.Error(trace.Wrap(err, "Cannot parse contribution count"))
             continue

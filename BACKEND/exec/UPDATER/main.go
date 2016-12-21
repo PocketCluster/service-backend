@@ -57,34 +57,28 @@ func accessGithubAPI(repoDB *gorm.DB, ctrl *control.Controller, repoModel *model
 
     /* ------------------------------------------- Handle Contributor information ----------------------------------- */
     // contributors
-    ctribs, _, err := ctrl.GetGithubContributorsStat(repoModel.RepoPage)
+    ctribs, _, err := ctrl.GetGithubContributors(repoModel.RepoPage)
     if err != nil {
         return trace.Wrap(err, "Cannot access contributors data " + repoModel.RepoPage + err.Error())
     }
 
-    for _, ctrb := range ctribs {
+    for _, cauthor := range ctribs {
         // contribution
-        if ctrb == nil {
-            log.Error(trace.Wrap(errors.New("Null contribution data. WTF?")))
-            continue
-        }
-
-        // contributor
-        cauthor := ctrb.Author
         if cauthor == nil {
-            log.Error(trace.Wrap(errors.New("Null contributor info")))
+            log.Error(trace.Wrap(errors.New("Null contribution data. WTF?")))
             continue
         }
 
         // user id
         cid, err := util.SafeGetInt(cauthor.ID)
         if err != nil {
+            log.Error(trace.Wrap(err, "Cannot access contributor ID : " + err.Error()))
             continue
         }
         contribID := "gh" + strconv.Itoa(cid)
 
         // how many times this contributor has worked
-        cfactor, err := util.SafeGetInt(ctrb.Total)
+        cfactor, err := util.SafeGetInt(cauthor.Contributions)
         if err != nil {
             continue
         }

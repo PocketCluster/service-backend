@@ -59,7 +59,10 @@ func (ctrl *Controller) GetGithubContributors(repoURL string) ([]*github.Contrib
     if len(owner) == 0 || len(repo) == 0{
         return nil, nil, fmt.Errorf("[ERR] Invalid repository URL format")
     }
-    opts := &github.ListContributorsOptions{Anon: "true"}
+    // We'll execlude anonymous users as it doesn't provide much information
+    // https://developer.github.com/v3/repos/#list-contributors
+    //opts := &github.ListContributorsOptions{Anon: "true"}
+    opts := &github.ListContributorsOptions{}
     return ctrl.githubClient.Repositories.ListContributors(owner, repo, opts)
 }
 
