@@ -83,6 +83,15 @@
                         </span>
                     </div>
 
+                    {{#repo.WikiPage}}
+                        <div class="col-xs">
+                        <span>
+                            <strong>Wiki Page</strong><br/>
+                            <a href="{{repo.WikiPage}}">{{repo.WikiPage}}</a>
+                        </span>
+                        </div>
+                    {{/repo.WikiPage}}
+
                     {{#repo.ProjectPage}}
                     <div class="col-xs">
                         <span>
