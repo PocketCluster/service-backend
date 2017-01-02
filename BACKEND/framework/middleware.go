@@ -27,7 +27,7 @@ func (a *Application) ApplySessions(c *web.C, h http.Handler) http.Handler {
 
 func (a *Application) ApplyDbMap(c *web.C, h http.Handler) http.Handler {
     fn := func(w http.ResponseWriter, r *http.Request) {
-        c.Env["GORM"] = a.GORM
+        c.Env["GORM"] = a.MetaDB
         h.ServeHTTP(w, r)
     }
     return http.HandlerFunc(fn)

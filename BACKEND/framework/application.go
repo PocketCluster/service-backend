@@ -42,7 +42,7 @@ type Application struct {
     Config         *config.Config
     Template       *template.Template
     Store          *sessions.CookieStore
-    GORM           *gorm.DB
+    MetaDB         *gorm.DB
     CsrfProtection *csrfProtection
 }
 
@@ -67,7 +67,7 @@ func (a *Application) init() {
     // db.Model(&model.Repository{}).Related(&model.RepoVersion{})
     // db.Model(&model.Repository{}).Related(&model.RepoCommit{})
     // db.Model(&model.Repository{}).Related(&model.RepoLanguage{})
-    a.GORM = db;
+    a.MetaDB = db;
 
     a.CsrfProtection = &csrfProtection{
         Key:       a.Config.CSRF.Key,
