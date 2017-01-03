@@ -34,28 +34,27 @@
     <script type="text/javascript" src="{{THEME_LINK}}/js/jquery.infinitescroll.min.js"></script>
     <script type="text/javascript">
     $(document).ready(function() {
-        var grid = $('#index');
-        grid.imagesLoaded(function () {
-            grid.masonry({
-                columnWidth: '.card',
-                itemSelector: '.card'
-            });
+        var grid = $('#index').masonry({
+            columnWidth: '.card',
+            itemSelector: '.card',
+            percentPosition: true,
+            transitionDuration: 10
+        });
+        grid.imagesLoaded().progress( function() {
+            grid.masonry('layout');
         });
         grid.infinitescroll({
             navSelector: '#pagination',
             nextSelector: '#pagination a',
             itemSelector: '.card',
-            loadingText: 'Loading...'
+            loadingText: 'Loading...',
+            contentSelector : "#index",
         },
         function(elem) {
             grid.masonry('appended', elem);
-            grid.imagesLoaded(function () {
-                grid.masonry({
-                    columnWidth: '.card',
-                    itemSelector: '.card'
-                });
+            grid.imagesLoaded().progress( function() {
+                grid.masonry('layout');
             });
         });
-
     });
     </script>
