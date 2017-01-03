@@ -6,7 +6,7 @@
 [debug] == resolving dependencies for index-front#index-front$sources_sjs0.6_2.11;1.0 [compile]
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-lang#scala-library;2.11.8 [compile->default(compile)]
 [info] Resolving org.scala-lang#scala-library;2.11.8 ...
-[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@553af807
+[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@7b027b90
 [debug] sbt-chain: module revision found in cache: org.scala-lang#scala-library;2.11.8
 [debug] 	found org.scala-lang#scala-library;2.11.8 in sbt-chain
 [debug] 	[2.11.8] org.scala-lang#scala-library;2.11.8
@@ -15,7 +15,7 @@
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-lang#scala-library;2.11.8 [compile->master]
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.webjars#jquery;2.2.4 [compile->default(compile)]
 [info] Resolving org.webjars#jquery;2.2.4 ...
-[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@65159810
+[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@460a5d57
 [debug] sbt-chain: module revision found in cache: org.webjars#jquery;2.2.4
 [debug] 	found org.webjars#jquery;2.2.4 in sbt-chain
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.webjars#jquery;2.2.4 [compile->runtime]
@@ -23,7 +23,7 @@
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.webjars#jquery;2.2.4 [compile->master]
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-js#scalajs-library_2.11;0.6.11 [compile->default(compile)]
 [info] Resolving org.scala-js#scalajs-library_2.11;0.6.11 ...
-[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@3a76d7a1
+[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@312001ed
 [debug] sbt-chain: module revision found in cache: org.scala-js#scalajs-library_2.11;0.6.11
 [debug] 	found org.scala-js#scalajs-library_2.11;0.6.11 in sbt-chain
 [debug] 	[0.6.11] org.scala-js#scalajs-library_2.11;0.6.11
@@ -32,7 +32,7 @@
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-js#scalajs-library_2.11;0.6.11 [compile->master]
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-js#scalajs-dom_sjs0.6_2.11;0.9.0 [compile->default(compile)]
 [info] Resolving org.scala-js#scalajs-dom_sjs0.6_2.11;0.9.0 ...
-[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@80e516
+[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@3cd6a227
 [debug] sbt-chain: module revision found in cache: org.scala-js#scalajs-dom_sjs0.6_2.11;0.9.0
 [debug] 	found org.scala-js#scalajs-dom_sjs0.6_2.11;0.9.0 in sbt-chain
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-js#scalajs-dom_sjs0.6_2.11;0.9.0 [compile->runtime]
@@ -40,7 +40,7 @@
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-js#scalajs-dom_sjs0.6_2.11;0.9.0 [compile->master]
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->be.doeraene#scalajs-jquery_sjs0.6_2.11;0.9.0 [compile->default(compile)]
 [info] Resolving be.doeraene#scalajs-jquery_sjs0.6_2.11;0.9.0 ...
-[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@43d5f7af
+[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@7b5e362c
 [debug] sbt-chain: module revision found in cache: be.doeraene#scalajs-jquery_sjs0.6_2.11;0.9.0
 [debug] 	found be.doeraene#scalajs-jquery_sjs0.6_2.11;0.9.0 in sbt-chain
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->be.doeraene#scalajs-jquery_sjs0.6_2.11;0.9.0 [compile->runtime]
@@ -155,7 +155,7 @@
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->be.doeraene#scalajs-jquery_sjs0.6_2.11;0.9.0 [test->master]
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-js#scalajs-test-interface_2.11;0.6.11 [test->default(compile)]
 [info] Resolving org.scala-js#scalajs-test-interface_2.11;0.6.11 ...
-[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@3f25e82a
+[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@27c67995
 [debug] sbt-chain: module revision found in cache: org.scala-js#scalajs-test-interface_2.11;0.6.11
 [debug] 	found org.scala-js#scalajs-test-interface_2.11;0.6.11 in sbt-chain
 [debug] 	[0.6.11] org.scala-js#scalajs-test-interface_2.11;0.6.11
@@ -388,7 +388,7 @@
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-js#scalajs-compiler_2.11.8;0.6.11 [plugin->master]
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-lang#scala-compiler;2.11.8 [plugin->default(compile)]
 [info] Resolving org.scala-lang#scala-compiler;2.11.8 ...
-[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@26d8eaf
+[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@4754a151
 [debug] sbt-chain: module revision found in cache: org.scala-lang#scala-compiler;2.11.8
 [debug] 	found org.scala-lang#scala-compiler;2.11.8 in sbt-chain
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-lang#scala-compiler;2.11.8 [plugin->runtime]
@@ -396,7 +396,7 @@
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-lang#scala-compiler;2.11.8 [plugin->master]
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-lang#scala-reflect;2.11.8 [plugin->default(compile)]
 [info] Resolving org.scala-lang#scala-reflect;2.11.8 ...
-[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@23621103
+[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@36860462
 [debug] sbt-chain: module revision found in cache: org.scala-lang#scala-reflect;2.11.8
 [debug] 	found org.scala-lang#scala-reflect;2.11.8 in sbt-chain
 [debug] 	[2.11.8] org.scala-lang#scala-reflect;2.11.8
@@ -405,7 +405,7 @@
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-lang#scala-reflect;2.11.8 [plugin->master]
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-lang.modules#scala-xml_2.11;1.0.4 [plugin->default(compile)]
 [info] Resolving org.scala-lang.modules#scala-xml_2.11;1.0.4 ...
-[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@4555242a
+[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@63358674
 [debug] sbt-chain: module revision found in cache: org.scala-lang.modules#scala-xml_2.11;1.0.4
 [debug] 	found org.scala-lang.modules#scala-xml_2.11;1.0.4 in sbt-chain
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-lang.modules#scala-xml_2.11;1.0.4 [plugin->runtime]
@@ -413,7 +413,7 @@
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-lang.modules#scala-xml_2.11;1.0.4 [plugin->master]
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-lang.modules#scala-parser-combinators_2.11;1.0.4 [plugin->default(compile)]
 [info] Resolving org.scala-lang.modules#scala-parser-combinators_2.11;1.0.4 ...
-[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@fb794ef
+[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@378722d5
 [debug] sbt-chain: module revision found in cache: org.scala-lang.modules#scala-parser-combinators_2.11;1.0.4
 [debug] 	found org.scala-lang.modules#scala-parser-combinators_2.11;1.0.4 in sbt-chain
 [debug] == resolving dependencies index-front#index-front$sources_sjs0.6_2.11;1.0->org.scala-lang.modules#scala-parser-combinators_2.11;1.0.4 [plugin->runtime]
@@ -544,7 +544,7 @@
 [debug] 	[NOT REQUIRED] org.eclipse.jetty#jetty-server;8.1.16.v20140903!jetty-server.jar(src)
 [debug] 	[NOT REQUIRED] org.eclipse.jetty.orbit#javax.servlet;3.0.0.v201112011016!javax.servlet.jar(src)
 [debug] 	[NOT REQUIRED] org.eclipse.jetty#jetty-continuation;8.1.16.v20140903!jetty-continuation.jar(src)
-[debug] :: resolution report :: resolve 85ms :: artifacts dl 20ms
+[debug] :: resolution report :: resolve 278ms :: artifacts dl 15ms
 [debug] 	report for index-front#index-front$sources_sjs0.6_2.11;1.0 compile produced in /Users/almightykim/Workspace/INDEX-WEB/FRONTEND/target/resolution-cache/reports/index-front-index-front$sources_sjs0.6_2.11-compile.xml
 [debug] 	report for index-front#index-front$sources_sjs0.6_2.11;1.0 runtime produced in /Users/almightykim/Workspace/INDEX-WEB/FRONTEND/target/resolution-cache/reports/index-front-index-front$sources_sjs0.6_2.11-runtime.xml
 [debug] 	report for index-front#index-front$sources_sjs0.6_2.11;1.0 test produced in /Users/almightykim/Workspace/INDEX-WEB/FRONTEND/target/resolution-cache/reports/index-front-index-front$sources_sjs0.6_2.11-test.xml
@@ -559,4 +559,4 @@
 [debug] 	report for index-front#index-front$sources_sjs0.6_2.11;1.0 pom produced in /Users/almightykim/Workspace/INDEX-WEB/FRONTEND/target/resolution-cache/reports/index-front-index-front$sources_sjs0.6_2.11-pom.xml
 [debug] 	report for index-front#index-front$sources_sjs0.6_2.11;1.0 scala-tool produced in /Users/almightykim/Workspace/INDEX-WEB/FRONTEND/target/resolution-cache/reports/index-front-index-front$sources_sjs0.6_2.11-scala-tool.xml
 [debug] 	report for index-front#index-front$sources_sjs0.6_2.11;1.0 phantom-js-jetty produced in /Users/almightykim/Workspace/INDEX-WEB/FRONTEND/target/resolution-cache/reports/index-front-index-front$sources_sjs0.6_2.11-phantom-js-jetty.xml
-[debug] 	resolve done (85ms resolve - 20ms download)
+[debug] 	resolve done (278ms resolve - 15ms download)
