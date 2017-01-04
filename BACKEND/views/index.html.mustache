@@ -40,7 +40,7 @@
             columnWidth: '.card',
             itemSelector: '.card',
             percentPosition: true,
-            transitionDuration: 10
+            transitionDuration: 10,
         });
         grid.imagesLoaded().progress( function() {
             grid.masonry('layout');
@@ -56,7 +56,6 @@
             itemSelector: '.card',
         },
         function(elem) {
-
             grid.masonry('appended', elem);
             grid.imagesLoaded().progress( function() {
                 grid.masonry('layout');
