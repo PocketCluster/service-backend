@@ -23,7 +23,7 @@ func (ctrl *Controller) Repository(c web.C, r *http.Request) (string, int) {
         owner model.Author;
         contribs []model.Author;
         repoContribs []model.RepoContributor
-        db *gorm.DB = ctrl.GetGORM(c)
+        db *gorm.DB = ctrl.GetMetaDB(c)
         slug string = strings.ToLower(c.URLParams["repo"])
     )
     if len(slug) == 0 {

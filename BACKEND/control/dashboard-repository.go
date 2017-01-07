@@ -12,11 +12,15 @@ import (
     "github.com/gravitational/trace"
     "github.com/zenazn/goji/web"
     "github.com/jinzhu/gorm"
+    "github.com/boltdb/bolt"
     "github.com/google/go-github/github"
+    "gopkg.in/vmihailenco/msgpack.v2"
 
     "github.com/stkim1/BACKEND/model"
     "github.com/stkim1/BACKEND/util"
     "github.com/stkim1/BACKEND/config"
+
+    "github.com/davecgh/go-spew/spew"
 )
 
 const (
@@ -54,9 +58,87 @@ func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, i
         return "", http.StatusNotFound
     }
 
+// this is how we'll get lang/release/tag and save it to boltdb
+{
+    langs, _, err := ctrl.GetGithubRepoLanguages(repoURL)
+    if err != nil {
+        log.Error(trace.Wrap(err))
+        return "", http.StatusNotFound
+    }
+    log.Info(spew.Sdump(langs))
+
+    releases, _, err := ctrl.GetGithubAllReleases(repoURL)
+    if err != nil {
+        log.Info(err.Error())
+        log.Error(trace.Wrap(err))
+        return "", http.StatusNotFound
+    }
+    log.Info(spew.Sdump(releases))
+
+    tags, _, err := ctrl.GetGithubAllTags(repoURL)
+    if err != nil {
+        log.Info(err.Error())
+        log.Error(trace.Wrap(err))
+        return "", http.StatusNotFound
+    }
+    //log.Info(spew.Sdump(tags))
+
+    value, err := msgpack.Marshal(tags)
+    if err != nil {
+        log.Info(err.Error())
+    } else {
+        log.Info(spew.Sdump(value))
+    }
+
+
+    rid, err := util.SafeGetInt(repo.ID)
+    if err != nil {
+        log.Error("Cannot parse repository id")
+    }
+    repoID := "gh" + strconv.Itoa(rid)
+
+    var tagBucket = []byte("github-repo-tags")
+    var key = model.MakeTagEntryKey(repoID)
+
+    // store some data
+    err = ctrl.GetSuppleDB(c).Update(func(tx *bolt.Tx) error {
+        bucket, err := tx.CreateBucketIfNotExists(tagBucket)
+        if err != nil {
+            return err
+        }
+        err = bucket.Put(key, value)
+        if err != nil {
+            return err
+        }
+        return nil
+    })
+
+    if err != nil {
+        log.Error(err)
+    }
+
+    // retrieve the data
+    err = ctrl.GetSuppleDB(c).View(func(tx *bolt.Tx) error {
+        bucket := tx.Bucket(tagBucket)
+        if bucket == nil {
+            return fmt.Errorf("Bucket %q not found!", tagBucket)
+        }
+
+        val := bucket.Get(key)
+        log.Info(spew.Sdump(val))
+
+        return nil
+    })
+
+    if err != nil {
+        log.Error(err)
+    }
+}
+
+
     switch mode {
     case "preview": {
-        response, err := getPreview(ctrl.GetGORM(c), requests, repo)
+        response, err := getPreview(ctrl.GetMetaDB(c), requests, repo)
         if err != nil {
             log.Error(trace.Wrap(err, "Cannot preview repo info"))
             return "{}", http.StatusNotFound
@@ -75,7 +157,7 @@ func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, i
             log.Error(trace.Wrap(err, "Retrieving repository contribution data failed " + util.SafeGetString(repo.HTMLURL)))
             return "", http.StatusNotFound
         }
-        responses, err := updateRepo(ctrl.GetGORM(c), ctrl.Config, requests, repo, contribs)
+        responses, err := updateRepo(ctrl.GetMetaDB(c), ctrl.Config, requests, repo, contribs)
         if err != nil {
             log.Error(trace.Wrap(err, "Cannot update the repo info " + util.SafeGetString(repo.HTMLURL)))
             return "{}", http.StatusNotFound
@@ -93,7 +175,7 @@ func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, i
             log.Error(trace.Wrap(err, "Retrieving repository contribution data failed " + util.SafeGetString(repo.HTMLURL)))
             return "", http.StatusNotFound
         }
-        responses, err := submitRepo(ctrl.GetGORM(c), ctrl.Config, requests, repo, contribs)
+        responses, err := submitRepo(ctrl.GetMetaDB(c), ctrl.Config, requests, repo, contribs)
         if err != nil {
             log.Error(trace.Wrap(err, "Cannot submit the repo info " + util.SafeGetString(repo.HTMLURL)))
             return "{}", http.StatusNotFound

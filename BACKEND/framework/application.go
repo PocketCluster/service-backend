@@ -12,13 +12,13 @@ import (
     "github.com/gorilla/sessions"
     "github.com/zenazn/goji/web"
 
+    "github.com/boltdb/bolt"
     "github.com/jinzhu/gorm"
     _ "github.com/jinzhu/gorm/dialects/sqlite"
 
     "github.com/stkim1/BACKEND/model"
     "github.com/stkim1/BACKEND/control"
     "github.com/stkim1/BACKEND/config"
-    "github.com/boltdb/bolt"
 )
 
 func NewApplication(config *config.Config, control *control.Controller) *Application {

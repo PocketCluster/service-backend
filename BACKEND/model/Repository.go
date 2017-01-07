@@ -55,15 +55,6 @@ type Repository struct{
     Created            time.Time
     // Updated Date
     Updated            time.Time
-
-    // all the contributors
-    Contributors       []RepoContributor
-    // latest official release/tag/snapshot
-    Versions           []RepoVersion
-    // commit to the main repo only
-    Commits            []RepoCommit
-    // Programming Languages used
-    Languages          []RepoLanguage
 }
 
 func (repo *Repository)CreatedDate() string {
