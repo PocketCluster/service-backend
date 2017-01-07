@@ -18,6 +18,7 @@ import (
     "github.com/stkim1/BACKEND/model"
     "github.com/stkim1/BACKEND/control"
     "github.com/stkim1/BACKEND/config"
+    "github.com/boltdb/bolt"
 )
 
 func NewApplication(config *config.Config, control *control.Controller) *Application {
@@ -43,6 +44,7 @@ type Application struct {
     Template       *template.Template
     Store          *sessions.CookieStore
     MetaDB         *gorm.DB
+    SuppleDB       *bolt.DB
     CsrfProtection *csrfProtection
 }
 
@@ -56,18 +58,21 @@ func (a *Application) init() {
         Secure:   a.Config.Cookie.Secure,
     }
 
-    db, err := gorm.Open(a.Config.Database.DatabaseType, a.Config.Database.DatabasePath)
+    // (SQLITE) metadata
+    metadb, err := gorm.Open(a.Config.Database.DatabaseType, a.Config.Database.DatabasePath)
     if err != nil {
-        log.Error(trace.Wrap(err,"Failed to open database"))
+        log.Fatal(trace.Wrap(err))
     }
     // Migrate the schema
-    db.AutoMigrate(&model.Author{}, &model.Repository{}, &model.RepoCommit{}, &model.RepoVersion{}, &model.RepoLanguage{}, &model.RepoContributor{});
+    metadb.AutoMigrate(&model.Author{}, &model.Repository{}, &model.RepoContributor{});
+    a.MetaDB = metadb;
 
-    // set relation
-    // db.Model(&model.Repository{}).Related(&model.RepoVersion{})
-    // db.Model(&model.Repository{}).Related(&model.RepoCommit{})
-    // db.Model(&model.Repository{}).Related(&model.RepoLanguage{})
-    a.MetaDB = db;
+    // (BOLTDB) supplementary
+    suppledb, err := bolt.Open(a.Config.Supplement.DatabasePath, 0600, nil)
+    if err != nil {
+        log.Fatal(trace.Wrap(err))
+    }
+    a.SuppleDB = suppledb
 
     a.CsrfProtection = &csrfProtection{
         Key:       a.Config.CSRF.Key,
@@ -78,6 +83,10 @@ func (a *Application) init() {
 }
 
 func (a *Application) Close() {
+    if a.SuppleDB != nil {
+        a.SuppleDB.Close()
+    }
+
     log.Info("!!!Application terminating!!!")
 }
 

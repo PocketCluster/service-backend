@@ -32,6 +32,10 @@ type Database struct {
     DatabasePath    string    `yaml:"database_path"`
 }
 
+type Supplement struct {
+    DatabasePath    string    `yaml:"database_path"`
+}
+
 type CSRF struct {
     Key             string    `yaml:"key"`
     Cookie          string    `yaml:"coockie"`
@@ -57,6 +61,7 @@ type Config struct {
     Site            `yaml:"site",inline,flow`
     Cookie          `yaml:"cookie",inline,flow`
     Database        `yaml:"database",inline,flow`
+    Supplement      `yaml:"supplement",inline,flow`
     CSRF            `yaml:"csrf",inline,flow`
     Github          `yaml:"github",inline,flow`
     VPN             `yaml:"vpn",inline,flow`

@@ -37,10 +37,10 @@ func main() {
 
     // Apply middleware
     //goji.Use(app.ApplySessions)
-    goji.Use(app.ApplyDbMap)
-    //goji.Use(app.ApplyAuth)
-    goji.Use(app.ApplyIsXhr)
     //goji.Use(app.ApplyCsrfProtection)
+    //goji.Use(app.ApplyAuth)
+    goji.Use(app.ApplyDbMap)
+    goji.Use(app.ApplyIsXhr)
     goji.Use(context.ClearHandler)
 
     // dashboard

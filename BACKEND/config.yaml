@@ -12,6 +12,8 @@ cookie:
 database:
   database_type: "sqlite3"
   database_path: "/www-server/pc-index.db"
+supplement:
+  database_path: "/www-server/pc-suppl.bt"
 csrf:
   key: "csrf_token"
   coockie: "XSRF-TOKEN"
