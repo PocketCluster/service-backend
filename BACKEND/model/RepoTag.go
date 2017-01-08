@@ -4,8 +4,8 @@ import (
     "time"
 )
 
-func MakeTagEntryKey(repoID string) []byte {
-    return []byte("tag-" + repoID)
+func MakeTagEntryKey(repoID string) string {
+    return "tag-" + repoID
 }
 
 type RepoTag struct {
@@ -28,7 +28,7 @@ func (slice ListTag) Len() int {
 }
 
 func (slice ListTag) Less(i, j int) bool {
-    return time.Duration(0) < slice[j].Published.Sub(slice[i].Published);
+    return 0 < slice[i].Published.Sub(slice[j].Published);
 }
 
 func (slice ListTag) Swap(i, j int) {

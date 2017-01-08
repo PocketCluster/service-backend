@@ -12,13 +12,14 @@ import (
     "github.com/gorilla/sessions"
     "github.com/zenazn/goji/web"
 
-    "github.com/boltdb/bolt"
     "github.com/jinzhu/gorm"
     _ "github.com/jinzhu/gorm/dialects/sqlite"
 
     "github.com/stkim1/BACKEND/model"
     "github.com/stkim1/BACKEND/control"
     "github.com/stkim1/BACKEND/config"
+    "github.com/stkim1/BACKEND/storage"
+    "github.com/stkim1/BACKEND/storage/boltbk"
 )
 
 func NewApplication(config *config.Config, control *control.Controller) *Application {
@@ -44,7 +45,7 @@ type Application struct {
     Template       *template.Template
     Store          *sessions.CookieStore
     MetaDB         *gorm.DB
-    SuppleDB       *bolt.DB
+    SuppleDB       storage.Nosql
     CsrfProtection *csrfProtection
 }
 
@@ -68,7 +69,7 @@ func (a *Application) init() {
     a.MetaDB = metadb;
 
     // (BOLTDB) supplementary
-    suppledb, err := bolt.Open(a.Config.Supplement.DatabasePath, 0600, nil)
+    suppledb, err := boltbk.New(a.Config.Supplement.DatabasePath)
     if err != nil {
         log.Fatal(trace.Wrap(err))
     }

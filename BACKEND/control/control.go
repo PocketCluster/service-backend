@@ -12,12 +12,12 @@ import (
     "github.com/gorilla/sessions"
     "github.com/zenazn/goji/web"
 
-    "github.com/boltdb/bolt"
     "github.com/jinzhu/gorm"
     "github.com/google/go-github/github"
 
     "github.com/stkim1/BACKEND/model"
     "github.com/stkim1/BACKEND/config"
+    "github.com/stkim1/BACKEND/storage"
 )
 
 /* ------- GITHUG API CONTROL ------- */
@@ -43,11 +43,11 @@ func (ctrl *Controller) GetSession(c web.C) *sessions.Session {
 }
 
 func (ctrl *Controller) GetMetaDB(c web.C) *gorm.DB {
-    return c.Env["GORM"].(*gorm.DB)
+    return c.Env["META"].(*gorm.DB)
 }
 
-func (ctrl *Controller) GetSuppleDB(c web.C) *bolt.DB {
-    return c.Env["BOLT"].(*bolt.DB)
+func (ctrl *Controller) GetSuppleDB(c web.C) storage.Nosql {
+    return c.Env["SUPP"].(storage.Nosql)
 }
 
 func (ctrl *Controller) IsXhr(c web.C) bool {

@@ -11,6 +11,7 @@ import (
 
     "github.com/stkim1/BACKEND/model"
     "github.com/stkim1/BACKEND/util"
+    "github.com/gravitational/trace"
 )
 
 func (ctrl *Controller) GetGithubRepoMeta(repoURL string) (*github.Repository, *github.Response, error) {
@@ -101,8 +102,7 @@ func (ctrl *Controller) GetGithubAllReleases(repoURL string) (model.ListRelease,
     }
 
     // ([]*RepositoryRelease, *Response, error)
-    // TODO : iterate to get all the releases
-    releases, resp, err := ctrl.githubClient.Repositories.ListReleases(owner, repo, &github.ListOptions{Page:1, PerPage:100})
+    releases, resp, err := ctrl.githubClient.Repositories.ListReleases(owner, repo, &github.ListOptions{Page:1, PerPage:10})
     if err != nil {
         return nil, nil, err
     }
@@ -132,22 +132,25 @@ func (ctrl *Controller) GetGithubAllTags(repoURL string) (model.ListTag, *github
     }
 
     // ([]*RepositoryRelease, *Response, error)
-    // TODO : iterate to get all the releases
-    tags, resp, err := ctrl.githubClient.Repositories.ListTags(owner, repo, &github.ListOptions{Page:1, PerPage:100})
+    tags, resp, err := ctrl.githubClient.Repositories.ListTags(owner, repo, &github.ListOptions{Page:1, PerPage:10})
     if err != nil {
         return nil, nil, err
     }
 
-    //log.Info(spew.Sdump(tags))
-
     var listTag model.ListTag
     for _, tag := range tags {
+        SHA := util.SafeGetString(tag.Commit.SHA)
+        commit, _, err := ctrl.githubClient.Git.GetCommit(owner, repo, SHA)
+        if err != nil {
+            trace.Wrap(err)
+            continue
+        }
         listTag = append(listTag, model.RepoTag{
-//            Published:      util.SafeGetTime(tag.Commit.Author.Date),
+            Published:      util.SafeGetTime(commit.Committer.Date),
             Name:           util.SafeGetString(tag.Name),
-//            Note:           util.SafeGetString(tag.Commit.Message),
-            SHA:            util.SafeGetString(tag.Commit.SHA),
-            WebLink:        util.SafeGetString(tag.Commit.URL),
+            Note:           util.SafeGetString(commit.Message),
+            SHA:            SHA,
+            WebLink:        fmt.Sprintf("https://github.com/%s/%s/commit/%s",owner, repo, SHA),
         })
     }
     sort.Sort(listTag)
