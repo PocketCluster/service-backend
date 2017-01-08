@@ -111,8 +111,7 @@ func (ctrl *Controller) GetGithubAllReleases(repoURL string) (model.ListRelease,
     for _, rel := range releases {
         listRelease = append(listRelease, model.RepoRelease{
             Published:      util.SafeGetTimestamp(rel.PublishedAt),
-            Name:           util.SafeGetString(rel.Name),
-            Note:           util.SafeGetString(rel.Body),
+            Version:        util.SafeGetString(rel.Name),
             WebLink:        util.SafeGetString(rel.HTMLURL),
         })
     }
@@ -120,7 +119,7 @@ func (ctrl *Controller) GetGithubAllReleases(repoURL string) (model.ListRelease,
     return listRelease, resp, err
 }
 
-func (ctrl *Controller) GetGithubAllTags(repoURL string) (model.ListTag, *github.Response, error) {
+func (ctrl *Controller) GetGithubAllTags(repoURL string, releaseList model.ListRelease) (model.ListRelease, *github.Response, error) {
     // TODO : check if URL is in correct form
     if len(repoURL) == 0 {
         return nil, nil, fmt.Errorf("[ERR] Invalid repository URL address")
@@ -132,12 +131,12 @@ func (ctrl *Controller) GetGithubAllTags(repoURL string) (model.ListTag, *github
     }
 
     // ([]*RepositoryRelease, *Response, error)
-    tags, resp, err := ctrl.githubClient.Repositories.ListTags(owner, repo, &github.ListOptions{Page:1, PerPage:10})
+    tags, resp, err := ctrl.githubClient.Repositories.ListTags(owner, repo, &github.ListOptions{Page:1, PerPage:11})
     if err != nil {
         return nil, nil, err
     }
 
-    var listTag model.ListTag
+    var listTag model.ListRelease
     for _, tag := range tags {
         SHA := util.SafeGetString(tag.Commit.SHA)
         commit, _, err := ctrl.githubClient.Git.GetCommit(owner, repo, SHA)
@@ -145,12 +144,13 @@ func (ctrl *Controller) GetGithubAllTags(repoURL string) (model.ListTag, *github
             trace.Wrap(err)
             continue
         }
-        listTag = append(listTag, model.RepoTag{
+
+        //TODO : build commit comparison list (commit...commit)
+        tagNote := fmt.Sprintf("https://github.com/%s/%s/commit/%s",owner, repo, SHA)
+        listTag = append(listTag, model.RepoRelease{
             Published:      util.SafeGetTime(commit.Committer.Date),
-            Name:           util.SafeGetString(tag.Name),
-            Note:           util.SafeGetString(commit.Message),
-            SHA:            SHA,
-            WebLink:        fmt.Sprintf("https://github.com/%s/%s/commit/%s",owner, repo, SHA),
+            Version:        util.SafeGetString(tag.Name),
+            WebLink:        tagNote,
         })
     }
     sort.Sort(listTag)

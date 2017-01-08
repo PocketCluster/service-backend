@@ -82,7 +82,7 @@ func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, i
     repoID := "gh" + strconv.Itoa(rid)
 
     if true {
-        tags, _, err := ctrl.GetGithubAllTags(repoURL)
+        tags, _, err := ctrl.GetGithubAllTags(repoURL, nil)
         if err != nil {
             log.Info(err.Error())
             log.Error(trace.Wrap(err))
@@ -92,7 +92,7 @@ func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, i
 
         // store some data
         ctrl.GetSuppleDB(c).AcquireLock("github-repo-tags", storage.Forever)
-        err = ctrl.GetSuppleDB(c).UpsertObj([]string{"github-repo-tags"}, model.MakeTagEntryKey(repoID), tags, storage.Forever)
+        err = ctrl.GetSuppleDB(c).UpsertObj([]string{"github-repo-tags"}, model.MakeReleaseEntryKey(repoID), tags, storage.Forever)
         if err != nil {
             log.Error(err.Error())
         }
@@ -102,8 +102,8 @@ func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, i
     if true {
         log.Info("let's compare tag")
         ctrl.GetSuppleDB(c).AcquireLock("github-repo-tags", storage.Forever)
-        var listTag model.ListTag
-        err = ctrl.GetSuppleDB(c).GetObj([]string{"github-repo-tags"}, model.MakeTagEntryKey(repoID), &listTag)
+        var listTag model.ListRelease
+        err = ctrl.GetSuppleDB(c).GetObj([]string{"github-repo-tags"}, model.MakeReleaseEntryKey(repoID), &listTag)
         if err != nil {
             log.Error(err.Error())
         } else {

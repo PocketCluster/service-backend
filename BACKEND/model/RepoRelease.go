@@ -2,19 +2,18 @@ package model
 
 import (
     "time"
+    "fmt"
 )
 
-func MakeReleaseEntryKey(repoID string) []byte {
-    return []byte("release-" + repoID)
+func MakeReleaseEntryKey(repoID string) string {
+    return fmt.Sprintf("release-%s",repoID)
 }
 
 type RepoRelease struct {
     // release date
     Published       time.Time       `msgpack:"pubdate"`
-    // release name
-    Name            string          `msgpack:"name"`
-    // release note
-    Note            string          `msgpack:"note"`
+    // release version
+    Version         string          `msgpack:"version"`
     // HTML URL
     WebLink         string          `msgpack:"weblink"`
 }
