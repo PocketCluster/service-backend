@@ -119,7 +119,7 @@ func (ctrl *Controller) GetGithubAllReleases(repoURL string) (model.ListRelease,
     return listRelease, resp, err
 }
 
-func (ctrl *Controller) GetGithubAllTags(repoURL string, releaseList model.ListRelease) (model.ListRelease, *github.Response, error) {
+func (ctrl *Controller) GetGithubAllTags(repoURL string, oldTagList model.ListTag) (model.ListTag, *github.Response, error) {
     // TODO : check if URL is in correct form
     if len(repoURL) == 0 {
         return nil, nil, fmt.Errorf("[ERR] Invalid repository URL address")
@@ -131,28 +131,53 @@ func (ctrl *Controller) GetGithubAllTags(repoURL string, releaseList model.ListR
     }
 
     // ([]*RepositoryRelease, *Response, error)
-    tags, resp, err := ctrl.githubClient.Repositories.ListTags(owner, repo, &github.ListOptions{Page:1, PerPage:11})
+    ghTags, resp, err := ctrl.githubClient.Repositories.ListTags(owner, repo, &github.ListOptions{Page:0, PerPage:11})
     if err != nil {
         return nil, nil, err
     }
 
-    var listTag model.ListRelease
-    for _, tag := range tags {
+    getOldTag := func(prevList model.ListTag, sha string) *model.RepoTag {
+        if len(prevList) == 0 {
+            return nil
+        }
+        for _, rel := range prevList {
+            if rel.SHA == sha {
+                return &rel
+            }
+        }
+        return nil
+    }
+
+    var tagList model.ListTag
+    for i, tag := range ghTags {
         SHA := util.SafeGetString(tag.Commit.SHA)
-        commit, _, err := ctrl.githubClient.Git.GetCommit(owner, repo, SHA)
-        if err != nil {
-            trace.Wrap(err)
-            continue
+
+        old := getOldTag(oldTagList, SHA)
+        // this tag DNE in old list
+        if old == nil {
+            commit, _, err := ctrl.githubClient.Git.GetCommit(owner, repo, SHA)
+            if err != nil {
+                trace.Wrap(err)
+                continue
+            }
+            tagNote := fmt.Sprintf("https://github.com/%s/%s/compare/%s...%s",owner, repo, SHA, util.SafeGetString(ghTags[i+1].Commit.SHA))
+            if len(ghTags) == 1 {
+                tagNote = fmt.Sprintf("https://github.com/%s/%s/commit/%s",owner, repo, SHA)
+            }
+            tagList = append(tagList, model.RepoTag{
+                Published:      util.SafeGetTime(commit.Committer.Date),
+                Version:        util.SafeGetString(tag.Name),
+                SHA:            SHA,
+                WebLink:        tagNote,
+            })
+        } else {
+            tagList = append(tagList, *old)
         }
 
-        //TODO : build commit comparison list (commit...commit)
-        tagNote := fmt.Sprintf("https://github.com/%s/%s/commit/%s",owner, repo, SHA)
-        listTag = append(listTag, model.RepoRelease{
-            Published:      util.SafeGetTime(commit.Committer.Date),
-            Version:        util.SafeGetString(tag.Name),
-            WebLink:        tagNote,
-        })
+        if len(ghTags) <= (len(tagList) + 1) {
+            break
+        }
     }
-    sort.Sort(listTag)
-    return listTag, resp, err
+    sort.Sort(tagList)
+    return tagList, resp, err
 }

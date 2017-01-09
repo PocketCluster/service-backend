@@ -59,59 +59,68 @@ func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, i
 
 // this is how we'll get lang/release/tag and save it to boltdb
 {
+    // repository id
+    rid, err := util.SafeGetInt(repo.ID)
+    if err != nil {
+        log.Error("Cannot parse repository id")
+    }
+    const tagBucket string = "github-repo-tags"
+    var repoID string = "gh" + strconv.Itoa(rid)
+    var repoSupp model.RepoSupplement
+
+    // try to read old values
+    ctrl.GetSuppleDB(c).AcquireLock(repoID, storage.Forever)
+    err = ctrl.GetSuppleDB(c).GetObj([]string{tagBucket}, repoID, &repoSupp)
+    if err != nil {
+        // we don't work an empty container
+        repoSupp = model.RepoSupplement{RepoID:repoID}
+        log.Error(err.Error())
+    }
+    ctrl.GetSuppleDB(c).ReleaseLock(repoID)
+
+    // get languages
     langs, _, err := ctrl.GetGithubRepoLanguages(repoURL)
     if err != nil {
         log.Error(trace.Wrap(err))
         return "", http.StatusNotFound
     }
-    log.Info(spew.Sdump(langs))
+    if len(langs) != 0 {
+        repoSupp.Languages = langs
+    }
 
+    // get releases
     releases, _, err := ctrl.GetGithubAllReleases(repoURL)
     if err != nil {
         log.Info(err.Error())
         log.Error(trace.Wrap(err))
         return "", http.StatusNotFound
     }
-    log.Info(spew.Sdump(releases))
-
-    // repository id
-    rid, err := util.SafeGetInt(repo.ID)
-    if err != nil {
-        log.Error("Cannot parse repository id")
-    }
-    repoID := "gh" + strconv.Itoa(rid)
-
-    if true {
-        tags, _, err := ctrl.GetGithubAllTags(repoURL, nil)
+    if len(releases) != 0 {
+        repoSupp.Releases = releases
+        repoSupp.Tags = nil
+    } else {
+        // if no releases are avaiable, then update tags
+        tags, _, err := ctrl.GetGithubAllTags(repoURL, repoSupp.Tags)
         if err != nil {
             log.Info(err.Error())
             log.Error(trace.Wrap(err))
             return "", http.StatusNotFound
         }
-        log.Info(spew.Sdump(tags))
-
-        // store some data
-        ctrl.GetSuppleDB(c).AcquireLock("github-repo-tags", storage.Forever)
-        err = ctrl.GetSuppleDB(c).UpsertObj([]string{"github-repo-tags"}, model.MakeReleaseEntryKey(repoID), tags, storage.Forever)
-        if err != nil {
-            log.Error(err.Error())
-        }
-        ctrl.GetSuppleDB(c).ReleaseLock("github-repo-tags")
+        repoSupp.Tags = tags
     }
 
-    if true {
-        log.Info("let's compare tag")
-        ctrl.GetSuppleDB(c).AcquireLock("github-repo-tags", storage.Forever)
-        var listTag model.ListRelease
-        err = ctrl.GetSuppleDB(c).GetObj([]string{"github-repo-tags"}, model.MakeReleaseEntryKey(repoID), &listTag)
-        if err != nil {
-            log.Error(err.Error())
-        } else {
-            log.Info(spew.Sdump(listTag))
-        }
-        ctrl.GetSuppleDB(c).ReleaseLock("github-repo-tags")
+    log.Info("\n\n-----------------\n" + spew.Sdump(repoSupp))
+    ctrl.GetSuppleDB(c).AcquireLock(repoID, storage.Forever)
+    err = ctrl.GetSuppleDB(c).UpsertObj([]string{tagBucket}, repoID, &repoSupp, storage.Forever)
+    if err != nil {
+        log.Error(err.Error())
     }
+    ctrl.GetSuppleDB(c).ReleaseLock(repoID)
+
 }
+    return "", http.StatusNotFound
+
+
 
 
     switch mode {
