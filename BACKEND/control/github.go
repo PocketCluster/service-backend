@@ -5,7 +5,7 @@ import (
     "strings"
     "sort"
 
-    //log "github.com/Sirupsen/logrus"
+    log "github.com/Sirupsen/logrus"
     //"github.com/davecgh/go-spew/spew"
     "github.com/google/go-github/github"
 
@@ -130,7 +130,7 @@ func (ctrl *Controller) GetGithubAllTags(repoURL string, oldTagList model.ListTa
         return nil, nil, fmt.Errorf("[ERR] Invalid repository URL format")
     }
 
-    // ([]*RepositoryRelease, *Response, error) : read 21 tags due to backport of apache repositories
+    // ([]*RepositoryRelease, *Response, error) : read 26 tags due to backport of apache repositories
     ghTags, resp, err := ctrl.githubClient.Repositories.ListTags(owner, repo, &github.ListOptions{Page:0, PerPage:26})
     if err != nil {
         return nil, nil, err
@@ -149,35 +149,68 @@ func (ctrl *Controller) GetGithubAllTags(repoURL string, oldTagList model.ListTa
     }
 
     var tagList model.ListTag
-    for i, tag := range ghTags {
+    if len(ghTags) == 1 {
+        tag := ghTags[0]
         SHA := util.SafeGetString(tag.Commit.SHA)
-
         old := getOldTag(oldTagList, SHA)
-        // this tag DNE in old list
         if old == nil {
-            commit, _, err := ctrl.githubClient.Git.GetCommit(owner, repo, SHA)
+            commit, resp, err := ctrl.githubClient.Git.GetCommit(owner, repo, SHA)
             if err != nil {
                 trace.Wrap(err)
-                continue
-            }
-            tagNote := fmt.Sprintf("https://github.com/%s/%s/compare/%s...%s",owner, repo, SHA, util.SafeGetString(ghTags[i+1].Commit.SHA))
-            if len(ghTags) == 1 {
-                tagNote = fmt.Sprintf("https://github.com/%s/%s/commit/%s",owner, repo, SHA)
+                return tagList, resp, err
             }
             tagList = append(tagList, model.RepoTag{
                 Published:      util.SafeGetTime(commit.Committer.Date),
                 Version:        util.SafeGetString(tag.Name),
                 SHA:            SHA,
-                WebLink:        tagNote,
+                WebLink:        fmt.Sprintf("https://github.com/%s/%s/commit/%s",owner, repo, SHA),
             })
         } else {
             tagList = append(tagList, *old)
         }
+        return tagList, resp, nil
 
-        if len(ghTags) <= (len(tagList) + 1) {
-            break
+    } else {
+        for _, tag := range ghTags {
+            SHA := util.SafeGetString(tag.Commit.SHA)
+            old := getOldTag(oldTagList, SHA)
+
+            // this tag DNE in old list
+            if old == nil {
+                commit, _, err := ctrl.githubClient.Git.GetCommit(owner, repo, SHA)
+                if err != nil {
+                    trace.Wrap(err)
+                    continue
+                }
+                tagList = append(tagList, model.RepoTag{
+                    Published:      util.SafeGetTime(commit.Committer.Date),
+                    Version:        util.SafeGetString(tag.Name),
+                    SHA:            SHA,
+                })
+            } else {
+                tagList = append(tagList, *old)
+            }
+
+            if len(ghTags) <= (len(tagList) + 1) {
+                break
+            }
         }
     }
-    sort.Sort(tagList)
+
+    if len(tagList) != 0 {
+        // sort for date
+        sort.Sort(tagList)
+        log.Info("Let's add web link to sorted list")
+
+        for i, _ := range tagList {
+            if len(tagList[i].WebLink) == 0 {
+                tagList[i].WebLink = fmt.Sprintf("https://github.com/%s/%s/compare/%s...%s",owner, repo, tagList[i + 1].SHA, tagList[i].SHA)
+            }
+            if len(tagList) <= (i + 2) {
+                break
+            }
+        }
+    }
+
     return tagList, resp, err
 }
