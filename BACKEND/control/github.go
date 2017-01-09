@@ -130,8 +130,8 @@ func (ctrl *Controller) GetGithubAllTags(repoURL string, oldTagList model.ListTa
         return nil, nil, fmt.Errorf("[ERR] Invalid repository URL format")
     }
 
-    // ([]*RepositoryRelease, *Response, error)
-    ghTags, resp, err := ctrl.githubClient.Repositories.ListTags(owner, repo, &github.ListOptions{Page:0, PerPage:11})
+    // ([]*RepositoryRelease, *Response, error) : read 21 tags due to backport of apache repositories
+    ghTags, resp, err := ctrl.githubClient.Repositories.ListTags(owner, repo, &github.ListOptions{Page:0, PerPage:26})
     if err != nil {
         return nil, nil, err
     }
