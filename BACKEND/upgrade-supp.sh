@@ -2,5 +2,5 @@
 
 export CONFIG_PATH=${PWD}/config-dev.yaml
 echo "Read ${CONFIG_PATH} ..."
-echo "Run server..."
-go run ${PWD}/exec/BACKEND/main.go
+echo "Run upgrade"
+go run ${PWD}/exec/upgrader/main.go
