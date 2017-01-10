@@ -43,7 +43,7 @@ func GithubSupplementInfo(repoDB *gorm.DB, suppDB storage.Nosql, ctrl *control.C
     if err != nil {
         // we don't work on an empty container
         repoSupp = model.RepoSupplement{RepoID:repoID}
-        log.Error(err.Error())
+        log.Infof("%s :: begin\n", repoURL)
     } else {
         log.Infof("--- %s :: collected --- \n", repoURL)
         return nil, nil
@@ -78,7 +78,7 @@ func GithubSupplementInfo(repoDB *gorm.DB, suppDB storage.Nosql, ctrl *control.C
 
     // save it to database
     //log.Info("\n\n-----------------\n" + spew.Sdump(repoSupp))
-    log.Infof("--- %s :: Lang [%d], Releases [%d] Tags [%d] ---", repoURL, len(repoSupp.Languages), len(repoSupp.Releases), len(repoSupp.Tags))
+    log.Infof("%s :: Lang [%d], Releases [%d] Tags [%d]", repoURL, len(repoSupp.Languages), len(repoSupp.Releases), len(repoSupp.Tags))
     suppDB.AcquireLock(repoID, storage.Forever)
     err = suppDB.UpsertObj([]string{model.RepoSuppBucket}, repoID, &repoSupp, storage.Forever)
     if err != nil {
