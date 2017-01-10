@@ -5,7 +5,7 @@ import (
     "strings"
     "sort"
 
-    log "github.com/Sirupsen/logrus"
+    //log "github.com/Sirupsen/logrus"
     //"github.com/davecgh/go-spew/spew"
     "github.com/google/go-github/github"
 
@@ -119,23 +119,11 @@ func (ctrl *Controller) GetGithubAllReleases(repoURL string) (model.ListRelease,
     return listRelease, resp, err
 }
 
-func (ctrl *Controller) GetGithubAllTags(repoURL string, oldTagList model.ListTag) (model.ListTag, *github.Response, error) {
-    // TODO : check if URL is in correct form
-    if len(repoURL) == 0 {
-        return nil, nil, fmt.Errorf("[ERR] Invalid repository URL address")
-    }
-    url := strings.Split(strings.Replace(repoURL , githubWebURL, "", -1), "/")
-    owner, repo := url[0], url[1]
-    if len(owner) == 0 || len(repo) == 0{
-        return nil, nil, fmt.Errorf("[ERR] Invalid repository URL format")
-    }
-
-    // ([]*RepositoryRelease, *Response, error) : read 26 tags due to backport of apache repositories
-    ghTags, resp, err := ctrl.githubClient.Repositories.ListTags(owner, repo, &github.ListOptions{Page:0, PerPage:26})
-    if err != nil {
-        return nil, nil, err
-    }
-
+func (ctrl *Controller) GetGithubAllTags(repoURL string, oldTagList model.ListTag) (model.ListTag, string, *github.Response, error) {
+    var (
+        updated string = ""
+        tagList model.ListTag
+    )
     getOldTag := func(prevList model.ListTag, sha string) *model.RepoTag {
         if len(prevList) == 0 {
             return nil
@@ -148,69 +136,67 @@ func (ctrl *Controller) GetGithubAllTags(repoURL string, oldTagList model.ListTa
         return nil
     }
 
-    var tagList model.ListTag
-    if len(ghTags) == 1 {
-        tag := ghTags[0]
+    // TODO : check if URL is in correct form
+    if len(repoURL) == 0 {
+        return nil, updated, nil, fmt.Errorf("[ERR] Invalid repository URL address")
+    }
+    url := strings.Split(strings.Replace(repoURL , githubWebURL, "", -1), "/")
+    owner, repo := url[0], url[1]
+    if len(owner) == 0 || len(repo) == 0{
+        return nil, updated, nil, fmt.Errorf("[ERR] Invalid repository URL format")
+    }
+
+    // append previous list
+    if len(oldTagList) != 0 {
+        tagList = append(tagList, oldTagList...)
+    }
+    // ([]*RepositoryRelease, *Response, error) : read 26 tags due to backport of apache repositories
+    ghTags, resp, err := ctrl.githubClient.Repositories.ListTags(owner, repo, &github.ListOptions{Page:0, PerPage:26})
+    if err != nil {
+        return nil, updated, nil, err
+    }
+
+    for _, tag := range ghTags {
         SHA := util.SafeGetString(tag.Commit.SHA)
         old := getOldTag(oldTagList, SHA)
+
+        // this tag DNE in old list
         if old == nil {
-            commit, resp, err := ctrl.githubClient.Git.GetCommit(owner, repo, SHA)
+            if len(updated) == 0 {
+                updated = util.SafeGetString(tag.Name)
+            }
+            commit, _, err := ctrl.githubClient.Git.GetCommit(owner, repo, SHA)
             if err != nil {
                 trace.Wrap(err)
-                return tagList, resp, err
+                continue
             }
             tagList = append(tagList, model.RepoTag{
                 Published:      util.SafeGetTime(commit.Committer.Date),
                 Version:        util.SafeGetString(tag.Name),
                 SHA:            SHA,
-                WebLink:        fmt.Sprintf("https://github.com/%s/%s/commit/%s",owner, repo, SHA),
             })
-        } else {
-            tagList = append(tagList, *old)
-        }
-        return tagList, resp, nil
-
-    } else {
-        for _, tag := range ghTags {
-            SHA := util.SafeGetString(tag.Commit.SHA)
-            old := getOldTag(oldTagList, SHA)
-
-            // this tag DNE in old list
-            if old == nil {
-                commit, _, err := ctrl.githubClient.Git.GetCommit(owner, repo, SHA)
-                if err != nil {
-                    trace.Wrap(err)
-                    continue
-                }
-                tagList = append(tagList, model.RepoTag{
-                    Published:      util.SafeGetTime(commit.Committer.Date),
-                    Version:        util.SafeGetString(tag.Name),
-                    SHA:            SHA,
-                })
-            } else {
-                tagList = append(tagList, *old)
-            }
-
-            if len(ghTags) <= (len(tagList) + 1) {
-                break
-            }
         }
     }
 
-    if len(tagList) != 0 {
-        // sort for date
-        sort.Sort(tagList)
-        log.Info("Let's add web link to sorted list")
+    // sort for date. It should be safe to sort empty slice
+    sort.Sort(tagList)
 
+    if len(tagList) == 1 {
+        tagList[0].WebLink = fmt.Sprintf("https://github.com/%s/%s/commit/%s", owner, repo, tagList[0].SHA)
+    } else {
         for i, _ := range tagList {
             if len(tagList[i].WebLink) == 0 {
                 tagList[i].WebLink = fmt.Sprintf("https://github.com/%s/%s/compare/%s...%s",owner, repo, tagList[i + 1].SHA, tagList[i].SHA)
             }
             if len(tagList) <= (i + 2) {
+                lastIndex := i + 1
+                if len(tagList[lastIndex].WebLink) == 0 {
+                    tagList[lastIndex].WebLink = fmt.Sprintf("https://github.com/%s/%s/commit/%s", owner, repo, tagList[lastIndex].SHA)
+                }
                 break
             }
         }
     }
 
-    return tagList, resp, err
+    return tagList, updated, resp, err
 }

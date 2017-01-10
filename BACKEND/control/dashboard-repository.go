@@ -26,6 +26,15 @@ const (
     modeStrings string = "preview update submit"
 )
 
+func githubRepoID(repoID *int) (string, error) {
+    // repository id
+    rid, err := util.SafeGetInt(repoID)
+    if err != nil {
+        return "", err
+    }
+    return fmt.Sprintf("gh%s",strconv.Itoa(rid)), nil
+}
+
 func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, int) {
     if !ctrl.IsSafeConnection(r) {
         return "", http.StatusNotFound
@@ -56,72 +65,6 @@ func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, i
         log.Error(trace.Wrap(err, "Retrieving repository failed"))
         return "", http.StatusNotFound
     }
-
-// this is how we'll get lang/release/tag and save it to boltdb
-{
-    // repository id
-    rid, err := util.SafeGetInt(repo.ID)
-    if err != nil {
-        log.Error("Cannot parse repository id")
-    }
-    const tagBucket string = "github-repo-tags"
-    var repoID string = "gh" + strconv.Itoa(rid)
-    var repoSupp model.RepoSupplement
-
-    // try to read old values
-    ctrl.GetSuppleDB(c).AcquireLock(repoID, storage.Forever)
-    err = ctrl.GetSuppleDB(c).GetObj([]string{tagBucket}, repoID, &repoSupp)
-    if err != nil {
-        // we don't work an empty container
-        repoSupp = model.RepoSupplement{RepoID:repoID}
-        log.Error(err.Error())
-    }
-    ctrl.GetSuppleDB(c).ReleaseLock(repoID)
-
-    // get languages
-    langs, _, err := ctrl.GetGithubRepoLanguages(repoURL)
-    if err != nil {
-        log.Error(trace.Wrap(err))
-        return "", http.StatusNotFound
-    }
-    if len(langs) != 0 {
-        repoSupp.Languages = langs
-    }
-
-    // get releases
-    releases, _, err := ctrl.GetGithubAllReleases(repoURL)
-    if err != nil {
-        log.Info(err.Error())
-        log.Error(trace.Wrap(err))
-        return "", http.StatusNotFound
-    }
-    if len(releases) != 0 {
-        repoSupp.Releases = releases
-        repoSupp.Tags = nil
-    } else {
-        // if no releases are avaiable, then update tags
-        tags, _, err := ctrl.GetGithubAllTags(repoURL, repoSupp.Tags)
-        if err != nil {
-            log.Info(err.Error())
-            log.Error(trace.Wrap(err))
-            return "", http.StatusNotFound
-        }
-        repoSupp.Tags = tags
-    }
-
-    log.Info("\n\n-----------------\n" + spew.Sdump(repoSupp))
-    ctrl.GetSuppleDB(c).AcquireLock(repoID, storage.Forever)
-    err = ctrl.GetSuppleDB(c).UpsertObj([]string{tagBucket}, repoID, &repoSupp, storage.Forever)
-    if err != nil {
-        log.Error(err.Error())
-    }
-    ctrl.GetSuppleDB(c).ReleaseLock(repoID)
-
-}
-    return "", http.StatusNotFound
-
-
-
 
     switch mode {
     case "preview": {
@@ -156,13 +99,7 @@ func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, i
         return string(json), http.StatusOK
     }
     case "submit": {
-        // Decode contributor API
-        contribs, _, err := ctrl.GetGithubContributors(repoURL)
-        if err != nil {
-            log.Error(trace.Wrap(err, "Retrieving repository contribution data failed " + util.SafeGetString(repo.HTMLURL)))
-            return "", http.StatusNotFound
-        }
-        responses, err := submitRepo(ctrl.GetMetaDB(c), ctrl.Config, requests, repo, contribs)
+        responses, err := submitRepo(ctrl, c, requests, repo)
         if err != nil {
             log.Error(trace.Wrap(err, "Cannot submit the repo info " + util.SafeGetString(repo.HTMLURL)))
             return "{}", http.StatusNotFound
@@ -177,7 +114,7 @@ func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, i
     return "{}", http.StatusNotFound
 }
 
-func submitRepo(repoDB *gorm.DB, config *config.Config, reqs map[string]string, repoData *github.Repository, ctribs []*github.Contributor) (map[string]interface{}, error) {
+func submitRepo(ctrl *Controller, c web.C, reqs map[string]string, repoData *github.Repository) (map[string]interface{}, error) {
     //TODO check validity of these variables
     var (
         // title
@@ -193,7 +130,15 @@ func submitRepo(repoDB *gorm.DB, config *config.Config, reqs map[string]string, 
         // logo image
         logoImage string        = strings.TrimSpace(reqs["add-repo-logo"])
         // repo Page
-        repoPage  string        = strings.TrimSpace(reqs["add-repo-url"])
+        repoURL string          = strings.TrimSpace(reqs["add-repo-url"])
+
+        repoDB *gorm.DB         = ctrl.GetMetaDB(c)
+
+        suppDB storage.Nosql    = ctrl.GetSuppleDB(c)
+
+        config *config.Config   = ctrl.Config
+
+        repoSupp model.RepoSupplement
     )
 
     /* -------------------------------------------- Submit Error Checking ------------------------------------------- */
@@ -201,11 +146,10 @@ func submitRepo(repoDB *gorm.DB, config *config.Config, reqs map[string]string, 
     /* -------------------------------------------------------------------------------------------------------------- */
 
     // Build repo id
-    rid, err := util.SafeGetInt(repoData.ID)
+    repoID, err := githubRepoID(repoData.ID)
     if err != nil {
         return nil, trace.Wrap(err, "Cannot parse repository id")
     }
-    repoID := "gh" + strconv.Itoa(rid)
 
     // owner info
     var owner *github.User = repoData.Owner
@@ -265,7 +209,7 @@ func submitRepo(repoDB *gorm.DB, config *config.Config, reqs map[string]string, 
     updatedDate     := repoData.UpdatedAt.Time
     wikiPage        := ""
     if *repoData.HasWiki {
-        wikiPage    = repoPage + "/wiki"
+        wikiPage    = repoURL + "/wiki"
     }
 
     repoAdded := model.Repository{
@@ -283,7 +227,7 @@ func submitRepo(repoDB *gorm.DB, config *config.Config, reqs map[string]string, 
         WatchCount:     watchCount,
         ProjectPage:    projectPage,
         WikiPage:       wikiPage,
-        RepoPage:       repoPage,
+        RepoPage:       repoURL,
         Slug:           slug,
         Tags:           "",
         Category:       category,
@@ -294,64 +238,115 @@ func submitRepo(repoDB *gorm.DB, config *config.Config, reqs map[string]string, 
     repoDB.Save(&repoAdded)
 
     // upon successful repo save, save readme to file
-    util.GithubReadmeScrap(repoPage, config.General.ReadmePath + slug + ".html")
+    util.GithubReadmeScrap(repoURL, config.General.ReadmePath + slug + ".html")
 
     /* ------------------------------------------- Handle Contributor information ----------------------------------- */
-    for _, cauthor := range ctribs {
-        // contribution
-        if cauthor == nil {
-            log.Error(trace.Wrap(errors.New("Null contribution data. WTF?")))
-            continue
-        }
-
-        // user id
-        cid, err := util.SafeGetInt(cauthor.ID)
-        if err != nil {
-            log.Error(trace.Wrap(err, "Cannot access contributor ID"))
-            continue
-        }
-        contribID := "gh" + strconv.Itoa(cid)
-
-        // how many times this contributor has worked
-        cfactor, err := util.SafeGetInt(cauthor.Contributions)
-        if err != nil {
-            log.Error(trace.Wrap(err, "Cannot parse contribution count"))
-            continue
-        }
-
-        // find this user
-        var users []model.Author
-        repoDB.Where("author_id = ?", contribID).Find(&users)
-        if len(users) == 0 {
-            authorType      := strings.ToLower(util.SafeGetString(cauthor.Type))
-            login           := util.SafeGetString(cauthor.Login)
-            profileUrl      := util.SafeGetString(cauthor.HTMLURL)
-            avatarUrl       := util.SafeGetString(cauthor.AvatarURL)
-
-            contribAuthor := model.Author{
-                Service     :"github",
-                Type        :authorType,
-                AuthorId    :contribID,
-                Login       :login,
-                Name        :"",
-                ProfileURL  :profileUrl,
-                AvatarURL   :avatarUrl,
-                Deceased    :false,
+    // Decode contributor API
+    contribs, _, err := ctrl.GetGithubContributors(repoURL)
+    if err != nil {
+        log.Error(trace.Wrap(err))
+    } else {
+        for _, cauthor := range contribs {
+            // contribution
+            if cauthor == nil {
+                log.Error(trace.Wrap(errors.New("Null contribution data. WTF?")))
+                continue
             }
-            repoDB.Save(&contribAuthor)
-        }
 
-        var repoContrib []model.RepoContributor
-        repoDB.Where("repo_id = ? AND author_id = ?", repoID, contribID).Find(&repoContrib)
-        if len(repoContrib) == 0 {
-            contribInfo := model.RepoContributor{
-                RepoId:         repoID,
-                AuthorId:       contribID,
-                Contribution:   cfactor,
+            // user id
+            cid, err := util.SafeGetInt(cauthor.ID)
+            if err != nil {
+                log.Error(trace.Wrap(err, "Cannot access contributor ID"))
+                continue
             }
-            repoDB.Save(&contribInfo)
+            contribID := "gh" + strconv.Itoa(cid)
+
+            // how many times this contributor has worked
+            cfactor, err := util.SafeGetInt(cauthor.Contributions)
+            if err != nil {
+                log.Error(trace.Wrap(err, "Cannot parse contribution count"))
+                continue
+            }
+
+            // find this user
+            var users []model.Author
+            repoDB.Where("author_id = ?", contribID).Find(&users)
+            if len(users) == 0 {
+                authorType      := strings.ToLower(util.SafeGetString(cauthor.Type))
+                login           := util.SafeGetString(cauthor.Login)
+                profileUrl      := util.SafeGetString(cauthor.HTMLURL)
+                avatarUrl       := util.SafeGetString(cauthor.AvatarURL)
+
+                contribAuthor := model.Author{
+                    Service     :"github",
+                    Type        :authorType,
+                    AuthorId    :contribID,
+                    Login       :login,
+                    Name        :"",
+                    ProfileURL  :profileUrl,
+                    AvatarURL   :avatarUrl,
+                    Deceased    :false,
+                }
+                repoDB.Save(&contribAuthor)
+            }
+
+            var repoContrib []model.RepoContributor
+            repoDB.Where("repo_id = ? AND author_id = ?", repoID, contribID).Find(&repoContrib)
+            if len(repoContrib) == 0 {
+                contribInfo := model.RepoContributor{
+                    RepoId:         repoID,
+                    AuthorId:       contribID,
+                    Contribution:   cfactor,
+                }
+                repoDB.Save(&contribInfo)
+            }
         }
     }
+
+    /* ----------------------------------------- Handle Languages, Releases, Tags ----------------------------------- */
+    suppDB.AcquireLock(repoID, storage.Forever)
+    err = suppDB.GetObj([]string{model.RepoSuppBucket}, repoID, &repoSupp)
+    if err != nil {
+        // we don't work on an empty container
+        repoSupp = model.RepoSupplement{RepoID:repoID}
+        log.Error(err.Error())
+    }
+    suppDB.ReleaseLock(repoID)
+
+    // get languages
+    langs, _, err := ctrl.GetGithubRepoLanguages(repoURL)
+    if err != nil {
+        log.Error(trace.Wrap(err))
+    } else {
+        repoSupp.Languages = langs
+    }
+
+    // get releases
+    releases, _, err := ctrl.GetGithubAllReleases(repoURL)
+    if err != nil {
+        log.Error(trace.Wrap(err))
+    }
+    if len(releases) != 0 {
+        repoSupp.Releases = releases
+        repoSupp.Tags = nil
+    } else {
+        // if no releases are avaiable, then update tags
+        tags, _, _, err := ctrl.GetGithubAllTags(repoURL, repoSupp.Tags)
+        if err != nil {
+            log.Error(trace.Wrap(err))
+        } else {
+            repoSupp.Tags = tags
+        }
+    }
+
+    log.Info("\n\n-----------------\n" + spew.Sdump(repoSupp))
+    suppDB.AcquireLock(repoID, storage.Forever)
+    err = suppDB.UpsertObj([]string{model.RepoSuppBucket}, repoID, &repoSupp, storage.Forever)
+    if err != nil {
+        log.Error(err.Error())
+    }
+    suppDB.ReleaseLock(repoID)
+
 
     return map[string]interface{}{
         "status" :"ok",

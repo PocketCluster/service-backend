@@ -1,5 +1,7 @@
 package model
 
+const RepoSuppBucket string = "repo-supp-bucket"
+
 type RepoSupplement struct {
     RepoID          string              `msgpack:"repoid"`
     Languages       ListLanguage        `msgpack:"languages, inline, omitempty"`
