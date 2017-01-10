@@ -45,6 +45,7 @@ func GithubSupplementInfo(repoDB *gorm.DB, suppDB storage.Nosql, ctrl *control.C
         repoSupp = model.RepoSupplement{RepoID:repoID}
         log.Error(err.Error())
     } else {
+        log.Infof("--- %s :: collected --- \n", repoURL)
         return nil, nil
     }
     suppDB.ReleaseLock(repoID)
@@ -77,7 +78,7 @@ func GithubSupplementInfo(repoDB *gorm.DB, suppDB storage.Nosql, ctrl *control.C
 
     // save it to database
     //log.Info("\n\n-----------------\n" + spew.Sdump(repoSupp))
-    log.Infof("\n --- %s :: Lang [%d], Releases [%d] Tags [%d] ---", repoURL, len(repoSupp.Languages), len(repoSupp.Releases), len(repoSupp.Tags))
+    log.Infof("--- %s :: Lang [%d], Releases [%d] Tags [%d] ---", repoURL, len(repoSupp.Languages), len(repoSupp.Releases), len(repoSupp.Tags))
     suppDB.AcquireLock(repoID, storage.Forever)
     err = suppDB.UpsertObj([]string{model.RepoSuppBucket}, repoID, &repoSupp, storage.Forever)
     if err != nil {
@@ -140,7 +141,7 @@ func main() {
         if resp != nil {
             log.Infof("Remaning API limit %d\n", resp.Rate.Remaining)
             if resp.Rate.Remaining < 100 {
-                log.Info("API limit is met")
+                log.Info("API limit is met\n")
                 break
             }
         }
