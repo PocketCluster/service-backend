@@ -1,6 +1,10 @@
 package model
 
-const RepoSuppBucket string = "repo-supp-bucket"
+const (
+    RepoSuppBucket string       = "repo-supp-bucket"
+
+    releaseDateFormat string    = "Jan. 2 2006"
+)
 
 type RepoSupplement struct {
     RepoID          string              `msgpack:"repoid"`

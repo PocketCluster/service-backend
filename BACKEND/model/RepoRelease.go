@@ -18,6 +18,10 @@ type RepoRelease struct {
     WebLink         string          `msgpack:"weblink"`
 }
 
+func (r *RepoRelease) PublishedDate() string {
+    return r.Published.Format(releaseDateFormat)
+}
+
 type ListRelease []RepoRelease
 
 func (slice ListRelease) Len() int {
@@ -30,4 +34,12 @@ func (slice ListRelease) Less(i, j int) bool {
 
 func (slice ListRelease) Swap(i, j int) {
     slice[i], slice[j] = slice[j], slice[i]
+}
+
+func (slice ListRelease) FirstTenElements() ListRelease {
+    var cnt int = len(slice)
+    if 10 < cnt {
+        cnt = 10
+    }
+    return slice[:cnt]
 }

@@ -40,6 +40,7 @@ func GithubSupplementInfo(repoDB *gorm.DB, suppDB storage.Nosql, ctrl *control.C
 
     suppDB.AcquireLock(repoID, time.Second)
     err = suppDB.GetObj([]string{model.RepoSuppBucket}, repoID, &repoSupp)
+    suppDB.ReleaseLock(repoID)
     if err != nil {
         // we don't work on an empty container
         repoSupp = model.RepoSupplement{RepoID:repoID}
@@ -47,7 +48,7 @@ func GithubSupplementInfo(repoDB *gorm.DB, suppDB storage.Nosql, ctrl *control.C
         log.Infof("%s :: already collected", repoID)
         return nil, nil
     }
-    suppDB.ReleaseLock(repoID)
+
 
     // get languages
     langs, resp, err = ctrl.GetGithubRepoLanguages(repoURL)
@@ -80,10 +81,10 @@ func GithubSupplementInfo(repoDB *gorm.DB, suppDB storage.Nosql, ctrl *control.C
     log.Infof("%s - %s :: Lang [%d], Releases [%d] Tags [%d]", repoID, repoURL, len(repoSupp.Languages), len(repoSupp.Releases), len(repoSupp.Tags))
     suppDB.AcquireLock(repoID, time.Second)
     err = suppDB.UpsertObj([]string{model.RepoSuppBucket}, repoID, &repoSupp, storage.Forever)
+    suppDB.ReleaseLock(repoID)
     if err != nil {
         log.Error(err.Error())
     }
-    suppDB.ReleaseLock(repoID)
 
     return resp, nil
 }

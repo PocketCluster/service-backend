@@ -20,6 +20,10 @@ type RepoTag struct {
     WebLink         string          `msgpack:"weblink"`
 }
 
+func (r *RepoTag) PublishedDate() string {
+    return r.Published.Format(releaseDateFormat)
+}
+
 type ListTag []RepoTag
 
 func (slice ListTag) Len() int {
@@ -32,4 +36,12 @@ func (slice ListTag) Less(i, j int) bool {
 
 func (slice ListTag) Swap(i, j int) {
     slice[i], slice[j] = slice[j], slice[i]
+}
+
+func (slice ListTag) FirstTenElements() ListTag {
+    var cnt int = len(slice)
+    if 10 < cnt {
+        cnt = 10
+    }
+    return slice[:cnt]
 }

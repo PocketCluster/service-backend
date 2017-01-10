@@ -4,16 +4,18 @@ import (
     "net/http"
     "strings"
     "io/ioutil"
+    "time"
     "path"
     "fmt"
 
     log "github.com/Sirupsen/logrus"
     "github.com/gravitational/trace"
-
     "github.com/zenazn/goji/web"
     "github.com/jinzhu/gorm"
+
     "github.com/stkim1/BACKEND/util"
     "github.com/stkim1/BACKEND/model"
+    "github.com/stkim1/BACKEND/storage"
 )
 
 func (ctrl *Controller) Repository(c web.C, r *http.Request) (string, int) {
@@ -23,15 +25,19 @@ func (ctrl *Controller) Repository(c web.C, r *http.Request) (string, int) {
         owner model.Author;
         contribs []model.Author;
         repoContribs []model.RepoContributor
-        db *gorm.DB = ctrl.GetMetaDB(c)
-        slug string = strings.ToLower(c.URLParams["repo"])
+        repoSupp model.RepoSupplement
+
+        metaDB *gorm.DB         = ctrl.GetMetaDB(c)
+        suppDB storage.Nosql    = ctrl.GetSuppleDB(c)
+        slug string             = strings.ToLower(c.URLParams["repo"])
+
     )
     if len(slug) == 0 {
         return "", http.StatusNotFound
     }
 
     // Find the repo by slug
-    db.Where("slug = ?", slug).First(&repositories)
+    metaDB.Where("slug = ?", slug).First(&repositories)
     if len(repositories) == 0 {
         log.Error(trace.Wrap(fmt.Errorf("Cannot find the target repository : %s",slug)))
         return "", http.StatusNotFound
@@ -39,7 +45,7 @@ func (ctrl *Controller) Repository(c web.C, r *http.Request) (string, int) {
     repo = repositories[0]
 
     // Find Owner
-    db.Where("author_id = ?", repo.AuthorId).First(&owner)
+    metaDB.Where("author_id = ?", repo.AuthorId).First(&owner)
 
     var content map[string]interface{} = map[string]interface{} {
         "DEFAULT_LANG":  "utf-8",
@@ -54,7 +60,7 @@ func (ctrl *Controller) Repository(c web.C, r *http.Request) (string, int) {
     }
 
     // Find Contribution relation
-    db.Where("repo_id = ?", repo.RepoId).Not("author_id = ?", owner.AuthorId).Order("contribution desc").Limit(10).Find(&repoContribs)
+    metaDB.Where("repo_id = ?", repo.RepoId).Not("author_id = ?", owner.AuthorId).Order("contribution desc").Limit(10).Find(&repoContribs)
     if len(repoContribs) != 0 {
         var contribId []string = make([]string, len(repoContribs))
         for i, r := range repoContribs {
@@ -63,9 +69,24 @@ func (ctrl *Controller) Repository(c web.C, r *http.Request) (string, int) {
             }
         }
         // Find Contributors
-        db.Where("author_id in (?)", contribId).Find(&contribs)
+        metaDB.Where("author_id in (?)", contribId).Find(&contribs)
         content["contribs"] = &contribs
         content["hasContribs"] = true
+    }
+
+    // Find Language/ Releases/ and Tags
+    suppDB.AcquireLock(repo.RepoId, time.Second)
+    err := suppDB.GetObj([]string{model.RepoSuppBucket}, repo.RepoId, &repoSupp)
+    suppDB.ReleaseLock(repo.RepoId)
+    if err != nil {
+        trace.Wrap(err)
+    } else {
+        // release first
+        if len(repoSupp.Releases) != 0 {
+            content["releases"] = repoSupp.Releases.FirstTenElements()
+        } else if len(repoSupp.Tags) != 0{
+            content["releases"] = repoSupp.Tags.FirstTenElements()
+        }
     }
 
     // Patch readme

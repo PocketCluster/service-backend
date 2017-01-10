@@ -6,6 +6,8 @@ import (
     "github.com/jinzhu/gorm"
 )
 
+const repoDateFormat string = "Jan. 2, 2006"
+
 type Repository struct{
     gorm.Model
     // two abbreviate chars + numbering : gh23247808
@@ -59,11 +61,11 @@ type Repository struct{
     Registed           time.Time
 }
 
-func (repo *Repository)CreatedDate() string {
+func (r *Repository) CreatedDate() string {
     //return repo.Created.Format("Jan. 2 2006 3:04 PM")
-    return repo.Created.Format("Jan. 2, 2006")
+    return r.Created.Format(repoDateFormat)
 }
 
-func (repo *Repository)UpdatedDate() string {
-    return repo.Updated.Format("Jan. 2, 2006")
+func (r *Repository) UpdatedDate() string {
+    return r.Updated.Format(repoDateFormat)
 }

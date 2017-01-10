@@ -306,14 +306,14 @@ func submitRepo(ctrl *Controller, c web.C, reqs map[string]string, repoData *git
     }
 
     /* ----------------------------------------- Handle Languages, Releases, Tags ----------------------------------- */
-    suppDB.AcquireLock(repoID, storage.Forever)
+    suppDB.AcquireLock(repoID, time.Second)
     err = suppDB.GetObj([]string{model.RepoSuppBucket}, repoID, &repoSupp)
+    suppDB.ReleaseLock(repoID)
     if err != nil {
         // we don't work on an empty container
         repoSupp = model.RepoSupplement{RepoID:repoID}
         log.Error(err.Error())
     }
-    suppDB.ReleaseLock(repoID)
 
     // get languages
     langs, _, err := ctrl.GetGithubRepoLanguages(repoURL)
@@ -342,13 +342,12 @@ func submitRepo(ctrl *Controller, c web.C, reqs map[string]string, repoData *git
     }
 
     log.Info("\n\n-----------------\n" + spew.Sdump(repoSupp))
-    suppDB.AcquireLock(repoID, storage.Forever)
+    suppDB.AcquireLock(repoID, time.Second)
     err = suppDB.UpsertObj([]string{model.RepoSuppBucket}, repoID, &repoSupp, storage.Forever)
+    suppDB.ReleaseLock(repoID)
     if err != nil {
         log.Error(err.Error())
     }
-    suppDB.ReleaseLock(repoID)
-
 
     return map[string]interface{}{
         "status" :"ok",
