@@ -20,6 +20,7 @@ import (
     "github.com/stkim1/BACKEND/storage"
 
     "github.com/davecgh/go-spew/spew"
+    "time"
 )
 
 const (
@@ -234,6 +235,7 @@ func submitRepo(ctrl *Controller, c web.C, reqs map[string]string, repoData *git
         Summary:        description,
         Created:        createdDate,
         Updated:        updatedDate,
+        Registed:       time.Now(),
     }
     repoDB.Save(&repoAdded)
 
