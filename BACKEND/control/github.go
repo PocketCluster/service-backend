@@ -104,7 +104,7 @@ func (ctrl *Controller) GetGithubAllReleases(repoURL string) (model.ListRelease,
     // ([]*RepositoryRelease, *Response, error)
     releases, resp, err := ctrl.githubClient.Repositories.ListReleases(owner, repo, &github.ListOptions{Page:1, PerPage:10})
     if err != nil {
-        return nil, nil, err
+        return nil, resp, err
     }
 
     var listRelease model.ListRelease
@@ -121,8 +121,12 @@ func (ctrl *Controller) GetGithubAllReleases(repoURL string) (model.ListRelease,
 
 func (ctrl *Controller) GetGithubAllTags(repoURL string, oldTagList model.ListTag) (model.ListTag, string, *github.Response, error) {
     var (
-        updated string = ""
+        owner, repo, updated string = "", "", ""
         tagList model.ListTag
+        ghTags []*github.RepositoryTag
+        commit *github.Commit
+        resp *github.Response
+        err error
     )
     getOldTag := func(prevList model.ListTag, sha string) *model.RepoTag {
         if len(prevList) == 0 {
@@ -138,12 +142,12 @@ func (ctrl *Controller) GetGithubAllTags(repoURL string, oldTagList model.ListTa
 
     // TODO : check if URL is in correct form
     if len(repoURL) == 0 {
-        return nil, updated, nil, fmt.Errorf("[ERR] Invalid repository URL address")
+        return nil, "", nil, fmt.Errorf("[ERR] Invalid repository URL address")
     }
     url := strings.Split(strings.Replace(repoURL , githubWebURL, "", -1), "/")
-    owner, repo := url[0], url[1]
+    owner, repo = url[0], url[1]
     if len(owner) == 0 || len(repo) == 0{
-        return nil, updated, nil, fmt.Errorf("[ERR] Invalid repository URL format")
+        return nil, "", nil, fmt.Errorf("[ERR] Invalid repository URL format")
     }
 
     // append previous list
@@ -151,9 +155,9 @@ func (ctrl *Controller) GetGithubAllTags(repoURL string, oldTagList model.ListTa
         tagList = append(tagList, oldTagList...)
     }
     // ([]*RepositoryRelease, *Response, error) : read 26 tags due to backport of apache repositories
-    ghTags, resp, err := ctrl.githubClient.Repositories.ListTags(owner, repo, &github.ListOptions{Page:0, PerPage:26})
+    ghTags, resp, err = ctrl.githubClient.Repositories.ListTags(owner, repo, &github.ListOptions{Page:0, PerPage:26})
     if err != nil {
-        return nil, updated, nil, err
+        return nil, "", resp, err
     }
 
     for _, tag := range ghTags {
@@ -165,10 +169,10 @@ func (ctrl *Controller) GetGithubAllTags(repoURL string, oldTagList model.ListTa
             if len(updated) == 0 {
                 updated = util.SafeGetString(tag.Name)
             }
-            commit, _, err := ctrl.githubClient.Git.GetCommit(owner, repo, SHA)
+            commit, resp, err = ctrl.githubClient.Git.GetCommit(owner, repo, SHA)
             if err != nil {
                 trace.Wrap(err)
-                continue
+                return nil, "", resp, err
             }
             tagList = append(tagList, model.RepoTag{
                 Published:      util.SafeGetTime(commit.Committer.Date),
