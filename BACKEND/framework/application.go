@@ -84,6 +84,10 @@ func (a *Application) init() {
 }
 
 func (a *Application) Close() {
+    if a.MetaDB != nil {
+        a.MetaDB.Close()
+    }
+
     if a.SuppleDB != nil {
         a.SuppleDB.Close()
     }

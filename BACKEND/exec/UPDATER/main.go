@@ -170,4 +170,5 @@ func main() {
     }
 
     log.Info("Update process ended at " + time.Now().Format("Jan. 2 2006 3:04 PM"))
+    repoDB.Close()
 }

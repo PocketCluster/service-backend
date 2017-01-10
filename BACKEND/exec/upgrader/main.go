@@ -38,14 +38,13 @@ func GithubSupplementInfo(repoDB *gorm.DB, suppDB storage.Nosql, ctrl *control.C
         return nil, trace.Wrap(errors.New("Cannot begin update a repo with empty URL"))
     }
 
-    suppDB.AcquireLock(repoID, storage.Forever)
+    suppDB.AcquireLock(repoID, time.Second)
     err = suppDB.GetObj([]string{model.RepoSuppBucket}, repoID, &repoSupp)
     if err != nil {
         // we don't work on an empty container
         repoSupp = model.RepoSupplement{RepoID:repoID}
-        log.Infof("%s :: begin\n", repoURL)
     } else {
-        log.Infof("--- %s :: collected --- \n", repoURL)
+        log.Infof("%s :: already collected", repoID)
         return nil, nil
     }
     suppDB.ReleaseLock(repoID)
@@ -78,8 +77,8 @@ func GithubSupplementInfo(repoDB *gorm.DB, suppDB storage.Nosql, ctrl *control.C
 
     // save it to database
     //log.Info("\n\n-----------------\n" + spew.Sdump(repoSupp))
-    log.Infof("%s :: Lang [%d], Releases [%d] Tags [%d]", repoURL, len(repoSupp.Languages), len(repoSupp.Releases), len(repoSupp.Tags))
-    suppDB.AcquireLock(repoID, storage.Forever)
+    log.Infof("%s - %s :: Lang [%d], Releases [%d] Tags [%d]", repoID, repoURL, len(repoSupp.Languages), len(repoSupp.Releases), len(repoSupp.Tags))
+    suppDB.AcquireLock(repoID, time.Second)
     err = suppDB.UpsertObj([]string{model.RepoSuppBucket}, repoID, &repoSupp, storage.Forever)
     if err != nil {
         log.Error(err.Error())
@@ -132,21 +131,25 @@ func main() {
     */
     var repos []model.Repository
     repoDB.Find(&repos)
-    for _, repo := range repos {
+    var repoCount int = len(repos)
+    for i, repo := range repos {
+        log.Infof("%d / %d | %s - %s", i, repoCount, repo.RepoId, repo.RepoPage)
         resp, err := GithubSupplementInfo(repoDB, suppledb, ctrl, &repo);
         if err != nil {
             log.Error(err.Error())
         }
 
         if resp != nil {
-            log.Infof("Remaning API limit %d\n", resp.Rate.Remaining)
+            log.Infof("Remaning API limit %d", resp.Rate.Remaining)
             if resp.Rate.Remaining < 100 {
-                log.Info("API limit is met\n")
+                log.Info("API limit is met")
                 break
             }
         }
+        log.Printf("\n")
     }
 
-    log.Info("Update process ended at " + time.Now().Format("Jan. 2 2006 3:04 PM"))
+    repoDB.Close()
     suppledb.Close()
+    log.Info("Update process ended at " + time.Now().Format("Jan. 2 2006 3:04 PM"))
 }
