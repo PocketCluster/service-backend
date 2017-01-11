@@ -338,6 +338,7 @@ func submitRepo(ctrl *Controller, c web.C, reqs map[string]string, repoData *git
         repoSupp.Tags = tags
     }
 
+    repoSupp.Updated = time.Now()
 
     log.Info("\n\n-----------------\n" + spew.Sdump(repoSupp))
     suppDB.AcquireLock(repoID, time.Second)

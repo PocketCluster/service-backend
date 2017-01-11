@@ -45,8 +45,10 @@ func GithubSupplementInfo(suppDB storage.Nosql, ctrl *control.Controller, repoMo
         // we don't work on an empty container
         repoSupp = model.RepoSupplement{RepoID:repoID}
     } else {
-        //log.Infof("%s :: already collected", repoID)
-        //return nil, nil
+        if !repoSupp.Updated.IsZero() && time.Hour * 6 < time.Now().Sub(repoSupp.Updated) {
+            log.Infof("%s :: updated already", repoID)
+            return nil, nil
+        }
     }
 
     // get languages
@@ -72,6 +74,8 @@ func GithubSupplementInfo(suppDB storage.Nosql, ctrl *control.Controller, repoMo
     } else if len(tags) != 0 {
         repoSupp.Tags = tags
     }
+
+    repoSupp.Updated = time.Now()
 
     // save it to database
     //log.Info("\n\n-----------------\n" + spew.Sdump(repoSupp))
@@ -138,13 +142,12 @@ func main() {
         }
 
         if resp != nil {
-            log.Infof("Remaning API limit %d", resp.Rate.Remaining)
+            log.Infof("Remaning API limit %d\n", resp.Rate.Remaining)
             if resp.Rate.Remaining < 200 {
                 log.Info("API limit is met")
                 break
             }
         }
-        log.Printf("\n")
     }
 
     repoDB.Close()
