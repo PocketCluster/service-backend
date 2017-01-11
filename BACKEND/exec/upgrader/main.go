@@ -77,7 +77,7 @@ func GithubSupplementInfo(suppDB storage.Nosql, ctrl *control.Controller, repoMo
     }
 
     repoSupp.Updated = time.Now()
-    repoSupp.BuildRecentPublication()
+    repoSupp.BuildRecentPublication(15)
 
     // save it to database
     log.Infof("%s - %s :: Lang [%d], Releases [%d] Tags [%d]", repoID, repoURL, len(repoSupp.Languages), len(repoSupp.Releases), len(repoSupp.Tags))
@@ -91,46 +91,33 @@ func GithubSupplementInfo(suppDB storage.Nosql, ctrl *control.Controller, repoMo
     return resp, nil
 }
 
-func GithubReleaseUpdate(suppDB storage.Nosql, ctrl *control.Controller, repoModel *model.Repository) (*github.Response, error) {
+
+func githubSortSupplementInfo(suppDB storage.Nosql, repoModel *model.Repository) error {
     var (
         repoID string                       = repoModel.RepoId
         repoURL string                      = repoModel.RepoPage
 
         repoSupp model.RepoSupplement
-        releases model.ListRelease
-
-        resp *github.Response
+        //langs model.ListLanguage
+        //releases model.ListRelease
+        //tags model.ListTag
         err error
     )
 
     // URL CHECK
     if len(repoURL) == 0 {
-        return nil, trace.Wrap(errors.New("Cannot begin update a repo with empty URL"))
+        return trace.Wrap(errors.New("Cannot begin update a repo with empty URL"))
     }
 
     suppDB.AcquireLock(repoID, time.Second)
     err = suppDB.GetObj([]string{model.RepoSuppBucket}, repoID, &repoSupp)
     suppDB.ReleaseLock(repoID)
     if err != nil {
-        // if you have an issue, just return for this one
-        return nil, err
-    } else {
-        if !repoSupp.Updated.IsZero() && time.Now().Sub(repoSupp.Updated) < (time.Hour * 6) {
-            log.Infof("%s :: updated already %v", repoID, time.Now().Sub(repoSupp.Updated))
-            //return nil, nil
-        }
+        return err
     }
 
-    // get releases
-    releases, resp, err = ctrl.GetGithubAllReleases(repoURL)
-    if err != nil {
-        return resp, trace.Wrap(err)
-    } else if len(releases) != 0 {
-        repoSupp.Releases = releases
-    }
-
-    repoSupp.Updated = time.Now()
-    //repoSupp.BuildRecentPublication()
+    repoSupp.BuildRecentPublication(15)
+    //log.Info(spew.Sdump(repoSupp.RecentPublish))
 
     // save it to database
     suppDB.AcquireLock(repoID, time.Second)
@@ -140,7 +127,7 @@ func GithubReleaseUpdate(suppDB storage.Nosql, ctrl *control.Controller, repoMod
         log.Error(err.Error())
     }
 
-    return resp, nil
+    return nil
 }
 
 func main() {
@@ -194,8 +181,7 @@ func main() {
         var repoCount int = len(repos)
         for i, repo := range repos {
             log.Infof("%d / %d | %s - %s", i, repoCount, repo.RepoId, repo.RepoPage)
-            //resp, err := GithubSupplementInfo(suppledb, ctrl, &repo);
-            resp, err := GithubReleaseUpdate(suppledb, ctrl, &repo);
+            resp, err := GithubSupplementInfo(suppledb, ctrl, &repo);
             if err != nil {
                 log.Error(err.Error())
             }
@@ -217,42 +203,4 @@ func main() {
     repoDB.Close()
     suppledb.Close()
     log.Info("Update process ended at " + time.Now().Format("Jan. 2 2006 3:04 PM"))
-}
-
-func githubSortSupplementInfo(suppDB storage.Nosql, repoModel *model.Repository) error {
-    var (
-        repoID string                       = repoModel.RepoId
-        repoURL string                      = repoModel.RepoPage
-
-        repoSupp model.RepoSupplement
-        //langs model.ListLanguage
-        //releases model.ListRelease
-        //tags model.ListTag
-        err error
-    )
-
-    // URL CHECK
-    if len(repoURL) == 0 {
-        return trace.Wrap(errors.New("Cannot begin update a repo with empty URL"))
-    }
-
-    suppDB.AcquireLock(repoID, time.Second)
-    err = suppDB.GetObj([]string{model.RepoSuppBucket}, repoID, &repoSupp)
-    suppDB.ReleaseLock(repoID)
-    if err != nil {
-        return err
-    }
-
-    repoSupp.BuildRecentPublication()
-    //log.Info(spew.Sdump(repoSupp.RecentPublish))
-
-    // save it to database
-    suppDB.AcquireLock(repoID, time.Second)
-    err = suppDB.UpsertObj([]string{model.RepoSuppBucket}, repoID, &repoSupp, storage.Forever)
-    suppDB.ReleaseLock(repoID)
-    if err != nil {
-        log.Error(err.Error())
-    }
-
-    return nil
 }

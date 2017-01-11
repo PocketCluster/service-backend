@@ -90,7 +90,7 @@ type RepoSupplement struct {
     RecentPublish ListPublished       `msgpack:"published, inline, omitempty"`
 }
 
-func (r *RepoSupplement) BuildRecentPublication() {
+func (r *RepoSupplement) BuildRecentPublication(maxEntity int) {
     var (
         pubList ListPublished
     )
@@ -122,8 +122,8 @@ func (r *RepoSupplement) BuildRecentPublication() {
         }
     }
     var cnt int = len(pubList)
-    if 10 < cnt {
-        cnt = 10
+    if maxEntity < cnt {
+        cnt = maxEntity
     }
     if cnt == 0 {
         return
