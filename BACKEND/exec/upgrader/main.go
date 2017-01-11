@@ -45,7 +45,9 @@ func GithubSupplementInfo(suppDB storage.Nosql, ctrl *control.Controller, repoMo
         // we don't work on an empty container
         repoSupp = model.RepoSupplement{RepoID:repoID}
     } else {
-        if !repoSupp.Updated.IsZero() && time.Hour * 6 < time.Now().Sub(repoSupp.Updated) {
+        //log.Info(spew.Sdump(repoSupp))
+        //if !repoSupp.Updated.IsZero() && time.Hour * 6 < time.Now().Sub(repoSupp.Updated) {
+        if !repoSupp.Updated.IsZero() {
             log.Infof("%s :: updated already", repoID)
             return nil, nil
         }
@@ -78,7 +80,6 @@ func GithubSupplementInfo(suppDB storage.Nosql, ctrl *control.Controller, repoMo
     repoSupp.Updated = time.Now()
 
     // save it to database
-    //log.Info("\n\n-----------------\n" + spew.Sdump(repoSupp))
     log.Infof("%s - %s :: Lang [%d], Releases [%d] Tags [%d]", repoID, repoURL, len(repoSupp.Languages), len(repoSupp.Releases), len(repoSupp.Tags))
     suppDB.AcquireLock(repoID, time.Second)
     err = suppDB.UpsertObj([]string{model.RepoSuppBucket}, repoID, &repoSupp, storage.Forever)
@@ -143,7 +144,7 @@ func main() {
 
         if resp != nil {
             log.Infof("Remaning API limit %d\n", resp.Rate.Remaining)
-            if resp.Rate.Remaining < 200 {
+            if resp.Rate.Remaining < 100 {
                 log.Info("API limit is met")
                 break
             }
