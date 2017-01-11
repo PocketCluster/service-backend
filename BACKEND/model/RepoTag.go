@@ -20,8 +20,16 @@ type RepoTag struct {
     WebLink         string          `msgpack:"weblink"`
 }
 
-func (r *RepoTag) PublishedDate() string {
-    return r.Published.Format(releaseDateFormat)
+func (r *RepoTag) published() time.Time {
+    return r.Published
+}
+
+func (r *RepoTag) version() string {
+    return r.Version
+}
+
+func (r *RepoTag) weblink() string {
+    return r.WebLink
 }
 
 type ListTag []RepoTag
@@ -36,21 +44,4 @@ func (slice ListTag) Less(i, j int) bool {
 
 func (slice ListTag) Swap(i, j int) {
     slice[i], slice[j] = slice[j], slice[i]
-}
-
-func (slice ListTag) FirstTenElements() []map[string]string {
-    var cnt int = len(slice)
-    if 10 < cnt {
-        cnt = 10
-    }
-    // FIXME : this is ugly as mustache does not work with property function
-    var list []map[string]string
-    for _, tag := range slice[:cnt] {
-        list = append(list, map[string]string {
-            "PublishedDate":    tag.PublishedDate(),
-            "Version":          tag.Version,
-            "WebLink":          tag.WebLink,
-        })
-    }
-    return list
 }

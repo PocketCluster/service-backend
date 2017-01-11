@@ -18,8 +18,16 @@ type RepoRelease struct {
     WebLink         string          `msgpack:"weblink"`
 }
 
-func (r *RepoRelease) PublishedDate() string {
-    return r.Published.Format(releaseDateFormat)
+func (r *RepoRelease) published() time.Time {
+    return r.Published
+}
+
+func (r *RepoRelease) version() string {
+    return r.Version
+}
+
+func (r *RepoRelease) weblink() string {
+    return r.WebLink
 }
 
 type ListRelease []RepoRelease
@@ -34,21 +42,4 @@ func (slice ListRelease) Less(i, j int) bool {
 
 func (slice ListRelease) Swap(i, j int) {
     slice[i], slice[j] = slice[j], slice[i]
-}
-
-func (slice ListRelease) FirstTenElements() []map[string]string {
-    var cnt int = len(slice)
-    if 10 < cnt {
-        cnt = 10
-    }
-    // FIXME : this is ugly as mustache does not work with property function
-    var list []map[string]string
-    for _, rel := range slice[:cnt] {
-        list = append(list, map[string]string {
-            "PublishedDate":    rel.PublishedDate(),
-            "Version":          rel.Version,
-            "WebLink":          rel.WebLink,
-        })
-    }
-    return list
 }
