@@ -4,8 +4,6 @@ import (
     "time"
     "sort"
     "strings"
-
-    //log "github.com/Sirupsen/logrus"
 )
 
 const (
@@ -18,18 +16,6 @@ type RecentPublish struct {
     Published       time.Time           `msgpack:"published"`
     Version         string              `msgpack:"version"`
     WebLink         string              `msgpack:"weblink"`
-}
-
-func (this *RecentPublish) IsEqual(that *RecentPublish) bool {
-    diff := this.Published.Sub(that.Published)
-    if diff < time.Duration(0) {
-        diff *= -1
-    }
-    if this.Version == that.Version && diff < (time.Hour * 48) {
-        //log.Infof("this %v | that %v", this.Version, that.Version)
-        return true
-    }
-    return false
 }
 
 func converRelease(r *RepoRelease) *RecentPublish {
@@ -50,12 +36,34 @@ func converRelease(r *RepoRelease) *RecentPublish {
     }
 }
 
+func compareRelAndTag(r *RepoRelease, t *RepoTag) bool {
+    diff := r.Published.Sub(t.Published)
+    if diff < time.Duration(0) {
+        diff *= -1
+    }
+    if len(r.TagVersion) != 0 && r.TagVersion == t.Version && diff < (time.Hour * 48) {
+        return true
+    }
+    return false
+}
+
 func convertTag(r *RepoTag) *RecentPublish {
     return &RecentPublish{
         Published:      r.Published,
         Version:        r.Version,
         WebLink:        r.WebLink,
     }
+}
+
+func comparePubAndTag(rp *RecentPublish, t *RepoTag) bool {
+    diff := rp.Published.Sub(t.Published)
+    if diff < time.Duration(0) {
+        diff *= -1
+    }
+    if strings.ToLower(rp.Version) == strings.ToLower(t.Version) && diff < (time.Hour * 48) {
+        return true
+    }
+    return false
 }
 
 type ListPublished []*RecentPublish
@@ -82,28 +90,35 @@ type RepoSupplement struct {
     RecentPublish ListPublished       `msgpack:"published, inline, omitempty"`
 }
 
-func (r *RepoSupplement) SaveRecentPublication() {
+func (r *RepoSupplement) BuildRecentPublication() {
     var (
         pubList ListPublished
-        isRelieaseExist = func(l *ListPublished, r *RecentPublish) bool {
-            if len(*l) == 0 {
-                return false
-            }
-            for _, p := range *l {
-                if p.IsEqual(r) {
-                    return true
-                }
-            }
-            return false
-        }
     )
     for i, _ := range r.Releases {
         pubList = append(pubList, converRelease(&(r.Releases[i])))
     }
+    isRelieaseExist := func(rl *ListRelease, pl *ListPublished, t *RepoTag) bool {
+        if len(*rl) == 0 {
+            return false
+        }
+        for i, _ := range *rl {
+            if compareRelAndTag(&((*rl)[i]), t) {
+                return true
+            }
+        }
+        if len(*pl) == 0 {
+            return false
+        }
+        for _, p := range *pl {
+            if comparePubAndTag(p, t) {
+                return true
+            }
+        }
+        return false
+    }
     for i, _ := range r.Tags {
-        r := convertTag(&(r.Tags[i]))
-        if !isRelieaseExist(&pubList, r) {
-            pubList = append(pubList, r)
+        if !isRelieaseExist(&(r.Releases), &pubList, &(r.Tags[i])) {
+            pubList = append(pubList, convertTag(&(r.Tags[i])))
         }
     }
     var cnt int = len(pubList)

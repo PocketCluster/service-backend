@@ -14,6 +14,8 @@ type RepoRelease struct {
     Published       time.Time       `msgpack:"pubdate"`
     // release version
     Version         string          `msgpack:"version"`
+    // Tagged version
+    TagVersion      string          `msgpack:"tagver"`
     // HTML URL
     WebLink         string          `msgpack:"weblink"`
 }

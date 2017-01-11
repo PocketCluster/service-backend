@@ -102,7 +102,7 @@ func (ctrl *Controller) GetGithubAllReleases(repoURL string) (model.ListRelease,
     }
 
     // ([]*RepositoryRelease, *Response, error)
-    releases, resp, err := ctrl.githubClient.Repositories.ListReleases(owner, repo, &github.ListOptions{Page:1, PerPage:10})
+    releases, resp, err := ctrl.githubClient.Repositories.ListReleases(owner, repo, &github.ListOptions{Page:1, PerPage:30})
     if err != nil {
         return nil, resp, err
     }
@@ -112,6 +112,7 @@ func (ctrl *Controller) GetGithubAllReleases(repoURL string) (model.ListRelease,
         listRelease = append(listRelease, model.RepoRelease{
             Published:      util.SafeGetTimestamp(rel.PublishedAt),
             Version:        util.SafeGetString(rel.Name),
+            TagVersion:     util.SafeGetString(rel.TagName),
             WebLink:        util.SafeGetString(rel.HTMLURL),
         })
     }
