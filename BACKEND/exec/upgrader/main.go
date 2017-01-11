@@ -19,7 +19,7 @@ import (
     "github.com/stkim1/BACKEND/storage"
 )
 
-func GithubSupplementInfo(repoDB *gorm.DB, suppDB storage.Nosql, ctrl *control.Controller, repoModel *model.Repository) (*github.Response, error) {
+func GithubSupplementInfo(suppDB storage.Nosql, ctrl *control.Controller, repoModel *model.Repository) (*github.Response, error) {
     var (
         repoID string                       = repoModel.RepoId
         repoURL string                      = repoModel.RepoPage
@@ -45,10 +45,9 @@ func GithubSupplementInfo(repoDB *gorm.DB, suppDB storage.Nosql, ctrl *control.C
         // we don't work on an empty container
         repoSupp = model.RepoSupplement{RepoID:repoID}
     } else {
-        log.Infof("%s :: already collected", repoID)
-        return nil, nil
+        //log.Infof("%s :: already collected", repoID)
+        //return nil, nil
     }
-
 
     // get languages
     langs, resp, err = ctrl.GetGithubRepoLanguages(repoURL)
@@ -62,18 +61,16 @@ func GithubSupplementInfo(repoDB *gorm.DB, suppDB storage.Nosql, ctrl *control.C
     releases, resp, err = ctrl.GetGithubAllReleases(repoURL)
     if err != nil {
         return resp, trace.Wrap(err)
-    }
-    if len(releases) != 0 {
+    } else if len(releases) != 0 {
         repoSupp.Releases = releases
-        repoSupp.Tags = nil
-    } else {
-        // if no releases are avaiable, then update tags
-        tags, _, resp, err = ctrl.GetGithubAllTags(repoURL, repoSupp.Tags)
-        if err != nil {
-            return resp, trace.Wrap(err)
-        } else if len(tags) != 0 {
-            repoSupp.Tags = tags
-        }
+    }
+
+    // get tags
+    tags, _, resp, err = ctrl.GetGithubAllTags(repoURL, repoSupp.Tags, 31)
+    if err != nil {
+        return resp, trace.Wrap(err)
+    } else if len(tags) != 0 {
+        repoSupp.Tags = tags
     }
 
     // save it to database
@@ -135,14 +132,14 @@ func main() {
     var repoCount int = len(repos)
     for i, repo := range repos {
         log.Infof("%d / %d | %s - %s", i, repoCount, repo.RepoId, repo.RepoPage)
-        resp, err := GithubSupplementInfo(repoDB, suppledb, ctrl, &repo);
+        resp, err := GithubSupplementInfo(suppledb, ctrl, &repo);
         if err != nil {
             log.Error(err.Error())
         }
 
         if resp != nil {
             log.Infof("Remaning API limit %d", resp.Rate.Remaining)
-            if resp.Rate.Remaining < 100 {
+            if resp.Rate.Remaining < 200 {
                 log.Info("API limit is met")
                 break
             }

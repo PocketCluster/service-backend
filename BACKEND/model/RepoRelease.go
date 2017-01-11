@@ -36,10 +36,19 @@ func (slice ListRelease) Swap(i, j int) {
     slice[i], slice[j] = slice[j], slice[i]
 }
 
-func (slice ListRelease) FirstTenElements() ListRelease {
+func (slice ListRelease) FirstTenElements() []map[string]string {
     var cnt int = len(slice)
     if 10 < cnt {
         cnt = 10
     }
-    return slice[:cnt]
+    // FIXME : this is ugly as mustache does not work with property function
+    var list []map[string]string
+    for _, rel := range slice[:cnt] {
+        list = append(list, map[string]string {
+            "PublishedDate":    rel.PublishedDate(),
+            "Version":          rel.Version,
+            "WebLink":          rel.WebLink,
+        })
+    }
+    return list
 }

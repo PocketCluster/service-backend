@@ -57,8 +57,6 @@ type Repository struct{
     Created            time.Time
     // Updated Date
     Updated            time.Time
-    // Registered Date
-    Registed           time.Time
 }
 
 func (r *Repository) CreatedDate() string {

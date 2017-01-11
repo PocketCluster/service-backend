@@ -119,7 +119,7 @@ func (ctrl *Controller) GetGithubAllReleases(repoURL string) (model.ListRelease,
     return listRelease, resp, err
 }
 
-func (ctrl *Controller) GetGithubAllTags(repoURL string, oldTagList model.ListTag) (model.ListTag, string, *github.Response, error) {
+func (ctrl *Controller) GetGithubAllTags(repoURL string, oldTagList model.ListTag, size int) (model.ListTag, string, *github.Response, error) {
     var (
         owner, repo, updated string = "", "", ""
         tagList model.ListTag
@@ -155,7 +155,7 @@ func (ctrl *Controller) GetGithubAllTags(repoURL string, oldTagList model.ListTa
         tagList = append(tagList, oldTagList...)
     }
     // ([]*RepositoryRelease, *Response, error) : read 26 tags due to backport of apache repositories
-    ghTags, resp, err = ctrl.githubClient.Repositories.ListTags(owner, repo, &github.ListOptions{Page:0, PerPage:26})
+    ghTags, resp, err = ctrl.githubClient.Repositories.ListTags(owner, repo, &github.ListOptions{Page:0, PerPage:size})
     if err != nil {
         return nil, "", resp, err
     }

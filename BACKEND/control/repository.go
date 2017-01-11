@@ -81,10 +81,10 @@ func (ctrl *Controller) Repository(c web.C, r *http.Request) (string, int) {
     if err != nil {
         trace.Wrap(err)
     } else {
-        // release first
+        // FIXME : Mustache template does not work well with a property function(), "PublishedDate". How?
         if len(repoSupp.Releases) != 0 {
             content["releases"] = repoSupp.Releases.FirstTenElements()
-        } else if len(repoSupp.Tags) != 0{
+        } else if len(repoSupp.Tags) != 0 {
             content["releases"] = repoSupp.Tags.FirstTenElements()
         }
     }

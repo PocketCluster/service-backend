@@ -65,7 +65,7 @@ func (a *Application) init() {
         log.Fatal(trace.Wrap(err))
     }
     // Migrate the schema
-    metadb.AutoMigrate(&model.Author{}, &model.Repository{}, &model.RepoContributor{});
+    metadb.AutoMigrate(&model.Repository{}, &model.Author{}, &model.RepoContributor{});
     a.MetaDB = metadb;
 
     // (BOLTDB) supplementary

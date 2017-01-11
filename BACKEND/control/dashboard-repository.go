@@ -235,7 +235,6 @@ func submitRepo(ctrl *Controller, c web.C, reqs map[string]string, repoData *git
         Summary:        description,
         Created:        createdDate,
         Updated:        updatedDate,
-        Registed:       time.Now(),
     }
     repoDB.Save(&repoAdded)
 
@@ -327,19 +326,18 @@ func submitRepo(ctrl *Controller, c web.C, reqs map[string]string, repoData *git
     releases, _, err := ctrl.GetGithubAllReleases(repoURL)
     if err != nil {
         log.Error(trace.Wrap(err))
-    }
-    if len(releases) != 0 {
+    } else if len(releases) != 0 {
         repoSupp.Releases = releases
-        repoSupp.Tags = nil
-    } else {
-        // if no releases are avaiable, then update tags
-        tags, _, _, err := ctrl.GetGithubAllTags(repoURL, repoSupp.Tags)
-        if err != nil {
-            log.Error(trace.Wrap(err))
-        } else {
-            repoSupp.Tags = tags
-        }
     }
+
+    // if no releases are avaiable, then update tags
+    tags, _, _, err := ctrl.GetGithubAllTags(repoURL, repoSupp.Tags, 26)
+    if err != nil {
+        log.Error(trace.Wrap(err))
+    } else if len(tags) != 0 {
+        repoSupp.Tags = tags
+    }
+
 
     log.Info("\n\n-----------------\n" + spew.Sdump(repoSupp))
     suppDB.AcquireLock(repoID, time.Second)
