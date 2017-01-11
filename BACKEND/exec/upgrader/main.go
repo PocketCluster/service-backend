@@ -46,8 +46,7 @@ func GithubSupplementInfo(suppDB storage.Nosql, ctrl *control.Controller, repoMo
         repoSupp = model.RepoSupplement{RepoID:repoID}
     } else {
         //log.Info(spew.Sdump(repoSupp))
-        //if !repoSupp.Updated.IsZero() && time.Hour * 6 < time.Now().Sub(repoSupp.Updated) {
-        if !repoSupp.Updated.IsZero() {
+        if !repoSupp.Updated.IsZero() && time.Hour * 6 < time.Now().Sub(repoSupp.Updated) {
             log.Infof("%s :: updated already", repoID)
             return nil, nil
         }
@@ -78,6 +77,7 @@ func GithubSupplementInfo(suppDB storage.Nosql, ctrl *control.Controller, repoMo
     }
 
     repoSupp.Updated = time.Now()
+    repoSupp.SaveRecentPublication()
 
     // save it to database
     log.Infof("%s - %s :: Lang [%d], Releases [%d] Tags [%d]", repoID, repoURL, len(repoSupp.Languages), len(repoSupp.Releases), len(repoSupp.Tags))
@@ -91,7 +91,48 @@ func GithubSupplementInfo(suppDB storage.Nosql, ctrl *control.Controller, repoMo
     return resp, nil
 }
 
+func githubSortSupplementInfo(suppDB storage.Nosql, repoModel *model.Repository) error {
+    var (
+        repoID string                       = repoModel.RepoId
+        repoURL string                      = repoModel.RepoPage
+
+        repoSupp model.RepoSupplement
+        //langs model.ListLanguage
+        //releases model.ListRelease
+        //tags model.ListTag
+        err error
+    )
+
+    // URL CHECK
+    if len(repoURL) == 0 {
+        return trace.Wrap(errors.New("Cannot begin update a repo with empty URL"))
+    }
+
+    suppDB.AcquireLock(repoID, time.Second)
+    err = suppDB.GetObj([]string{model.RepoSuppBucket}, repoID, &repoSupp)
+    suppDB.ReleaseLock(repoID)
+    if err != nil {
+        return err
+    }
+
+    repoSupp.SaveRecentPublication()
+    //log.Info(spew.Sdump(repoSupp.RecentPublish))
+
+    // save it to database
+    log.Infof("%s - %s :: Lang [%d], Releases [%d] Tags [%d]", repoID, repoURL, len(repoSupp.Languages), len(repoSupp.Releases), len(repoSupp.Tags))
+    suppDB.AcquireLock(repoID, time.Second)
+    err = suppDB.UpsertObj([]string{model.RepoSuppBucket}, repoID, &repoSupp, storage.Forever)
+    suppDB.ReleaseLock(repoID)
+    if err != nil {
+        log.Error(err.Error())
+    }
+
+    return nil
+}
+
+
 func main() {
+    var handleUpdate bool = false
     // config
     cfgPath, ok := os.LookupEnv(config.EnvConfigFilePath)
     if !ok {
@@ -134,20 +175,27 @@ func main() {
     */
     var repos []model.Repository
     repoDB.Find(&repos)
-    var repoCount int = len(repos)
-    for i, repo := range repos {
-        log.Infof("%d / %d | %s - %s", i, repoCount, repo.RepoId, repo.RepoPage)
-        resp, err := GithubSupplementInfo(suppledb, ctrl, &repo);
-        if err != nil {
-            log.Error(err.Error())
-        }
 
-        if resp != nil {
-            log.Infof("Remaning API limit %d\n", resp.Rate.Remaining)
-            if resp.Rate.Remaining < 100 {
-                log.Info("API limit is met")
-                break
+    if handleUpdate {
+        var repoCount int = len(repos)
+        for i, repo := range repos {
+            log.Infof("%d / %d | %s - %s", i, repoCount, repo.RepoId, repo.RepoPage)
+            resp, err := GithubSupplementInfo(suppledb, ctrl, &repo);
+            if err != nil {
+                log.Error(err.Error())
             }
+
+            if resp != nil {
+                log.Infof("Remaning API limit %d\n", resp.Rate.Remaining)
+                if resp.Rate.Remaining < 100 {
+                    log.Info("API limit is met")
+                    break
+                }
+            }
+        }
+    } else {
+        for _, repo := range repos {
+            githubSortSupplementInfo(suppledb, &repo);
         }
     }
 

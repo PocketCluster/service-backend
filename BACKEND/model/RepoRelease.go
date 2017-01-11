@@ -18,18 +18,6 @@ type RepoRelease struct {
     WebLink         string          `msgpack:"weblink"`
 }
 
-func (r *RepoRelease) published() time.Time {
-    return r.Published
-}
-
-func (r *RepoRelease) version() string {
-    return r.Version
-}
-
-func (r *RepoRelease) weblink() string {
-    return r.WebLink
-}
-
 type ListRelease []RepoRelease
 
 func (slice ListRelease) Len() int {

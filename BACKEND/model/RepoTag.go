@@ -20,18 +20,6 @@ type RepoTag struct {
     WebLink         string          `msgpack:"weblink"`
 }
 
-func (r *RepoTag) published() time.Time {
-    return r.Published
-}
-
-func (r *RepoTag) version() string {
-    return r.Version
-}
-
-func (r *RepoTag) weblink() string {
-    return r.WebLink
-}
-
 type ListTag []RepoTag
 
 func (slice ListTag) Len() int {
