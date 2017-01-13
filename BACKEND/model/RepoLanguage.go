@@ -11,7 +11,7 @@ type RepoLanguage struct {
     Percentage        float32       `msgpack:"percent"`
 }
 
-type ListLanguage []RepoLanguage
+type ListLanguage []*RepoLanguage
 
 func (slice ListLanguage) Len() int {
     return len(slice)

@@ -17,10 +17,6 @@ import (
     "github.com/stkim1/BACKEND/model"
     "github.com/stkim1/BACKEND/util"
     "github.com/stkim1/BACKEND/config"
-    "github.com/stkim1/BACKEND/storage"
-
-    "github.com/davecgh/go-spew/spew"
-    "time"
 )
 
 const (
@@ -135,11 +131,7 @@ func submitRepo(ctrl *Controller, c web.C, reqs map[string]string, repoData *git
 
         repoDB *gorm.DB         = ctrl.GetMetaDB(c)
 
-        suppDB storage.Nosql    = ctrl.GetSuppleDB(c)
-
         config *config.Config   = ctrl.Config
-
-        repoSupp model.RepoSupplement
     )
 
     /* -------------------------------------------- Submit Error Checking ------------------------------------------- */
@@ -302,50 +294,6 @@ func submitRepo(ctrl *Controller, c web.C, reqs map[string]string, repoData *git
                 repoDB.Save(&contribInfo)
             }
         }
-    }
-
-    /* ----------------------------------------- Handle Languages, Releases, Tags ----------------------------------- */
-    suppDB.AcquireLock(repoID, time.Second)
-    err = suppDB.GetObj([]string{model.RepoSuppBucket}, repoID, &repoSupp)
-    suppDB.ReleaseLock(repoID)
-    if err != nil {
-        // we don't work on an empty container
-        repoSupp = model.RepoSupplement{RepoID:repoID}
-        log.Error(err.Error())
-    }
-
-    // get languages
-    langs, _, err := ctrl.GetGithubRepoLanguages(repoURL)
-    if err != nil {
-        log.Error(trace.Wrap(err))
-    } else {
-        repoSupp.Languages = langs
-    }
-
-    // get releases
-    releases, _, err := ctrl.GetGithubAllReleases(repoURL)
-    if err != nil {
-        log.Error(trace.Wrap(err))
-    } else if len(releases) != 0 {
-        repoSupp.Releases = releases
-    }
-
-    // if no releases are avaiable, then update tags
-    tags, _, _, err := ctrl.GetGithubAllTags(repoURL, repoSupp.Tags, 26)
-    if err != nil {
-        log.Error(trace.Wrap(err))
-    } else if len(tags) != 0 {
-        repoSupp.Tags = tags
-    }
-
-    repoSupp.Updated = time.Now()
-
-    log.Info("\n\n-----------------\n" + spew.Sdump(repoSupp))
-    suppDB.AcquireLock(repoID, time.Second)
-    err = suppDB.UpsertObj([]string{model.RepoSuppBucket}, repoID, &repoSupp, storage.Forever)
-    suppDB.ReleaseLock(repoID)
-    if err != nil {
-        log.Error(err.Error())
     }
 
     return map[string]interface{}{

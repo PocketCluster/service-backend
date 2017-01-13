@@ -20,7 +20,7 @@ type RepoTag struct {
     WebLink         string          `msgpack:"weblink"`
 }
 
-type ListTag []RepoTag
+type ListTag []*RepoTag
 
 func (slice ListTag) Len() int {
     return len(slice)

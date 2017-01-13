@@ -10,7 +10,7 @@ import (
     "github.com/jinzhu/gorm"
     _ "github.com/jinzhu/gorm/dialects/sqlite"
     "github.com/google/go-github/github"
-    //"github.com/davecgh/go-spew/spew"
+    "github.com/davecgh/go-spew/spew"
 
     "github.com/stkim1/BACKEND/model"
     "github.com/stkim1/BACKEND/control"
@@ -61,7 +61,7 @@ func GithubSupplementInfo(suppDB storage.Nosql, ctrl *control.Controller, repoMo
     }
 
     // get releases
-    releases, resp, err = ctrl.GetGithubAllReleases(repoURL)
+    releases, _, resp, err = ctrl.GetGithubAllReleases(repoURL, &repoSupp.Releases, 30)
     if err != nil {
         return resp, trace.Wrap(err)
     } else if len(releases) != 0 {
@@ -69,15 +69,16 @@ func GithubSupplementInfo(suppDB storage.Nosql, ctrl *control.Controller, repoMo
     }
 
     // get tags
-    tags, _, resp, err = ctrl.GetGithubAllTags(repoURL, repoSupp.Tags, 31)
+    tags, _, resp, err = ctrl.GetGithubAllTags(repoURL, &repoSupp.Tags, 31)
     if err != nil {
         return resp, trace.Wrap(err)
     } else if len(tags) != 0 {
         repoSupp.Tags = tags
     }
 
-    repoSupp.Updated = time.Now()
     repoSupp.BuildRecentPublication(15)
+    repoSupp.Updated = time.Now()
+    //log.Info(spew.Sdump(repoSupp))
 
     // save it to database
     log.Infof("%s - %s :: Lang [%d], Releases [%d] Tags [%d]", repoID, repoURL, len(repoSupp.Languages), len(repoSupp.Releases), len(repoSupp.Tags))
@@ -117,7 +118,7 @@ func githubSortSupplementInfo(suppDB storage.Nosql, repoModel *model.Repository)
     }
 
     repoSupp.BuildRecentPublication(15)
-    //log.Info(spew.Sdump(repoSupp.RecentPublish))
+    log.Info(spew.Sdump(repoSupp.RecentPublish))
 
     // save it to database
     suppDB.AcquireLock(repoID, time.Second)
@@ -132,7 +133,7 @@ func githubSortSupplementInfo(suppDB storage.Nosql, repoModel *model.Repository)
 
 func main() {
     var (
-        handleUpdate bool = false
+        handleUpdate bool = true
     )
     // config
     cfgPath, ok := os.LookupEnv(config.EnvConfigFilePath)

@@ -20,7 +20,7 @@ type RepoRelease struct {
     WebLink         string          `msgpack:"weblink"`
 }
 
-type ListRelease []RepoRelease
+type ListRelease []*RepoRelease
 
 func (slice ListRelease) Len() int {
     return len(slice)

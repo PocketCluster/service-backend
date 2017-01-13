@@ -29,7 +29,7 @@ func converRelease(r *RepoRelease) *RecentPublish {
         var linkSplit []string = strings.Split(weblink, "/releases/tag/")
         version = linkSplit[len(linkSplit) - 1]
     }
-    return &RecentPublish{
+    return &RecentPublish {
         Published:      published,
         Version:        version,
         WebLink:        weblink,
@@ -93,32 +93,34 @@ type RepoSupplement struct {
 func (r *RepoSupplement) BuildRecentPublication(maxEntity int) {
     var (
         pubList ListPublished
+
+        isRelieaseExist = func(rl *ListRelease, pl *ListPublished, t *RepoTag) bool {
+            if len(*rl) == 0 {
+                return false
+            }
+            for _, rel := range *rl {
+                if compareRelAndTag(rel, t) {
+                    return true
+                }
+            }
+            if len(*pl) == 0 {
+                return false
+            }
+            for _, p := range *pl {
+                if comparePubAndTag(p, t) {
+                    return true
+                }
+            }
+            return false
+        }
     )
-    for i, _ := range r.Releases {
-        pubList = append(pubList, converRelease(&(r.Releases[i])))
+
+    for _, rel := range r.Releases {
+        pubList = append(pubList, converRelease(rel))
     }
-    isRelieaseExist := func(rl *ListRelease, pl *ListPublished, t *RepoTag) bool {
-        if len(*rl) == 0 {
-            return false
-        }
-        for i, _ := range *rl {
-            if compareRelAndTag(&((*rl)[i]), t) {
-                return true
-            }
-        }
-        if len(*pl) == 0 {
-            return false
-        }
-        for _, p := range *pl {
-            if comparePubAndTag(p, t) {
-                return true
-            }
-        }
-        return false
-    }
-    for i, _ := range r.Tags {
-        if !isRelieaseExist(&(r.Releases), &pubList, &(r.Tags[i])) {
-            pubList = append(pubList, convertTag(&(r.Tags[i])))
+    for _, t := range r.Tags {
+        if !isRelieaseExist(&(r.Releases), &pubList, t) {
+            pubList = append(pubList, convertTag(t))
         }
     }
     var cnt int = len(pubList)
