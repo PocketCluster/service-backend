@@ -81,8 +81,9 @@ func (ctrl *Controller) Repository(c web.C, r *http.Request) (string, int) {
     if err != nil {
         trace.Wrap(err)
     } else {
-        list := repoSupp.RecentPublication()
+        list := repoSupp.RecentPublication(5)
         if len(list) != 0 {
+            content["hasRelease"] = true
             content["releases"] = list
         }
     }

@@ -128,10 +128,21 @@
     </div>
 
     <div class="span3">
-        <p>
+{{#hasRelease}}
+        <table class="table table-striped table-condensed" style="margin-top:2em;">
+            <thead>
+                <tr>
+                    <th>Latest Releases</th>
+                </tr>
+            </thead>
+            <tbody>
 {{#releases}}
-            {{PublishedDate}} <a href="{{WebLink}}"p>{{Version}}</a><br/>
+                <tr>
+                    <td><a href="{{WebLink}}">{{Version}}</a><br/><small><strong>&nbsp;{{PublishedDate}}</strong></small></td>
+                </tr>
 {{/releases}}
-        </p>
+            </tbody>
+        </table>
+{{/hasRelease}}
     </div>
 </div>

@@ -134,17 +134,20 @@ func (r *RepoSupplement) BuildRecentPublication(maxEntity int) {
     r.RecentPublish = pubList[:cnt]
 }
 
-func (r *RepoSupplement) RecentPublication() []map[string]string {
-    if len(r.RecentPublish) == 0 {
+func (r *RepoSupplement) RecentPublication(maxSize int) []map[string]string {
+    if len(r.RecentPublish) == 0 || maxSize == 0 {
         return nil
     }
     var list []map[string]string
-    for _, pub := range r.RecentPublish {
+    for i, pub := range r.RecentPublish {
         list = append(list, map[string]string {
             "PublishedDate":    pub.Published.Format(releaseDateFormat),
             "Version":          pub.Version,
             "WebLink":          pub.WebLink,
         })
+        if maxSize <= (i + 1) {
+            break
+        }
     }
     return list
 }
