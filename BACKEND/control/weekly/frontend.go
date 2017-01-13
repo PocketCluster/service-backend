@@ -21,7 +21,7 @@ const (
 
 func findRepoInCategory(db *gorm.DB, dateInterval int, cat string) []map[string]string {
     var (
-        then time.Time = time.Now().AddDate(0, 0, -7)
+        then time.Time = time.Now().AddDate(0, 0, -5)
         repos []model.Repository
         desc []map[string]string
     )

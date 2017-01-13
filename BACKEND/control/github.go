@@ -90,26 +90,38 @@ func (ctrl *Controller) GetGithubRepoLanguages(repoURL string) (model.ListLangua
     return listLang, resp, err
 }
 
-func (ctrl *Controller) GetGithubAllReleases(repoURL string) (model.ListRelease, *github.Response, error) {
+func (ctrl *Controller) GetGithubAllReleases(repoURL string, oldReleases *model.ListRelease, size int) (model.ListRelease, *github.Response, error) {
+    var (
+        owner, repo, updated string = "", "", ""
+        url []string
+        listRelease model.ListRelease
+        releases []*github.RepositoryRelease
+        resp *github.Response
+        err error
+    )
+    isOldReleaseExists := func(prevList model.ListRelease, rel *github.RepositoryRelease) bool {
+
+    }
+
     // TODO : check if URL is in correct form
     if len(repoURL) == 0 {
         return nil, nil, fmt.Errorf("[ERR] Invalid repository URL address")
     }
-    url := strings.Split(strings.Replace(repoURL , githubWebURL, "", -1), "/")
-    owner, repo := url[0], url[1]
+    url = strings.Split(strings.Replace(repoURL , githubWebURL, "", -1), "/")
+    owner, repo = url[0], url[1]
     if len(owner) == 0 || len(repo) == 0{
         return nil, nil, fmt.Errorf("[ERR] Invalid repository URL format")
     }
 
     // ([]*RepositoryRelease, *Response, error)
-    releases, resp, err := ctrl.githubClient.Repositories.ListReleases(owner, repo, &github.ListOptions{Page:1, PerPage:30})
+    releases, resp, err = ctrl.githubClient.Repositories.ListReleases(owner, repo, &github.ListOptions{Page:1, PerPage:size})
     if err != nil {
         return nil, resp, err
     }
 
-    var listRelease model.ListRelease
+    //TODO : combine with old releases like tags
     for _, rel := range releases {
-        listRelease = append(listRelease, model.RepoRelease{
+        listRelease = append(listRelease, model.RepoRelease {
             Published:      util.SafeGetTimestamp(rel.PublishedAt),
             Version:        util.SafeGetString(rel.Name),
             TagVersion:     util.SafeGetString(rel.TagName),
@@ -120,20 +132,22 @@ func (ctrl *Controller) GetGithubAllReleases(repoURL string) (model.ListRelease,
     return listRelease, resp, err
 }
 
-func (ctrl *Controller) GetGithubAllTags(repoURL string, oldTagList model.ListTag, size int) (model.ListTag, string, *github.Response, error) {
+func (ctrl *Controller) GetGithubAllTags(repoURL string, oldTagList *model.ListTag, size int) (model.ListTag, string, *github.Response, error) {
     var (
         owner, repo, updated string = "", "", ""
         tagList model.ListTag
+        url []string
         ghTags []*github.RepositoryTag
         commit *github.Commit
         resp *github.Response
         err error
     )
-    getOldTag := func(prevList model.ListTag, sha string) *model.RepoTag {
-        if len(prevList) == 0 {
+    getOldTag := func(prevList *model.ListTag, sha string) *model.RepoTag {
+        if len(*prevList) == 0 {
             return nil
         }
-        for _, rel := range prevList {
+        for i, _ := range *prevList {
+            rel := prevList[i]
             if rel.SHA == sha {
                 return &rel
             }
@@ -145,15 +159,15 @@ func (ctrl *Controller) GetGithubAllTags(repoURL string, oldTagList model.ListTa
     if len(repoURL) == 0 {
         return nil, "", nil, fmt.Errorf("[ERR] Invalid repository URL address")
     }
-    url := strings.Split(strings.Replace(repoURL , githubWebURL, "", -1), "/")
+    url = strings.Split(strings.Replace(repoURL , githubWebURL, "", -1), "/")
     owner, repo = url[0], url[1]
     if len(owner) == 0 || len(repo) == 0{
         return nil, "", nil, fmt.Errorf("[ERR] Invalid repository URL format")
     }
 
     // append previous list
-    if len(oldTagList) != 0 {
-        tagList = append(tagList, oldTagList...)
+    if len(*oldTagList) != 0 {
+        tagList = append(tagList, (*oldTagList)...)
     }
     // ([]*RepositoryRelease, *Response, error) : read 26 tags due to backport of apache repositories
     ghTags, resp, err = ctrl.githubClient.Repositories.ListTags(owner, repo, &github.ListOptions{Page:0, PerPage:size})
@@ -163,7 +177,7 @@ func (ctrl *Controller) GetGithubAllTags(repoURL string, oldTagList model.ListTa
 
     for _, tag := range ghTags {
         SHA := util.SafeGetString(tag.Commit.SHA)
-        old := getOldTag(oldTagList, SHA)
+        old := getOldTag(*oldTagList, SHA)
 
         // this tag DNE in old list
         if old == nil {
