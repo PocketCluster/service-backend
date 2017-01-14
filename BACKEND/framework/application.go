@@ -1,11 +1,13 @@
 package framework
 
 import (
+    "crypto/sha256"
     "html/template"
     "io"
     "net/http"
     "reflect"
-    "crypto/sha256"
+    "sync"
+    "time"
 
     log "github.com/Sirupsen/logrus"
     "github.com/gravitational/trace"
@@ -40,13 +42,20 @@ type csrfProtection struct {
 
 // Application-wide resource management
 type Application struct {
-    Controller     *control.Controller
-    Config         *config.Config
-    Template       *template.Template
-    Store          *sessions.CookieStore
-    MetaDB         *gorm.DB
-    SuppleDB       storage.Nosql
-    CsrfProtection *csrfProtection
+    Controller          *control.Controller
+    Config              *config.Config
+    Template            *template.Template
+    Store               *sessions.CookieStore
+    MetaDB              *gorm.DB
+    SuppleDB            storage.Nosql
+    CsrfProtection      *csrfProtection
+
+    // waiter
+    UpdateWait          sync.WaitGroup
+    QuitMetaUpdate      chan bool
+    QuitSuppUpdate      chan bool
+    LastMetaUpdated     time.Time
+    LastSuppUpdated     time.Time
 }
 
 func (a *Application) init() {
@@ -67,6 +76,7 @@ func (a *Application) init() {
     // Migrate the schema
     metadb.AutoMigrate(&model.Repository{}, &model.Author{}, &model.RepoContributor{});
     a.MetaDB = metadb;
+    a.QuitMetaUpdate = make(chan bool)
 
     // (BOLTDB) supplementary
     suppledb, err := boltbk.New(a.Config.Supplement.DatabasePath)
@@ -74,6 +84,7 @@ func (a *Application) init() {
         log.Fatal(trace.Wrap(err))
     }
     a.SuppleDB = suppledb
+    a.QuitSuppUpdate = make(chan bool)
 
     a.CsrfProtection = &csrfProtection{
         Key:       a.Config.CSRF.Key,
@@ -84,6 +95,14 @@ func (a *Application) init() {
 }
 
 func (a *Application) Close() {
+    log.Info("Wait for graceful completion...")
+    a.QuitSuppUpdate <- true
+    a.QuitMetaUpdate <- true
+    a.UpdateWait.Wait()
+
+    close(a.QuitSuppUpdate)
+    close(a.QuitMetaUpdate)
+
     if a.MetaDB != nil {
         a.MetaDB.Close()
     }

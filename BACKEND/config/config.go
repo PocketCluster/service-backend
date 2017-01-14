@@ -53,7 +53,13 @@ type VPN struct {
 }
 
 type Update struct {
-    ForceReadme     bool      `yaml:"force_readme"`
+    ForceReadme           bool      `yaml:"force_readme"`
+    MetaUpdatRecord       string    `yaml:"meta_update_record"`
+    // in minutes
+    MetaUpdateInterval    int64     `yaml:"meta_update_interval"`
+    SuppUpdatRecord       string    `yaml:"supp_update_record"`
+    // in minutes
+    SuppUpdateInterval    int64     `yaml:"supp_update_interval"`
 }
 
 type Config struct {
