@@ -7,7 +7,7 @@ import (
     "net/http"
     "reflect"
     "sync"
-    "time"
+    "sync/atomic"
 
     log "github.com/Sirupsen/logrus"
     "github.com/gravitational/trace"
@@ -52,10 +52,10 @@ type Application struct {
 
     // waiter
     UpdateWait          sync.WaitGroup
+    IsMetaUpdating      atomic.Value
     QuitMetaUpdate      chan bool
+    IsSuppUpdating      atomic.Value
     QuitSuppUpdate      chan bool
-    LastMetaUpdated     time.Time
-    LastSuppUpdated     time.Time
 }
 
 func (a *Application) init() {
@@ -77,6 +77,7 @@ func (a *Application) init() {
     metadb.AutoMigrate(&model.Repository{}, &model.Author{}, &model.RepoContributor{});
     a.MetaDB = metadb;
     a.QuitMetaUpdate = make(chan bool)
+    a.IsMetaUpdating.Store(false)
 
     // (BOLTDB) supplementary
     suppledb, err := boltbk.New(a.Config.Supplement.DatabasePath)
@@ -85,6 +86,7 @@ func (a *Application) init() {
     }
     a.SuppleDB = suppledb
     a.QuitSuppUpdate = make(chan bool)
+    a.IsSuppUpdating.Store(false)
 
     a.CsrfProtection = &csrfProtection{
         Key:       a.Config.CSRF.Key,
@@ -99,7 +101,6 @@ func (a *Application) Close() {
     a.QuitSuppUpdate <- true
     a.QuitMetaUpdate <- true
     a.UpdateWait.Wait()
-
     close(a.QuitSuppUpdate)
     close(a.QuitMetaUpdate)
 

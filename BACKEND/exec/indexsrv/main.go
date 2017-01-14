@@ -82,5 +82,9 @@ func main() {
     graceful.PostHook(func() {
         app.Close()
     })
+
+    // just before going into serve, initiate updater
+    app.ScheduleMetaUpdate()
+    app.ScheduleSuppUpdate()
     goji.Serve()
 }

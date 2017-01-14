@@ -26,7 +26,7 @@ vpn:
   vpn_host: "198.199.115.209"
 update:
   force_readme: false
-  meta_update_record: "/www-server/meta-updated.txt"
+  meta_update_record: "/www-server/meta-updated.log"
   meta_update_interval: 180
-  supp_update_record: "/www-server/supp-updated.txt"
+  supp_update_record: "/www-server/supp-updated.log"
   supp_update_interval: 720

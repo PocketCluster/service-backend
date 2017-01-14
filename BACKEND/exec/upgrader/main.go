@@ -9,7 +9,6 @@ import (
     "github.com/gravitational/trace"
     "github.com/jinzhu/gorm"
     _ "github.com/jinzhu/gorm/dialects/sqlite"
-    "github.com/google/go-github/github"
     "github.com/davecgh/go-spew/spew"
 
     "github.com/stkim1/BACKEND/model"
@@ -17,81 +16,8 @@ import (
     "github.com/stkim1/BACKEND/config"
     "github.com/stkim1/BACKEND/storage/boltbk"
     "github.com/stkim1/BACKEND/storage"
+    "github.com/stkim1/BACKEND/update"
 )
-
-func GithubSupplementInfo(suppDB storage.Nosql, ctrl *control.Controller, repoModel *model.Repository) (*github.Response, error) {
-    var (
-        repoID string                       = repoModel.RepoId
-        repoURL string                      = repoModel.RepoPage
-
-        repoSupp model.RepoSupplement
-        langs model.ListLanguage
-        releases model.ListRelease
-        tags model.ListTag
-
-        resp *github.Response
-        err error
-    )
-
-    // URL CHECK
-    if len(repoURL) == 0 {
-        return nil, trace.Wrap(errors.New("Cannot begin update a repo with empty URL"))
-    }
-
-    suppDB.AcquireLock(repoID, time.Second)
-    err = suppDB.GetObj([]string{model.RepoSuppBucket}, repoID, &repoSupp)
-    suppDB.ReleaseLock(repoID)
-    if err != nil {
-        // we don't work on an empty container
-        repoSupp = model.RepoSupplement{RepoID:repoID}
-    } else {
-        //log.Info(spew.Sdump(repoSupp))
-        if !repoSupp.Updated.IsZero() && time.Now().Sub(repoSupp.Updated) < (time.Hour * 6) {
-            log.Infof("%s :: updated already", repoID)
-            return nil, nil
-        }
-    }
-
-    // get languages
-    langs, resp, err = ctrl.GetGithubRepoLanguages(repoURL)
-    if err != nil {
-        return resp, trace.Wrap(err)
-    } else {
-        repoSupp.Languages = langs
-    }
-
-    // get releases
-    releases, _, resp, err = ctrl.GetGithubAllReleases(repoURL, &repoSupp.Releases, 30)
-    if err != nil {
-        return resp, trace.Wrap(err)
-    } else if len(releases) != 0 {
-        repoSupp.Releases = releases
-    }
-
-    // get tags
-    tags, _, resp, err = ctrl.GetGithubAllTags(repoURL, &repoSupp.Tags, 31)
-    if err != nil {
-        return resp, trace.Wrap(err)
-    } else if len(tags) != 0 {
-        repoSupp.Tags = tags
-    }
-
-    repoSupp.BuildRecentPublication(15)
-    repoSupp.Updated = time.Now()
-    //log.Info(spew.Sdump(repoSupp))
-
-    // save it to database
-    log.Infof("%s - %s :: Lang [%d], Releases [%d] Tags [%d]", repoID, repoURL, len(repoSupp.Languages), len(repoSupp.Releases), len(repoSupp.Tags))
-    suppDB.AcquireLock(repoID, time.Second)
-    err = suppDB.UpsertObj([]string{model.RepoSuppBucket}, repoID, &repoSupp, storage.Forever)
-    suppDB.ReleaseLock(repoID)
-    if err != nil {
-        log.Error(err.Error())
-    }
-
-    return resp, nil
-}
-
 
 func githubSortSupplementInfo(suppDB storage.Nosql, repoModel *model.Repository) error {
     var (
@@ -178,11 +104,19 @@ func main() {
     var repos []model.Repository
     repoDB.Find(&repos)
 
-    if handleUpdate {
+    // update meta-data
+    if false {
+        for _, repo := range repos {
+            _, err := update.UpdateRepoMeta(repoDB, ctrl, &repo)
+            if err != nil {
+                log.Error(err.Error())
+            }
+        }
+    } else if handleUpdate {
         var repoCount int = len(repos)
         for i, repo := range repos {
             log.Infof("%d / %d | %s - %s", i, repoCount, repo.RepoId, repo.RepoPage)
-            resp, err := GithubSupplementInfo(suppledb, ctrl, &repo);
+            resp, err := update.GithubSupplementInfo(suppledb, ctrl, &repo);
             if err != nil {
                 log.Error(err.Error())
             }
