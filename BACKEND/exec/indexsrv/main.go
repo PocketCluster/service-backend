@@ -13,6 +13,7 @@ import (
     "github.com/stkim1/BACKEND/framework"
     "github.com/stkim1/BACKEND/control"
     "github.com/stkim1/BACKEND/config"
+    "runtime"
 )
 
 func main() {
@@ -29,7 +30,7 @@ func main() {
         log.Panic(trace.Wrap(err, "Cannot load config"))
         return
     }
-
+    runtime.GOMAXPROCS(cfg.General.MaxConcurrency)
     // Setup Controller
     ctrl = control.NewController(cfg)
     // setup Application

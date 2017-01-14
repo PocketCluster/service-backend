@@ -152,9 +152,13 @@ func UpdateAllRepoMeta(metaDB *gorm.DB, cfg *config.Config, metaWaiter *sync.Wai
     // update start
     metaDB.Find(&repos)
     for i, _ := range repos {
-        _, err := UpdateRepoMeta(metaDB, ctrl, &(repos[i]))
+        resp, err := UpdateRepoMeta(metaDB, ctrl, &(repos[i]))
         if err != nil {
             log.Error(trace.Wrap(err))
+        }
+        if resp != nil && resp.Rate.Remaining < 100 {
+            log.Info("HIT API LIMIT!!!")
+            break
         }
     }
     log.Info("Meta Update process ended at " + time.Now().Format("Jan. 2 2006 3:04 PM"))

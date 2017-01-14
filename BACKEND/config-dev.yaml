@@ -2,6 +2,7 @@ general:
   template_path: "./views/"
   readme_path: "./readme/"
   server_port: 8000
+  max_concurrency: 2
 site:
   site_name: "INDEX DEV"
   site_url: "http://localhost:8000"
@@ -26,7 +27,9 @@ vpn:
   vpn_host: "198.199.115.209"
 update:
   force_readme: false
+  max_release_collect: 30
+  max_release_rebuild: 15
   meta_update_record: "./meta-updated.log"
-  meta_update_interval: 30
+  meta_update_interval: 10
   supp_update_record: "./supp-updated.log"
-  supp_update_interval: 30
+  supp_update_interval: 15

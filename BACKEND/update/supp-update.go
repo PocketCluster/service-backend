@@ -18,7 +18,7 @@ import (
     "github.com/stkim1/BACKEND/config"
 )
 
-func GithubSupplementInfo(suppDB storage.Nosql, ctrl *control.Controller, repoModel *model.Repository) (*github.Response, error) {
+func GithubSupplementInfo(suppDB storage.Nosql, ctrl *control.Controller, repoModel *model.Repository, maxRelease, maxRebuild int, updateInterval int64) (*github.Response, error) {
     var (
         repoID string                       = repoModel.RepoId
         repoURL string                      = repoModel.RepoPage
@@ -41,12 +41,11 @@ func GithubSupplementInfo(suppDB storage.Nosql, ctrl *control.Controller, repoMo
     err = suppDB.GetObj([]string{model.RepoSuppBucket}, repoID, &repoSupp)
     suppDB.ReleaseLock(repoID)
     if err != nil {
-        // we don't work on an empty container
         repoSupp = model.RepoSupplement{RepoID:repoID}
     } else {
-        //log.Info(spew.Sdump(repoSupp))
-        if !repoSupp.Updated.IsZero() && time.Now().Sub(repoSupp.Updated) < (time.Hour * 6) {
-            log.Infof("%s :: updated already", repoID)
+        // give a 30 minute headroom so this repo will be updated
+        if !repoSupp.Updated.IsZero() && time.Now().Sub(repoSupp.Updated) < (time.Minute * time.Duration(updateInterval + 30)) {
+            log.Infof("%s :: updated already", repoURL)
             return nil, nil
         }
     }
@@ -60,7 +59,7 @@ func GithubSupplementInfo(suppDB storage.Nosql, ctrl *control.Controller, repoMo
     }
 
     // get releases
-    releases, _, resp, err = ctrl.GetGithubAllReleases(repoURL, &repoSupp.Releases, 30)
+    releases, _, resp, err = ctrl.GetGithubAllReleases(repoURL, &repoSupp.Releases, maxRelease)
     if err != nil {
         return resp, err
     } else if len(releases) != 0 {
@@ -68,14 +67,14 @@ func GithubSupplementInfo(suppDB storage.Nosql, ctrl *control.Controller, repoMo
     }
 
     // get tags
-    tags, _, resp, err = ctrl.GetGithubAllTags(repoURL, &repoSupp.Tags, 31)
+    tags, _, resp, err = ctrl.GetGithubAllTags(repoURL, &repoSupp.Tags, maxRelease + 1)
     if err != nil {
         return resp, err
     } else if len(tags) != 0 {
         repoSupp.Tags = tags
     }
 
-    repoSupp.BuildRecentPublication(15)
+    repoSupp.BuildRecentPublication(maxRebuild)
     repoSupp.Updated = time.Now()
     //log.Info(spew.Sdump(repoSupp))
 
@@ -102,9 +101,13 @@ func UpdateAllRepoSupplement(metaDB *gorm.DB, suppDB storage.Nosql, cfg *config.
 
     metaDB.Find(&repos)
     for i, _ := range repos {
-        _, err := GithubSupplementInfo(suppDB, ctrl, &(repos[i]));
+        resp, err := GithubSupplementInfo(suppDB, ctrl, &(repos[i]), cfg.Update.MaxReleaseCollect, cfg.Update.MaxReleaseRebuild, cfg.SuppUpdateInterval);
         if err != nil {
             trace.Wrap(err)
+        }
+        if resp != nil && resp.Rate.Remaining < 100 {
+            log.Info("HIT API LIMIT!!!")
+            break
         }
     }
     log.Info("Supplementary Update process ended at " + time.Now().Format("Jan. 2 2006 3:04 PM"))

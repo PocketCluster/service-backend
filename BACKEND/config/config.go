@@ -14,6 +14,7 @@ type General struct {
     TemplatePath    string    `yaml:"template_path"`
     ReadmePath      string    `yaml:"readme_path"`
     ServerPort      int       `yaml:"server_port"`
+    MaxConcurrency  int       `yaml:"max_concurrency"`
 }
 
 type Site struct {
@@ -54,9 +55,15 @@ type VPN struct {
 
 type Update struct {
     ForceReadme        bool      `yaml:"force_readme"`
+    // how many entities should we read from github
+    MaxReleaseCollect  int       `yaml:"max_release_collect"`
+    // how many entities should we rebuild for display
+    MaxReleaseRebuild  int       `yaml:"max_release_rebuild"`
+    // last updated record
     MetaUpdateRecord   string    `yaml:"meta_update_record"`
     // in minutes
     MetaUpdateInterval int64     `yaml:"meta_update_interval"`
+    // last updated record
     SuppUpdateRecord   string    `yaml:"supp_update_record"`
     // in minutes
     SuppUpdateInterval int64     `yaml:"supp_update_interval"`
