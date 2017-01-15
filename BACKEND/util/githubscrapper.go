@@ -72,10 +72,8 @@ func GithubReadmeScrap(location string, filename string) {
                 return
             }
 
-            // check if link starts with hash-anchor
+            // check if link starts with anchor
             if strings.HasPrefix(link, "#") {
-                // since this is an anchor to the single document, we do not need to remove it
-                //s.SetAttr("href", location + href)
                 return
             }
 
@@ -93,6 +91,7 @@ func GithubReadmeScrap(location string, filename string) {
         }
     });
 
+    // anchor link fix
     readme.Find("a[href]").Filter(".anchor").Each(func(_ int, s *goquery.Selection) {
         anchor, exists := s.Attr("id")
         if exists {
