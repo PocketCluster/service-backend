@@ -31,7 +31,7 @@ func (a *Application) ScheduleMetaUpdate() {
         if err != nil {
             lastRec = time.Now().Add((time.Minute * time.Duration(30) - time.Minute * time.Duration(cfg.Update.MetaUpdateInterval)))
         }
-        log.Info("Generated Last Meta update" + lastRec.String())
+        log.Info("Last Meta update" + lastRec.String())
 
         for {
             select {
@@ -72,7 +72,7 @@ func (a *Application) ScheduleSuppUpdate() {
         if err != nil {
             lastRec = time.Now().Add((time.Minute * time.Duration(60) - time.Minute * time.Duration(cfg.Update.SuppUpdateInterval)))
         }
-        log.Info("Generated Last Supp update" + lastRec.String())
+        log.Info("Last Supp update" + lastRec.String())
 
         for {
             select {

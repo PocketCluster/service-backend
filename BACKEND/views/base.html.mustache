@@ -12,8 +12,9 @@
     <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
     <meta http-equiv="pragma" content="no-cache" />
     <meta name="google-site-verification" content="Pome8HwHNR8b_silNplvWew-n2A-g9glH7ZURDNOl4I" />
-    <meta name="keywords" content="pocketcluster, bigdata, hadoop, machine learning, data science" />
+
 {{#ISINDEX}}
+    <meta name="keywords" content="pocketcluster, bigdata, hadoop, machine learning, data science" />
     <meta name="description" content="PocketCluster: Experiments and Experiences" />
     <meta name="author" content="PocketCluster.io"/>
     <link rel="publisher" href="https://twitter.com/stkim1">
@@ -22,6 +23,24 @@
     <meta name="description" content="{{repo.Title}} - {{repo.Summary}}" />
     <meta name="author" content="{{owner.Login}}"/>
     <link rel="publisher" href="{{owner.ProfileURL}}">
+
+    <!-- facebook opengraph -->
+    <meta property="og:type"        content="website" />
+    <meta property="og:url"         content="https://index.pocketcluster.io/{{repo.Slug}}.html" />
+    <meta property="og:title"       content="{{repo.Title}}" />
+    <meta property="og:description" content="{{repo.Summary}}" />
+    <meta property="og:image"       content="https://avatars.githubusercontent.com/{{owner.Login}}?s=128" />
+
+    <!-- twitter card -->
+    <meta name="twitter:card"       content="summary" />
+    <meta name="twitter:site"       content="@pocketcluster" />
+    <meta name="twitter:domain"     content="pocketcluster.io" />
+    <meta name="twitter:title"      content="{{repo.Title}}" />
+    <meta name="twitter:description" content="{{repo.Summary}}" />
+    <meta name="twitter:image"      content="https://avatars.githubusercontent.com/{{owner.Login}}?s=128" />
+    <meta name="twitter:url"        content="https://index.pocketcluster.io/{{repo.Slug}}.html" />
+    <meta name="twitter:label1"     content="Last Commit" />
+    <meta name="twitter:data1"      content="{{repo.UpdatedDate}}" />
 {{/ISINDEX}}
 {{#FEED_ALL_ATOM}}
     <link href="{{FEED_DOMAIN}}/{{FEED_ALL_ATOM}}" type="application/atom+xml" rel="alternate" title="{{SITENAME}} Atom Feed" />
@@ -41,7 +60,7 @@
     <link href="{{THEME_LINK}}/css/bootplus.min.css" rel="stylesheet">
     <link href="{{THEME_LINK}}/css/bootplus-responsive.min.css" rel="stylesheet">
     <link href="{{THEME_LINK}}/css/docs.css" rel="stylesheet">
-    <link href="{{THEME_LINK}}/js/google-code-prettify/prettify.css" rel="stylesheet">
+    <!--link href="{{THEME_LINK}}/js/google-code-prettify/prettify.css" rel="stylesheet"-->
 {{^ISINDEX}}
     <link href="{{THEME_LINK}}/css/social-share-kit.css" type="text/css" rel="stylesheet">
 {{/ISINDEX}}

@@ -44,7 +44,8 @@ func GithubSupplementInfo(suppDB storage.Nosql, ctrl *control.Controller, repoMo
         repoSupp = model.RepoSupplement{RepoID:repoID}
     } else {
         // give a 30 minute headroom so this repo will be updated
-        if !repoSupp.Updated.IsZero() && time.Now().Sub(repoSupp.Updated) < (time.Minute * time.Duration(updateInterval + 30)) {
+        //if !repoSupp.Updated.IsZero() && time.Now().Sub(repoSupp.Updated) < (time.Minute * time.Duration(updateInterval * 2 + 30)) {
+        if !repoSupp.Updated.IsZero() && time.Now().Sub(repoSupp.Updated) < (time.Hour * time.Duration(24)) {
             log.Infof("%s :: updated already", repoURL)
             return nil, nil
         }

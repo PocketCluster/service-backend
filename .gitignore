@@ -91,4 +91,4 @@ project/plugins/project/
 .ensime
 
 # PC-INDEX specific
-BACKEND/pc-*
+BACKEND/DEVASSETS/*

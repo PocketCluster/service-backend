@@ -89,9 +89,9 @@ func (ctrl *Controller) Repository(c web.C, r *http.Request) (string, int) {
     }
 
     // Patch readme
-    readme, err := ioutil.ReadFile(path.Join("readme/", slug + ".html"))
+    readme, err := ioutil.ReadFile(path.Join(ctrl.Config.General.ReadmePath, slug + ".html"))
     if err != nil {
-        log.Error(trace.Wrap(err, "Cnnot read readme html file"))
+        log.Error(trace.Wrap(err))
     }
     content["readme"] = string(readme)
 
