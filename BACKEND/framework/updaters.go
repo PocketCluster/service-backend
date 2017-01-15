@@ -29,7 +29,7 @@ func (a *Application) ScheduleMetaUpdate() {
             lastRec, err = time.Parse(time.RFC3339, string(oldTS))
         }
         if err != nil {
-            lastRec = time.Now().Add((time.Minute * time.Duration(5) - time.Minute * time.Duration(cfg.Update.MetaUpdateInterval)))
+            lastRec = time.Now().Add((time.Minute * time.Duration(30) - time.Minute * time.Duration(cfg.Update.MetaUpdateInterval)))
         }
         log.Info("Generated Last Meta update" + lastRec.String())
 
@@ -70,7 +70,7 @@ func (a *Application) ScheduleSuppUpdate() {
             lastRec, err = time.Parse(time.RFC3339, string(oldTS))
         }
         if err != nil {
-            lastRec = time.Now().Add((time.Minute * time.Duration(10) - time.Minute * time.Duration(cfg.Update.SuppUpdateInterval)))
+            lastRec = time.Now().Add((time.Minute * time.Duration(60) - time.Minute * time.Duration(cfg.Update.SuppUpdateInterval)))
         }
         log.Info("Generated Last Supp update" + lastRec.String())
 
