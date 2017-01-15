@@ -3,6 +3,8 @@ package util
 import (
     "strings"
     "errors"
+    "github.com/google/go-github/github"
+    "time"
 )
 
 func SafeGetString(str *string) string {
@@ -31,4 +33,18 @@ func SafeGetBool(value *bool) bool {
 
 func SafeStringJoin(params... string) string {
     return strings.Join(params, "")
+}
+
+func SafeGetTimestamp(value *github.Timestamp) time.Time {
+    if value == nil {
+        return time.Time{}
+    }
+    return value.Time
+}
+
+func SafeGetTime(value *time.Time) time.Time {
+    if value == nil {
+        return time.Time{}
+    }
+    return *value
 }

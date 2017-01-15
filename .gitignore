@@ -89,3 +89,6 @@ project/plugins/project/
 # ENSIME specific
 .ensime_cache/
 .ensime
+
+# PC-INDEX specific
+BACKEND/pc-*

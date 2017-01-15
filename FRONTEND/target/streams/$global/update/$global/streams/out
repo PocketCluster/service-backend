@@ -7,7 +7,7 @@
 [debug] == resolving dependencies for index-front#index-front_sjs0.6_2.11;1.0 [compile]
 [debug] == resolving dependencies index-front#index-front_sjs0.6_2.11;1.0->org.scala-lang#scala-library;2.11.8 [compile->default(compile)]
 [info] Resolving org.scala-lang#scala-library;2.11.8 ...
-[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@4462f49b
+[debug] sbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@fe646fc
 [debug] sbt-chain: module revision found in cache: org.scala-lang#scala-library;2.11.8
 [debug] 	found org.scala-lang#scala-library;2.11.8 in sbt-chain
 [debug] 	[2.11.8] org.scala-lang#scala-library;2.11.8
@@ -666,7 +666,7 @@
 [debug] 	[NOT REQUIRED] org.eclipse.jetty#jetty-http;8.1.16.v20140903!jetty-http.jar
 [debug] 	[NOT REQUIRED] org.eclipse.jetty.orbit#javax.servlet;3.0.0.v201112011016!javax.servlet.jar(orbit)
 [debug] 	[NOT REQUIRED] org.eclipse.jetty#jetty-continuation;8.1.16.v20140903!jetty-continuation.jar
-[debug] :: resolution report :: resolve 408ms :: artifacts dl 13ms
+[debug] :: resolution report :: resolve 492ms :: artifacts dl 13ms
 [debug] 	report for index-front#index-front_sjs0.6_2.11;1.0 compile produced in /Users/almightykim/Workspace/INDEX-WEB/FRONTEND/target/resolution-cache/reports/index-front-index-front_sjs0.6_2.11-compile.xml
 [debug] 	report for index-front#index-front_sjs0.6_2.11;1.0 runtime produced in /Users/almightykim/Workspace/INDEX-WEB/FRONTEND/target/resolution-cache/reports/index-front-index-front_sjs0.6_2.11-runtime.xml
 [debug] 	report for index-front#index-front_sjs0.6_2.11;1.0 test produced in /Users/almightykim/Workspace/INDEX-WEB/FRONTEND/target/resolution-cache/reports/index-front-index-front_sjs0.6_2.11-test.xml
@@ -681,5 +681,5 @@
 [debug] 	report for index-front#index-front_sjs0.6_2.11;1.0 pom produced in /Users/almightykim/Workspace/INDEX-WEB/FRONTEND/target/resolution-cache/reports/index-front-index-front_sjs0.6_2.11-pom.xml
 [debug] 	report for index-front#index-front_sjs0.6_2.11;1.0 scala-tool produced in /Users/almightykim/Workspace/INDEX-WEB/FRONTEND/target/resolution-cache/reports/index-front-index-front_sjs0.6_2.11-scala-tool.xml
 [debug] 	report for index-front#index-front_sjs0.6_2.11;1.0 phantom-js-jetty produced in /Users/almightykim/Workspace/INDEX-WEB/FRONTEND/target/resolution-cache/reports/index-front-index-front_sjs0.6_2.11-phantom-js-jetty.xml
-[debug] 	resolve done (408ms resolve - 13ms download)
+[debug] 	resolve done (492ms resolve - 13ms download)
 [info] Done updating.

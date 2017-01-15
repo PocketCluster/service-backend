@@ -19,7 +19,7 @@ func (ctrl *Controller) Sitemap(c web.C, r *http.Request) (string, int) {
     sm.SetVerbose(false)
 
     var repos []model.Repository
-    ctrl.GetGORM(c).Find(&repos)
+    ctrl.GetMetaDB(c).Find(&repos)
 
     var buffer bytes.Buffer
     for _, repo := range repos {

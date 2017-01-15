@@ -14,7 +14,7 @@ func GetDefaultCategory() []Category {
     return []Category{
         {"Example",    "category/example.html",   false},
         {"Toolset",    "category/toolset.html",   false},
-        {"Model",      "category/model.html",       false},
+        {"Model",      "category/model.html",     false},
         {"Library",    "category/library.html",   false},
         {"Framework",  "category/framework.html", false},
     }
