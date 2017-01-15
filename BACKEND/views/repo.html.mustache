@@ -83,6 +83,15 @@
                         </span>
                     </div>
 
+                    {{#repo.WikiPage}}
+                        <div class="col-xs">
+                        <span>
+                            <strong>Wiki Page</strong><br/>
+                            <a href="{{repo.WikiPage}}">{{repo.WikiPage}}</a>
+                        </span>
+                        </div>
+                    {{/repo.WikiPage}}
+
                     {{#repo.ProjectPage}}
                     <div class="col-xs">
                         <span>
@@ -119,6 +128,21 @@
     </div>
 
     <div class="span3">
-
+{{#hasRelease}}
+        <table class="table table-striped table-condensed" style="margin-top:2em;">
+            <thead>
+                <tr>
+                    <th>Latest Releases</th>
+                </tr>
+            </thead>
+            <tbody>
+{{#releases}}
+                <tr>
+                    <td><a href="{{WebLink}}">{{Version}}</a><br/><small><strong>&nbsp;{{PublishedDate}}</strong></small></td>
+                </tr>
+{{/releases}}
+            </tbody>
+        </table>
+{{/hasRelease}}
     </div>
 </div>

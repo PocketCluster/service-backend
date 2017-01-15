@@ -11,11 +11,13 @@ import (
     "github.com/gravitational/trace"
     "github.com/gorilla/sessions"
     "github.com/zenazn/goji/web"
+
     "github.com/jinzhu/gorm"
     "github.com/google/go-github/github"
 
     "github.com/stkim1/BACKEND/model"
     "github.com/stkim1/BACKEND/config"
+    "github.com/stkim1/BACKEND/storage"
 )
 
 /* ------- GITHUG API CONTROL ------- */
@@ -36,52 +38,16 @@ type Controller struct {
     *config.Config
 }
 
-func (ctrl *Controller) GetGithubRepoMeta(repoURL string) (*github.Repository, *github.Response, error) {
-    // TODO : check if URL is in correct form
-    if len(repoURL) == 0 {
-        return nil, nil, fmt.Errorf("[ERR] Invalid repository URL address")
-    }
-    url := strings.Split(strings.Replace(repoURL , githubWebURL, "", -1), "/")
-    owner, repo := url[0], url[1]
-    if len(owner) == 0 || len(repo) == 0{
-        return nil, nil, fmt.Errorf("[ERR] Invalid repository URL format")
-    }
-    return ctrl.githubClient.Repositories.Get(owner, repo)
-}
-
-func (ctrl *Controller) GetGithubContributors(repoURL string) ([]*github.Contributor, *github.Response, error) {
-    // TODO : check if URL is in correct form
-    if len(repoURL) == 0 {
-        return nil, nil, fmt.Errorf("[ERR] Invalid repository URL address")
-    }
-    url := strings.Split(strings.Replace(repoURL , githubWebURL, "", -1), "/")
-    owner, repo := url[0], url[1]
-    if len(owner) == 0 || len(repo) == 0{
-        return nil, nil, fmt.Errorf("[ERR] Invalid repository URL format")
-    }
-    opts := &github.ListContributorsOptions{Anon: "true"}
-    return ctrl.githubClient.Repositories.ListContributors(owner, repo, opts)
-}
-
-func (ctrl *Controller) GetGithubContributorsStat(repoURL string) ([]*github.ContributorStats, *github.Response, error) {
-    // TODO : check if URL is in correct form
-    if len(repoURL) == 0 {
-        return nil, nil, fmt.Errorf("[ERR] Invalid repository URL address")
-    }
-    url := strings.Split(strings.Replace(repoURL , githubWebURL, "", -1), "/")
-    owner, repo := url[0], url[1]
-    if len(owner) == 0 || len(repo) == 0{
-        return nil, nil, fmt.Errorf("[ERR] Invalid repository URL format")
-    }
-    return ctrl.githubClient.Repositories.ListContributorsStats(owner, repo)
-}
-
 func (ctrl *Controller) GetSession(c web.C) *sessions.Session {
     return c.Env["Session"].(*sessions.Session)
 }
 
-func (ctrl *Controller) GetGORM(c web.C) *gorm.DB {
-    return c.Env["GORM"].(*gorm.DB)
+func (ctrl *Controller) GetMetaDB(c web.C) *gorm.DB {
+    return c.Env["META"].(*gorm.DB)
+}
+
+func (ctrl *Controller) GetSuppleDB(c web.C) storage.Nosql {
+    return c.Env["SUPP"].(storage.Nosql)
 }
 
 func (ctrl *Controller) IsXhr(c web.C) bool {

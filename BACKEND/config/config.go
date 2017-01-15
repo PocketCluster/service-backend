@@ -14,6 +14,7 @@ type General struct {
     TemplatePath    string    `yaml:"template_path"`
     ReadmePath      string    `yaml:"readme_path"`
     ServerPort      int       `yaml:"server_port"`
+    MaxConcurrency  int       `yaml:"max_concurrency"`
 }
 
 type Site struct {
@@ -29,6 +30,10 @@ type Cookie struct {
 
 type Database struct {
     DatabaseType    string    `yaml:"database_type"`
+    DatabasePath    string    `yaml:"database_path"`
+}
+
+type Supplement struct {
     DatabasePath    string    `yaml:"database_path"`
 }
 
@@ -49,7 +54,19 @@ type VPN struct {
 }
 
 type Update struct {
-    ForceReadme     bool      `yaml:"force_readme"`
+    ForceReadme        bool      `yaml:"force_readme"`
+    // how many entities should we read from github
+    MaxReleaseCollect  int       `yaml:"max_release_collect"`
+    // how many entities should we rebuild for display
+    MaxReleaseRebuild  int       `yaml:"max_release_rebuild"`
+    // last updated record
+    MetaUpdateRecord   string    `yaml:"meta_update_record"`
+    // in minutes
+    MetaUpdateInterval int64     `yaml:"meta_update_interval"`
+    // last updated record
+    SuppUpdateRecord   string    `yaml:"supp_update_record"`
+    // in minutes
+    SuppUpdateInterval int64     `yaml:"supp_update_interval"`
 }
 
 type Config struct {
@@ -57,6 +74,7 @@ type Config struct {
     Site            `yaml:"site",inline,flow`
     Cookie          `yaml:"cookie",inline,flow`
     Database        `yaml:"database",inline,flow`
+    Supplement      `yaml:"supplement",inline,flow`
     CSRF            `yaml:"csrf",inline,flow`
     Github          `yaml:"github",inline,flow`
     VPN             `yaml:"vpn",inline,flow`

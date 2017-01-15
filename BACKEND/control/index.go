@@ -18,7 +18,7 @@ import (
 // Home page route
 func (ctrl *Controller) Index(c web.C, r *http.Request) (string, int) {
     var (
-        db *gorm.DB = ctrl.GetGORM(c)
+        db *gorm.DB = ctrl.GetMetaDB(c)
         repositories []model.Repository
     )
     db.Order("updated desc").Limit(SingleColumnCount * TotalRowCount).Find(&repositories)
@@ -42,7 +42,7 @@ func (ctrl *Controller) Index(c web.C, r *http.Request) (string, int) {
 
 func (ctrl *Controller) IndexPaged(c web.C, r *http.Request) (string, int) {
     var (
-        db *gorm.DB = ctrl.GetGORM(c)
+        db *gorm.DB = ctrl.GetMetaDB(c)
         repositories []model.Repository
         page int
         err error

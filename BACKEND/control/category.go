@@ -19,7 +19,7 @@ import (
 func (ctrl *Controller) Category(c web.C, r *http.Request) (string, int) {
     var (
         repositories []model.Repository
-        db *gorm.DB        = ctrl.GetGORM(c)
+        db *gorm.DB        = ctrl.GetMetaDB(c)
         category string    = strings.ToLower(strings.TrimSpace(c.URLParams["cat"]))
         title string       = strings.Title(strings.TrimSpace(c.URLParams["cat"]))
     )
@@ -76,7 +76,7 @@ func (ctrl *Controller) CategoryPaged(c web.C, r *http.Request) (string, int) {
         return "", http.StatusNotFound
     }
 
-    var db *gorm.DB = ctrl.GetGORM(c)
+    var db *gorm.DB = ctrl.GetMetaDB(c)
     //FIXME : how to guard on querying for large page #?
     db.Where("category = ?", category).Order("updated desc").Offset(SingleColumnCount * TotalRowCount * page).Limit(SingleColumnCount * TotalRowCount).Find(&repositories)
     if len(repositories) == 0 {
