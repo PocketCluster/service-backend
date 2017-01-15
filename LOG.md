@@ -1,5 +1,8 @@
 # PocketCluster Deployment Log
 
+- 01/15/2017
+  * Repository Meta/ Supplementary (Release + Tag) update internalized
+
 - 01/13/2017
   * 5 Latest release note including tag is displayed
 
