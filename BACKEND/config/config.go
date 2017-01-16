@@ -69,6 +69,10 @@ type Update struct {
     SuppUpdateInterval int64     `yaml:"supp_update_interval"`
 }
 
+type Search struct {
+    IndexStoragePath   string    `yaml:"index_storage_path"`
+}
+
 type Config struct {
     General         `yaml:"general",inline,flow`
     Site            `yaml:"site",inline,flow`
@@ -79,6 +83,7 @@ type Config struct {
     Github          `yaml:"github",inline,flow`
     VPN             `yaml:"vpn",inline,flow`
     Update          `yaml:"update",inline,flow`
+    Search          `yaml:"search",inline,flow`
 }
 
 func NewConfig(filepath string) (*Config, error) {

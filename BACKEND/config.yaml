@@ -33,3 +33,5 @@ update:
   meta_update_interval: 180
   supp_update_record: "/www-server/supp-updated.log"
   supp_update_interval: 180
+search:
+  index_storage_path: "/www-server/search"

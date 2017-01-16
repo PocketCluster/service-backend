@@ -74,12 +74,15 @@ func main() {
         log.Fatal(trace.Wrap(err))
         return
     }
+    defer repoDB.Close()
+
     // (BOLTDB) supplementary
     suppledb, err := boltbk.New(cfg.Supplement.DatabasePath)
     if err != nil {
         log.Fatal(trace.Wrap(err))
         return
     }
+    defer suppledb.Close()
 
     // controller
     ctrl := control.NewController(cfg)
@@ -134,8 +137,5 @@ func main() {
             githubSortSupplementInfo(suppledb, &repo);
         }
     }
-
-    repoDB.Close()
-    suppledb.Close()
     log.Info("Update process ended at " + time.Now().Format("Jan. 2 2006 3:04 PM"))
 }
