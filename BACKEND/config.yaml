@@ -32,4 +32,4 @@ update:
   meta_update_record: "/www-server/meta-updated.log"
   meta_update_interval: 180
   supp_update_record: "/www-server/supp-updated.log"
-  supp_update_interval: 360
+  supp_update_interval: 180

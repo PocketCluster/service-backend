@@ -34,6 +34,12 @@ func UpdateRepoMeta(metaDB *gorm.DB, ctrl *control.Controller, repoModel *model.
         err error
     )
 
+    // Do not update a repo within 24 hours from the last update
+    if !repoModel.UpdatedAt.IsZero() && time.Now().Sub(repoModel.UpdatedAt) < (time.Hour * time.Duration(24)) {
+        log.Infof("%s :: Updated already", repoModel.RepoPage)
+        return nil, nil
+    }
+
     // URL CHECK
     if len(repoModel.RepoPage) == 0 {
         return resp, errors.New("Cannot begin update a repo with empty URL")

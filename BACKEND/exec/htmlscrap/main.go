@@ -9,9 +9,9 @@ import (
     "github.com/jinzhu/gorm"
     _ "github.com/jinzhu/gorm/dialects/sqlite"
 
-    "github.com/stkim1/BACKEND/util"
     "github.com/stkim1/BACKEND/config"
     "github.com/stkim1/BACKEND/model"
+    "github.com/stkim1/BACKEND/util"
 )
 
 func main()  {
