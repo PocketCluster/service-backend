@@ -5,8 +5,13 @@ import (
     "path"
 
     log "github.com/Sirupsen/logrus"
+    "github.com/gravitational/trace"
+    "github.com/jinzhu/gorm"
+    _ "github.com/jinzhu/gorm/dialects/sqlite"
+
     "github.com/stkim1/BACKEND/util"
     "github.com/stkim1/BACKEND/config"
+    "github.com/stkim1/BACKEND/model"
 )
 
 func main()  {
@@ -18,7 +23,20 @@ func main()  {
     cfg, err := config.NewConfig(cfgPath)
     if err != nil {
         log.Fatal(err.Error())
+        return
     }
 
-    util.GithubReadmeScrap("https://github.com/spark-jobserver/spark-jobserver", path.Join(cfg.General.ReadmePath + "spark-jobserver.html"))
+    // database
+    repoDB, err := gorm.Open(cfg.Database.DatabaseType, cfg.Database.DatabasePath)
+    if err != nil {
+        log.Fatal(trace.Wrap(err))
+        return
+    }
+
+    var repos []model.Repository
+    repoDB.Find(&repos)
+    for _, repo := range repos {
+        util.GithubReadmeScrap(repo.RepoPage, path.Join(cfg.General.ReadmePath, repo.Slug + ".html"))
+    }
+    repoDB.Close()
 }

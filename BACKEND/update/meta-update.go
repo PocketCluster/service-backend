@@ -2,6 +2,7 @@ package update
 
 import (
     "errors"
+    "path"
     "strconv"
     "strings"
     "sync"
@@ -135,7 +136,7 @@ func UpdateRepoMeta(metaDB *gorm.DB, ctrl *control.Controller, repoModel *model.
     }
 
     if 0 < updatedDate.Sub(lastUpdate) || ctrl.Config.Update.ForceReadme {
-        util.GithubReadmeScrap(repoModel.RepoPage, ctrl.Config.General.ReadmePath + repoModel.Slug + ".html")
+        util.GithubReadmeScrap(repoModel.RepoPage, path.Join(ctrl.Config.General.ReadmePath, repoModel.Slug + ".html"))
     }
     return resp, nil
 }

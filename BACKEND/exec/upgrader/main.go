@@ -116,7 +116,7 @@ func main() {
         var repoCount int = len(repos)
         for i, repo := range repos {
             log.Infof("%d / %d | %s - %s", i, repoCount, repo.RepoId, repo.RepoPage)
-            resp, err := update.GithubSupplementInfo(suppledb, ctrl, &repo);
+            resp, err := update.GithubSupplementInfo(suppledb, ctrl, &repo, cfg.Update.MaxReleaseCollect, cfg.Update.MaxReleaseRebuild, cfg.Update.SuppUpdateInterval);
             if err != nil {
                 log.Error(err.Error())
             }
