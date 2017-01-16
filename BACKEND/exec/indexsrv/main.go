@@ -44,6 +44,12 @@ func main() {
     goji.Use(app.ApplyIsXhr)
     goji.Use(context.ClearHandler)
 
+    // TODO : Handle Notfound
+    //goji.NotFound()
+
+    // TODO : what submix for?
+    //v1Mux :=goji.SubMux()
+
     // dashboard
     goji.Get("/pocketcluster/dashboard/:mode",                                       app.AddRoute(ctrl.DashboardFront))
     goji.Post("/pocketcluster/dashboard/repository/:mode",                           app.AddRoute(ctrl.DashboardRepository))
