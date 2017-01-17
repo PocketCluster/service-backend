@@ -4,6 +4,7 @@ import (
     "bytes"
     "fmt"
     "strings"
+    "sync/atomic"
     "net"
     "net/http"
 
@@ -11,13 +12,13 @@ import (
     "github.com/gravitational/trace"
     "github.com/gorilla/sessions"
     "github.com/zenazn/goji/web"
-
     "github.com/jinzhu/gorm"
     "github.com/google/go-github/github"
 
     "github.com/stkim1/BACKEND/model"
     "github.com/stkim1/BACKEND/config"
     "github.com/stkim1/BACKEND/storage"
+
 )
 
 /* ------- GITHUG API CONTROL ------- */
@@ -36,6 +37,9 @@ func NewController(config *config.Config) *Controller {
 type Controller struct {
     githubClient        *github.Client
     *config.Config
+
+    // in-memory variables
+    TotalRepoCount      atomic.Value
 }
 
 func (ctrl *Controller) GetSession(c web.C) *sessions.Session {

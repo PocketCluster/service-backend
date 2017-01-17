@@ -2,7 +2,6 @@ package framework
 
 import (
     "crypto/sha256"
-    "html/template"
     "io"
     "net/http"
     "reflect"
@@ -16,12 +15,16 @@ import (
 
     "github.com/jinzhu/gorm"
     _ "github.com/jinzhu/gorm/dialects/sqlite"
+    "github.com/blevesearch/bleve"
+)
 
+import (
     "github.com/stkim1/BACKEND/model"
     "github.com/stkim1/BACKEND/control"
     "github.com/stkim1/BACKEND/config"
     "github.com/stkim1/BACKEND/storage"
     "github.com/stkim1/BACKEND/storage/boltbk"
+    pocketsearch "github.com/stkim1/BACKEND/search"
 )
 
 func NewApplication(config *config.Config, control *control.Controller) *Application {
@@ -44,11 +47,13 @@ type csrfProtection struct {
 type Application struct {
     Controller          *control.Controller
     Config              *config.Config
-    Template            *template.Template
+    CsrfProtection      *csrfProtection
     Store               *sessions.CookieStore
+
+    // databases
     MetaDB              *gorm.DB
     SuppleDB            storage.Nosql
-    CsrfProtection      *csrfProtection
+    SearchIndex         bleve.Index
 
     // waiter
     UpdateWait          sync.WaitGroup
@@ -59,6 +64,17 @@ type Application struct {
 }
 
 func (a *Application) init() {
+    var (
+        repoCount int64 = 0
+    )
+    // CSRF protection
+    a.CsrfProtection = &csrfProtection{
+        Key:       a.Config.CSRF.Key,
+        Cookie:    a.Config.CSRF.Cookie,
+        Header:    a.Config.CSRF.Header,
+        Secure:    a.Config.Cookie.Secure,
+    }
+    // Cookie
     hash := sha256.New()
     io.WriteString(hash, a.Config.Cookie.MacSecret)
     a.Store = sessions.NewCookieStore(hash.Sum(nil))
@@ -68,32 +84,46 @@ func (a *Application) init() {
         Secure:   a.Config.Cookie.Secure,
     }
 
+    /****************** DATABASE INITIALIZE ******************/
     // (SQLITE) metadata
-    metadb, err := gorm.Open(a.Config.Database.DatabaseType, a.Config.Database.DatabasePath)
+    metaDB, err := gorm.Open(a.Config.Database.DatabaseType, a.Config.Database.DatabasePath)
     if err != nil {
         log.Fatal(trace.Wrap(err))
     }
     // Migrate the schema
-    metadb.AutoMigrate(&model.Repository{}, &model.Author{}, &model.RepoContributor{});
-    a.MetaDB = metadb;
-    a.QuitMetaUpdate = make(chan bool)
-    a.IsMetaUpdating.Store(false)
+    metaDB.AutoMigrate(&model.Repository{}, &model.Author{}, &model.RepoContributor{});
+    a.MetaDB = metaDB;
 
     // (BOLTDB) supplementary
-    suppledb, err := boltbk.New(a.Config.Supplement.DatabasePath)
+    suppDB, err := boltbk.New(a.Config.Supplement.DatabasePath)
     if err != nil {
         log.Fatal(trace.Wrap(err))
     }
-    a.SuppleDB = suppledb
-    a.QuitSuppUpdate = make(chan bool)
-    a.IsSuppUpdating.Store(false)
+    a.SuppleDB = suppDB
 
-    a.CsrfProtection = &csrfProtection{
-        Key:       a.Config.CSRF.Key,
-        Cookie:    a.Config.CSRF.Cookie,
-        Header:    a.Config.CSRF.Header,
-        Secure:    a.Config.Cookie.Secure,
+    // (SearchDB)
+    rsInx, err := bleve.Open(a.Config.Search.IndexStoragePath)
+    if err != nil {
+        m, err := pocketsearch.BuildIndexMapping()
+        if err != nil {
+            log.Fatal(err)
+        }
+        rsInx, err = bleve.New(a.Config.Search.IndexStoragePath, m)
+        if err != nil {
+            log.Fatal(err)
+        }
     }
+    a.SearchIndex = rsInx
+
+    /****************** IN-MEMORY VARIABLE ******************/
+    metaDB.Model(&model.Repository{}).Count(&repoCount)
+    a.Controller.TotalRepoCount.Store(repoCount)
+
+    /****************** UPDATE INITIALIZE ******************/
+    a.IsMetaUpdating.Store(false)
+    a.QuitMetaUpdate = make(chan bool)
+    a.IsSuppUpdating.Store(false)
+    a.QuitSuppUpdate = make(chan bool)
 }
 
 func (a *Application) Close() {
@@ -107,11 +137,12 @@ func (a *Application) Close() {
     if a.MetaDB != nil {
         a.MetaDB.Close()
     }
-
     if a.SuppleDB != nil {
         a.SuppleDB.Close()
     }
-
+    if a.SearchIndex != nil {
+        a.SearchIndex.Close()
+    }
     log.Info("!!!Application terminating!!!")
 }
 

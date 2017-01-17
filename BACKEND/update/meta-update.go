@@ -14,15 +14,20 @@ import (
     "github.com/jinzhu/gorm"
     _ "github.com/jinzhu/gorm/dialects/sqlite"
     "github.com/google/go-github/github"
+    "github.com/blevesearch/bleve"
+)
 
+import (
     "github.com/stkim1/BACKEND/model"
     "github.com/stkim1/BACKEND/util"
     "github.com/stkim1/BACKEND/control"
     "github.com/stkim1/BACKEND/config"
+    pocketsearch "github.com/stkim1/BACKEND/search"
 )
 
-func UpdateRepoMeta(metaDB *gorm.DB, ctrl *control.Controller, repoModel *model.Repository) (*github.Response, error) {
+func UpdateRepoMeta(metaDB *gorm.DB, searchIndex bleve.Index, ctrl *control.Controller, repoModel *model.Repository) (*github.Response, error) {
     var (
+        cfg *config.Config                   = ctrl.Config
         lastUpdate, updatedDate time.Time
         branch, wikiPage, authorType, login, profileURL, avatarURL string
         starCount, forkCount, watchCount int64
@@ -35,7 +40,7 @@ func UpdateRepoMeta(metaDB *gorm.DB, ctrl *control.Controller, repoModel *model.
     )
 
     // Do not update a repo within 24 hours from the last update
-    if !repoModel.UpdatedAt.IsZero() && time.Now().Sub(repoModel.UpdatedAt) < (time.Hour * time.Duration(24)) {
+    if !repoModel.UpdatedAt.IsZero() && time.Now().Sub(repoModel.UpdatedAt) < (time.Hour * time.Duration(cfg.Update.MetaUpdateCycle)) {
         log.Infof("%s :: Updated already", repoModel.RepoPage)
         return nil, nil
     }
@@ -141,13 +146,19 @@ func UpdateRepoMeta(metaDB *gorm.DB, ctrl *control.Controller, repoModel *model.
         }
     }
 
-    if 0 < updatedDate.Sub(lastUpdate) || ctrl.Config.Update.ForceReadme {
-        util.GithubReadmeScrap(repoModel.RepoPage, path.Join(ctrl.Config.General.ReadmePath, repoModel.Slug + ".html"))
+    if 0 < updatedDate.Sub(lastUpdate) || cfg.Update.ForceReadme {
+        readme, err := util.GithubReadmeScrap(repoModel.RepoPage, path.Join(ctrl.Config.General.ReadmePath, repoModel.Slug + ".html"))
+        if err != nil {
+            log.Error(err)
+        } else {
+            sr := pocketsearch.NewSerachRepo(repoModel, &readme)
+            sr.Index(searchIndex)
+        }
     }
     return resp, nil
 }
 
-func UpdateAllRepoMeta(metaDB *gorm.DB, cfg *config.Config, metaWaiter *sync.WaitGroup, isUpdating *atomic.Value) {
+func UpdateAllRepoMeta(metaDB *gorm.DB, searchIndex bleve.Index, cfg *config.Config, metaWaiter *sync.WaitGroup, isUpdating *atomic.Value) {
     var (
         ctrl *control.Controller        = control.NewController(cfg)
         repos []model.Repository
@@ -159,7 +170,7 @@ func UpdateAllRepoMeta(metaDB *gorm.DB, cfg *config.Config, metaWaiter *sync.Wai
     // update start
     metaDB.Find(&repos)
     for i, _ := range repos {
-        resp, err := UpdateRepoMeta(metaDB, ctrl, &(repos[i]))
+        resp, err := UpdateRepoMeta(metaDB, searchIndex, ctrl, &(repos[i]))
         if err != nil {
             log.Error(trace.Wrap(err))
         }

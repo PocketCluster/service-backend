@@ -46,7 +46,6 @@ func readmeTokenizing(filename string) (string, error) {
     return textContent, nil
 }
 
-
 func main() {
     var (
         rsIndx bleve.Index

@@ -8,17 +8,20 @@ import (
 
     log "github.com/Sirupsen/logrus"
     "github.com/jinzhu/gorm"
+    "github.com/blevesearch/bleve"
 
     "github.com/stkim1/BACKEND/storage"
     "github.com/stkim1/BACKEND/config"
     "github.com/stkim1/BACKEND/update"
+    "github.com/stkim1/BACKEND/model"
 )
 
 func (a *Application) ScheduleMetaUpdate() {
-    go func (quit <- chan bool, metaWaiter *sync.WaitGroup, metaDB *gorm.DB, cfg *config.Config, isUpdating *atomic.Value) {
+    go func (quit <- chan bool, metaWaiter *sync.WaitGroup, metaDB *gorm.DB, searchIndex bleve.Index, cfg *config.Config, totalRepoCount, isUpdating *atomic.Value) {
         var (
             updateTicker *time.Ticker   = time.NewTicker(time.Minute)
             lastRec time.Time
+            repoCount int64 = 0
             oldTS []byte
             err error
         )
@@ -37,10 +40,14 @@ func (a *Application) ScheduleMetaUpdate() {
             select {
             case launch := <- updateTicker.C: {
                     if !isUpdating.Load().(bool) && (time.Minute * time.Duration(cfg.Update.MetaUpdateInterval)) < launch.Sub(lastRec) {
+                        // update repo count
+                        metaDB.Model(&model.Repository{}).Count(&repoCount)
+                        totalRepoCount.Store(repoCount)
+
+                        // update
                         ioutil.WriteFile(cfg.Update.MetaUpdateRecord, []byte(launch.Format(time.RFC3339)), 0600)
                         lastRec = launch
-
-                        go update.UpdateAllRepoMeta(metaDB, cfg, metaWaiter, isUpdating)
+                        go update.UpdateAllRepoMeta(metaDB, searchIndex, cfg, metaWaiter, isUpdating)
                     }
                 }
 
@@ -52,7 +59,7 @@ func (a *Application) ScheduleMetaUpdate() {
                 }
             }
         }
-    }(a.QuitMetaUpdate, &a.UpdateWait, a.MetaDB, a.Config, &a.IsMetaUpdating)
+    }(a.QuitMetaUpdate, &a.UpdateWait, a.MetaDB, a.SearchIndex, a.Config, &(a.Controller.TotalRepoCount), &a.IsMetaUpdating)
 }
 
 func (a *Application) ScheduleSuppUpdate() {
