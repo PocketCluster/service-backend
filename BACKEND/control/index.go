@@ -7,9 +7,9 @@ import (
 
     log "github.com/Sirupsen/logrus"
     "github.com/gravitational/trace"
-
     "github.com/zenazn/goji/web"
     "github.com/jinzhu/gorm"
+    humanize "github.com/dustin/go-humanize"
 
     "github.com/stkim1/BACKEND/util"
     "github.com/stkim1/BACKEND/model"
@@ -32,6 +32,7 @@ func (ctrl *Controller) Index(c web.C, r *http.Request) (string, int) {
         "DEFAULT_LANG":    "utf-8",
         "SITEURL":         ctrl.Config.Site.SiteURL,
         "THEME_LINK":      ctrl.Site.ThemeLink,
+        "TOTAL_COUNT":     humanize.FormatInteger("##,###.", int(ctrl.TotalRepoCount.Load().(int64))),
         "CATEGORIES":      model.GetDefaultCategory(),
         "repositories":    &repositories,
         "nextpagelink":    "/index2.html",
@@ -69,6 +70,7 @@ func (ctrl *Controller) IndexPaged(c web.C, r *http.Request) (string, int) {
         "DEFAULT_LANG":    "utf-8",
         "SITEURL":         ctrl.Config.SiteURL,
         "THEME_LINK":      ctrl.Site.ThemeLink,
+        "TOTAL_COUNT":     humanize.FormatInteger("##,###.", int(ctrl.TotalRepoCount.Load().(int64))),
         "CATEGORIES":      model.GetDefaultCategory(),
         "repositories":    &repositories,
     }

@@ -10,6 +10,7 @@ import (
     "github.com/gravitational/trace"
     "github.com/zenazn/goji/web"
     "github.com/jinzhu/gorm"
+    humanize "github.com/dustin/go-humanize"
 
     "github.com/stkim1/BACKEND/util"
     "github.com/stkim1/BACKEND/model"
@@ -40,6 +41,7 @@ func (ctrl *Controller) Category(c web.C, r *http.Request) (string, int) {
         "SITENAME":        ctrl.Site.SiteName,
         "DEFAULT_LANG":    "utf-8",
         "SITEURL":         ctrl.Config.SiteURL,
+        "TOTAL_COUNT":     humanize.FormatInteger("##,###.", int(ctrl.TotalRepoCount.Load().(int64))),
         "THEME_LINK":      ctrl.Site.ThemeLink,
         "CATEGORIES":      model.GetActivatedCategory(category),
         "title":           title,
@@ -88,6 +90,7 @@ func (ctrl *Controller) CategoryPaged(c web.C, r *http.Request) (string, int) {
         "SITENAME":        ctrl.Site.SiteName,
         "DEFAULT_LANG":    "utf-8",
         "SITEURL":         ctrl.Site.SiteURL,
+        "TOTAL_COUNT":     humanize.FormatInteger("##,###.", int(ctrl.TotalRepoCount.Load().(int64))),
         "THEME_LINK":      ctrl.Site.ThemeLink,
         "CATEGORIES":      model.GetActivatedCategory(category),
         "title":           title,
