@@ -54,6 +54,8 @@ type Application struct {
     MetaDB              *gorm.DB
     SuppleDB            storage.Nosql
     SearchIndex         bleve.Index
+    SearchStat          storage.Nosql
+    SocialDB            storage.Nosql
 
     // waiter
     UpdateWait          sync.WaitGroup
@@ -115,6 +117,20 @@ func (a *Application) init() {
     }
     a.SearchIndex = rsInx
 
+    // (Search stat DB)
+    statDB, err := boltbk.New(a.Config.Stat.DatabasePath)
+    if err != nil {
+        log.Fatal(trace.Wrap(err))
+    }
+    a.SearchStat = statDB
+
+    // Social Sharing DB
+    socialDB, err := boltbk.New(a.Config.Social.DatabasePath)
+    if err != nil {
+        log.Fatal(trace.Wrap(err))
+    }
+    a.SocialDB = socialDB
+
     /****************** IN-MEMORY VARIABLE ******************/
     metaDB.Model(&model.Repository{}).Count(&repoCount)
     a.Controller.TotalRepoCount.Store(repoCount)
@@ -142,6 +158,12 @@ func (a *Application) Close() {
     }
     if a.SearchIndex != nil {
         a.SearchIndex.Close()
+    }
+    if a.SearchStat != nil {
+        a.SearchStat.Close()
+    }
+    if a.SocialDB != nil {
+        a.SocialDB.Close()
     }
     log.Info("!!!Application terminating!!!")
 }

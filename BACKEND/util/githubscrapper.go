@@ -94,6 +94,12 @@ func GithubReadmeScrap(location string, filename string) (string, error) {
             }
         }
     });
+
+    // google-code prettify. see https://github.com/google/code-prettify
+    readme.Find("pre").Each(func(_ int, s *goquery.Selection) {
+        s.AddClass("prettyprint")
+    })
+
     // save readme html
     html, err := readme.Html()
     if err != nil {

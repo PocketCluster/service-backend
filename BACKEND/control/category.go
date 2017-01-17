@@ -37,7 +37,6 @@ func (ctrl *Controller) Category(c web.C, r *http.Request) (string, int) {
     }
 
     var content map[string]interface{} = map[string]interface{} {
-        "ISINDEX":         false,
         "SITENAME":        ctrl.Site.SiteName,
         "DEFAULT_LANG":    "utf-8",
         "SITEURL":         ctrl.Config.SiteURL,
@@ -52,7 +51,7 @@ func (ctrl *Controller) Category(c web.C, r *http.Request) (string, int) {
         content["nextpagelink"] = "/category/" + category + "2.html"
     }
 
-    return util.RenderLayout(ctrl.Config.General.TemplatePath, "index.html.mustache", "base.html.mustache", content), http.StatusOK
+    return util.RenderLayout(ctrl.Config.General.TemplatePath, "navhead.html.mustache", "index.html.mustache", content), http.StatusOK
 }
 
 // Category route
@@ -86,7 +85,6 @@ func (ctrl *Controller) CategoryPaged(c web.C, r *http.Request) (string, int) {
     }
 
     var content map[string]interface{} = map[string]interface{} {
-        "ISINDEX":         false,
         "SITENAME":        ctrl.Site.SiteName,
         "DEFAULT_LANG":    "utf-8",
         "SITEURL":         ctrl.Site.SiteURL,
@@ -101,5 +99,5 @@ func (ctrl *Controller) CategoryPaged(c web.C, r *http.Request) (string, int) {
         content["nextpagelink"] = "/category/" + category + strconv.Itoa(page + 1) + ".html"
     }
 
-    return util.RenderLayout(ctrl.Config.General.TemplatePath, "index.html.mustache", "base.html.mustache", content), http.StatusOK
+    return util.RenderLayout(ctrl.Config.General.TemplatePath, "navhead.html.mustache", "index.html.mustache", content), http.StatusOK
 }

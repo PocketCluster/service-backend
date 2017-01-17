@@ -50,7 +50,6 @@ func (ctrl *Controller) Repository(c web.C, r *http.Request) (string, int) {
 
     var content map[string]interface{} = map[string]interface{} {
         "DEFAULT_LANG":    "utf-8",
-        "ISINDEX":         false,
         "SITENAME":        ctrl.Config.Site.SiteName,
         "SITEURL":         ctrl.Config.Site.SiteURL,
         "THEME_LINK":      ctrl.Site.ThemeLink,
@@ -97,5 +96,5 @@ func (ctrl *Controller) Repository(c web.C, r *http.Request) (string, int) {
     }
     content["readme"] = string(readme)
 
-    return util.RenderLayout(ctrl.Config.General.TemplatePath, "repo.html.mustache", "base.html.mustache", content), http.StatusOK
+    return util.RenderLayout(ctrl.Config.General.TemplatePath, "navhead.html.mustache", "repo.html.mustache", content), http.StatusOK
 }

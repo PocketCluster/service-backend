@@ -37,3 +37,7 @@ update:
   max_release_rebuild: 15
 search:
   index_storage_path: "/www-server/search"
+stat:
+  database_path: "/www-server/pc-stat.bt"
+social:
+  database_path: "/www-server/pc-social.bt"

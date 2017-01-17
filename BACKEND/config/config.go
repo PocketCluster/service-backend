@@ -77,6 +77,14 @@ type Search struct {
     IndexStoragePath   string    `yaml:"index_storage_path"`
 }
 
+type Stat struct {
+    DatabasePath    string    `yaml:"database_path"`
+}
+
+type Social struct {
+    DatabasePath    string    `yaml:"database_path"`
+}
+
 type Config struct {
     General         `yaml:"general",inline,flow`
     Site            `yaml:"site",inline,flow`
@@ -88,6 +96,8 @@ type Config struct {
     VPN             `yaml:"vpn",inline,flow`
     Update          `yaml:"update",inline,flow`
     Search          `yaml:"search",inline,flow`
+    Stat            `yaml:"stat",inline,flow`
+    Social          `yaml:"social",inline,flow`
 }
 
 func NewConfig(filepath string) (*Config, error) {

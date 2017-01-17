@@ -18,12 +18,14 @@ import (
     "github.com/stkim1/BACKEND/model"
     "github.com/stkim1/BACKEND/config"
     "github.com/stkim1/BACKEND/storage"
-
 )
 
 /* ------- GITHUG API CONTROL ------- */
 const (
-    githubWebURL string             = "https://github.com/"
+    githubWebURL string    = "https://github.com/"
+    DBMeta       string    = "META"
+    DBSupp       string    = "SUPP"
+    DBSocial     string    = "SOCI"
 )
 
 func NewController(config *config.Config) *Controller {
@@ -47,11 +49,15 @@ func (ctrl *Controller) GetSession(c web.C) *sessions.Session {
 }
 
 func (ctrl *Controller) GetMetaDB(c web.C) *gorm.DB {
-    return c.Env["META"].(*gorm.DB)
+    return c.Env[DBMeta].(*gorm.DB)
 }
 
 func (ctrl *Controller) GetSuppleDB(c web.C) storage.Nosql {
-    return c.Env["SUPP"].(storage.Nosql)
+    return c.Env[DBSupp].(storage.Nosql)
+}
+
+func (ctrl *Controller) GetSocialDB(c web.C) storage.Nosql {
+    return c.Env[DBSocial].(storage.Nosql)
 }
 
 func (ctrl *Controller) IsXhr(c web.C) bool {

@@ -27,7 +27,6 @@ func (ctrl *Controller) Index(c web.C, r *http.Request) (string, int) {
     }
 
     var content map[string]interface{} = map[string]interface{} {
-        "ISINDEX":         true,
         "SITENAME":        ctrl.Config.Site.SiteName,
         "DEFAULT_LANG":    "utf-8",
         "SITEURL":         ctrl.Config.Site.SiteURL,
@@ -38,7 +37,7 @@ func (ctrl *Controller) Index(c web.C, r *http.Request) (string, int) {
         "nextpagelink":    "/index2.html",
     }
 
-    return util.RenderLayout(ctrl.Config.General.TemplatePath, "index.html.mustache", "base.html.mustache", content), http.StatusOK
+    return util.RenderLayout(ctrl.Config.General.TemplatePath, "navhead.html.mustache", "index.html.mustache", content), http.StatusOK
 }
 
 func (ctrl *Controller) IndexPaged(c web.C, r *http.Request) (string, int) {
@@ -65,7 +64,6 @@ func (ctrl *Controller) IndexPaged(c web.C, r *http.Request) (string, int) {
     }
 
     var content map[string]interface{} = map[string]interface{} {
-        "ISINDEX":         true,
         "SITENAME":        ctrl.Config.SiteName,
         "DEFAULT_LANG":    "utf-8",
         "SITEURL":         ctrl.Config.SiteURL,
@@ -79,5 +77,5 @@ func (ctrl *Controller) IndexPaged(c web.C, r *http.Request) (string, int) {
         content["nextpagelink"] = "/index" + strconv.Itoa(page + 1) + ".html"
     }
 
-    return util.RenderLayout(ctrl.Config.General.TemplatePath, "index.html.mustache", "base.html.mustache", content), http.StatusOK
+    return util.RenderLayout(ctrl.Config.General.TemplatePath, "navhead.html.mustache", "index.html.mustache", content), http.StatusOK
 }

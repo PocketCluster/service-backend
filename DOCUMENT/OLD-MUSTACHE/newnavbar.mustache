@@ -1,0 +1,65 @@
+<!-- Navbar
+================================================== -->
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <a class="brand" href="/index.html">{{SITENAME}}</a>
+            <div class="nav-collapse collapse navbar-responsive-collapse">
+                <ul class="nav">
+{{#CATEGORIES}}
+                    <li{{#IsActive}} class="active"{{/IsActive}}>
+                        <a href="{{SITEURL}}/{{Url}}">{{Name}}</a>
+                    </li>
+{{/CATEGORIES}}
+                    <li>
+                        <a href="https://blog.pocketcluster.io/download/">Blog</a>
+                    </li>
+                </ul>
+                <form class="navbar-form navbar-left" action="">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search">
+                        <button type="submit" class="btn btn-default">Search</button>
+                    </div>
+                </form>
+            </div><!-- /.nav-collapse -->
+        </div>
+    </div><!-- /navbar-inner -->
+</div>
+
+
+<!-- Navbar OLD
+================================================== -->
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <a class="brand" href="/index.html">{{SITENAME}}</a>
+            <div class="nav-collapse collapse">
+                <ul class="nav">
+{{#CATEGORIES}}
+                    <li{{#IsActive}} class="active"{{/IsActive}}>
+                        <a href="{{SITEURL}}/{{Url}}">{{Name}}</a>
+                    </li>
+{{/CATEGORIES}}
+                    <li>
+                        <a href="https://blog.pocketcluster.io/download/">Blog</a>
+                    </li>
+                    <li>
+                        <a href="https://pc-join.herokuapp.com/">Slack</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
