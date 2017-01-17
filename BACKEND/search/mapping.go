@@ -7,6 +7,15 @@ import (
     "github.com/blevesearch/bleve/mapping"
 )
 
+const (
+    IndexNameRepoMeta  string       = "indexmeta"
+)
+
+const (
+    SearchTypeField    string       = "Type"
+    SearchTypeRepoMeta string       = "repometa"
+)
+
 func BuildIndexMapping() (mapping.IndexMapping, error) {
 
     // a generic reusable mapping for english text
@@ -23,8 +32,8 @@ func BuildIndexMapping() (mapping.IndexMapping, error) {
     repoMapping.AddFieldMappingsAt("Readme", englishText)
 
     indexMapping := bleve.NewIndexMapping()
-    indexMapping.AddDocumentMapping("repo", repoMapping)
-    indexMapping.TypeField       = "Category"
+    indexMapping.AddDocumentMapping(SearchTypeRepoMeta, repoMapping)
+    indexMapping.TypeField       = SearchTypeField
     indexMapping.DefaultAnalyzer = "en"
     return indexMapping, nil
 }

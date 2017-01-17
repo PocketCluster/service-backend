@@ -8,6 +8,8 @@ import (
 func NewSerachRepo(repo *model.Repository, readme *string) *SearchRepo {
     return &SearchRepo{
         RepoID:         repo.RepoId,
+        Type:           SearchTypeRepoMeta,
+        Slug:           repo.Slug,
         Category:       repo.Category,
         Title:          repo.Title,
         Readme:         *readme,
@@ -16,6 +18,8 @@ func NewSerachRepo(repo *model.Repository, readme *string) *SearchRepo {
 
 type SearchRepo struct {
     RepoID     string       `json:"RepoID"`
+    Type       string       `json:"Type"`
+    Slug       string       `json:"Slug"`
     Category   string       `json:"Category"`
     Title      string       `json:"Title"`
     Readme     string       `json:"Readme"`
