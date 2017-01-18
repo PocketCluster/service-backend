@@ -8,12 +8,14 @@ import (
     "github.com/gravitational/trace"
     "github.com/jinzhu/gorm"
     _ "github.com/jinzhu/gorm/dialects/sqlite"
+    "github.com/blevesearch/bleve"
 )
 
 import (
     "github.com/stkim1/BACKEND/config"
     "github.com/stkim1/BACKEND/model"
     "github.com/stkim1/BACKEND/util"
+    pocketsearch "github.com/stkim1/BACKEND/search"
 )
 
 func main()  {
@@ -28,6 +30,19 @@ func main()  {
         return
     }
 
+    rsIndx, err := bleve.Open(cfg.Search.IndexStoragePath)
+    if err != nil {
+        m, err := pocketsearch.BuildIndexMapping()
+        if err != nil {
+            log.Fatal(err)
+        }
+        rsIndx, err = bleve.New(cfg.Search.IndexStoragePath, m)
+        if err != nil {
+            log.Fatal(err)
+        }
+    }
+    defer rsIndx.Close()
+
     // database
     repoDB, err := gorm.Open(cfg.Database.DatabaseType, cfg.Database.DatabasePath)
     if err != nil {
@@ -38,7 +53,13 @@ func main()  {
 
     var repos []model.Repository
     repoDB.Find(&repos)
-    for _, repo := range repos {
-        util.GithubReadmeScrap(repo.RepoPage, path.Join(cfg.General.ReadmePath, repo.Slug + ".html"))
+    for i, repo := range repos {
+        readme, err := util.GithubReadmeScrap(repo.RepoPage, path.Join(cfg.General.ReadmePath, repo.Slug + ".html"))
+        if err != nil {
+            log.Error(err)
+        } else {
+            sr := pocketsearch.NewSerachRepo(&(repos[i]), &readme)
+            sr.Index(rsIndx)
+        }
     }
 }
