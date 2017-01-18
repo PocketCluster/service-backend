@@ -55,7 +55,6 @@ func (ctrl *Controller) Repository(c web.C, r *http.Request) (string, int) {
         "THEME_LINK":      ctrl.Site.ThemeLink,
         "TOTAL_COUNT":     humanize.FormatInteger("##,###.", int(ctrl.TotalRepoCount.Load().(int64))),
         "CATEGORIES":      model.GetActivatedCategory(repo.Category),
-        "title":           repo.Title,
         "repo":            &repo,
         "owner":           &owner,
     }
