@@ -5,6 +5,7 @@ import (
     "errors"
     "fmt"
     "net/http"
+    "path"
     "strings"
     "strconv"
 
@@ -231,7 +232,7 @@ func submitRepo(ctrl *Controller, c web.C, reqs map[string]string, repoData *git
     repoDB.Save(&repoAdded)
 
     // upon successful repo save, save readme to file
-    util.GithubReadmeScrap(repoURL, config.General.ReadmePath + slug + ".html")
+    util.GithubReadmeScrap(repoURL, path.Join(config.General.ReadmePath, slug + ".html"))
 
     /* ------------------------------------------- Handle Contributor information ----------------------------------- */
     // Decode contributor API

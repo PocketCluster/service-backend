@@ -7,9 +7,9 @@ import (
 
     log "github.com/Sirupsen/logrus"
     "github.com/gravitational/trace"
-
     "github.com/zenazn/goji/web"
     "github.com/jinzhu/gorm"
+    humanize "github.com/dustin/go-humanize"
 
     "github.com/stkim1/BACKEND/util"
     "github.com/stkim1/BACKEND/model"
@@ -27,17 +27,17 @@ func (ctrl *Controller) Index(c web.C, r *http.Request) (string, int) {
     }
 
     var content map[string]interface{} = map[string]interface{} {
-        "ISINDEX":         true,
         "SITENAME":        ctrl.Config.Site.SiteName,
         "DEFAULT_LANG":    "utf-8",
         "SITEURL":         ctrl.Config.Site.SiteURL,
         "THEME_LINK":      ctrl.Site.ThemeLink,
+        "TOTAL_COUNT":     humanize.FormatInteger("##,###.", int(ctrl.TotalRepoCount.Load().(int64))),
         "CATEGORIES":      model.GetDefaultCategory(),
         "repositories":    &repositories,
         "nextpagelink":    "/index2.html",
     }
 
-    return util.RenderLayout(ctrl.Config.General.TemplatePath, "index.html.mustache", "base.html.mustache", content), http.StatusOK
+    return util.RenderLayout(ctrl.Config.General.TemplatePath, "navhead.html.mustache", "index.html.mustache", content), http.StatusOK
 }
 
 func (ctrl *Controller) IndexPaged(c web.C, r *http.Request) (string, int) {
@@ -64,11 +64,11 @@ func (ctrl *Controller) IndexPaged(c web.C, r *http.Request) (string, int) {
     }
 
     var content map[string]interface{} = map[string]interface{} {
-        "ISINDEX":         true,
         "SITENAME":        ctrl.Config.SiteName,
         "DEFAULT_LANG":    "utf-8",
         "SITEURL":         ctrl.Config.SiteURL,
         "THEME_LINK":      ctrl.Site.ThemeLink,
+        "TOTAL_COUNT":     humanize.FormatInteger("##,###.", int(ctrl.TotalRepoCount.Load().(int64))),
         "CATEGORIES":      model.GetDefaultCategory(),
         "repositories":    &repositories,
     }
@@ -77,5 +77,5 @@ func (ctrl *Controller) IndexPaged(c web.C, r *http.Request) (string, int) {
         content["nextpagelink"] = "/index" + strconv.Itoa(page + 1) + ".html"
     }
 
-    return util.RenderLayout(ctrl.Config.General.TemplatePath, "index.html.mustache", "base.html.mustache", content), http.StatusOK
+    return util.RenderLayout(ctrl.Config.General.TemplatePath, "navhead.html.mustache", "index.html.mustache", content), http.StatusOK
 }

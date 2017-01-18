@@ -55,18 +55,34 @@ type VPN struct {
 
 type Update struct {
     ForceReadme        bool      `yaml:"force_readme"`
+    // last updated record
+    MetaUpdateRecord   string    `yaml:"meta_update_record"`
+    // meta update loop period in minutes
+    MetaUpdateInterval int64     `yaml:"meta_update_interval"`
+    // individual repo meta update cycle in minutes
+    MetaUpdateCycle    int64     `yaml:"meta_update_cycle"`
+    // last updated record
+    SuppUpdateRecord   string    `yaml:"supp_update_record"`
+    // supp update loop period in minutes
+    SuppUpdateInterval int64     `yaml:"supp_update_interval"`
+    // individual repo supp update cycle in minutes
+    SuppUpdateCycle    int64     `yaml:"supp_update_cycle"`
     // how many entities should we read from github
     MaxReleaseCollect  int       `yaml:"max_release_collect"`
     // how many entities should we rebuild for display
     MaxReleaseRebuild  int       `yaml:"max_release_rebuild"`
-    // last updated record
-    MetaUpdateRecord   string    `yaml:"meta_update_record"`
-    // in minutes
-    MetaUpdateInterval int64     `yaml:"meta_update_interval"`
-    // last updated record
-    SuppUpdateRecord   string    `yaml:"supp_update_record"`
-    // in minutes
-    SuppUpdateInterval int64     `yaml:"supp_update_interval"`
+}
+
+type Search struct {
+    IndexStoragePath   string    `yaml:"index_storage_path"`
+}
+
+type Stat struct {
+    DatabasePath    string    `yaml:"database_path"`
+}
+
+type Social struct {
+    DatabasePath    string    `yaml:"database_path"`
 }
 
 type Config struct {
@@ -79,6 +95,9 @@ type Config struct {
     Github          `yaml:"github",inline,flow`
     VPN             `yaml:"vpn",inline,flow`
     Update          `yaml:"update",inline,flow`
+    Search          `yaml:"search",inline,flow`
+    Stat            `yaml:"stat",inline,flow`
+    Social          `yaml:"social",inline,flow`
 }
 
 func NewConfig(filepath string) (*Config, error) {

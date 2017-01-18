@@ -4,6 +4,7 @@ import (
     "bytes"
     "fmt"
     "strings"
+    "sync/atomic"
     "net"
     "net/http"
 
@@ -11,7 +12,6 @@ import (
     "github.com/gravitational/trace"
     "github.com/gorilla/sessions"
     "github.com/zenazn/goji/web"
-
     "github.com/jinzhu/gorm"
     "github.com/google/go-github/github"
 
@@ -22,7 +22,10 @@ import (
 
 /* ------- GITHUG API CONTROL ------- */
 const (
-    githubWebURL string             = "https://github.com/"
+    githubWebURL string    = "https://github.com/"
+    DBMeta       string    = "META"
+    DBSupp       string    = "SUPP"
+    DBSocial     string    = "SOCI"
 )
 
 func NewController(config *config.Config) *Controller {
@@ -36,6 +39,9 @@ func NewController(config *config.Config) *Controller {
 type Controller struct {
     githubClient        *github.Client
     *config.Config
+
+    // in-memory variables
+    TotalRepoCount      atomic.Value
 }
 
 func (ctrl *Controller) GetSession(c web.C) *sessions.Session {
@@ -43,11 +49,15 @@ func (ctrl *Controller) GetSession(c web.C) *sessions.Session {
 }
 
 func (ctrl *Controller) GetMetaDB(c web.C) *gorm.DB {
-    return c.Env["META"].(*gorm.DB)
+    return c.Env[DBMeta].(*gorm.DB)
 }
 
 func (ctrl *Controller) GetSuppleDB(c web.C) storage.Nosql {
-    return c.Env["SUPP"].(storage.Nosql)
+    return c.Env[DBSupp].(storage.Nosql)
+}
+
+func (ctrl *Controller) GetSocialDB(c web.C) storage.Nosql {
+    return c.Env[DBSocial].(storage.Nosql)
 }
 
 func (ctrl *Controller) IsXhr(c web.C) bool {

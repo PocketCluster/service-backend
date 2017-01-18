@@ -27,9 +27,17 @@ vpn:
   vpn_host: "198.199.115.209"
 update:
   force_readme: false
+  meta_update_record: "/www-server/meta-updated.log"
+  meta_update_interval: 120
+  meta_update_cycle: 720
+  supp_update_record: "/www-server/supp-updated.log"
+  supp_update_interval: 120
+  supp_update_cycle: 1440
   max_release_collect: 30
   max_release_rebuild: 15
-  meta_update_record: "/www-server/meta-updated.log"
-  meta_update_interval: 180
-  supp_update_record: "/www-server/supp-updated.log"
-  supp_update_interval: 720
+search:
+  index_storage_path: "/www-server/search"
+stat:
+  database_path: "/www-server/pc-stat.bt"
+social:
+  database_path: "/www-server/pc-social.bt"

@@ -1,0 +1,40 @@
+<!-- Navbar
+================================================== -->
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <a class="brand" href="/index.html">{{SITENAME}}</a>
+            <div class="nav-collapse collapse navbar-responsive-collapse">
+                <ul class="nav">
+{{#CATEGORIES}}
+                    <li{{#IsActive}} class="active"{{/IsActive}}>
+                        <a href="{{SITEURL}}/{{Url}}">{{Name}}</a>
+                    </li>
+{{/CATEGORIES}}
+                </ul>
+                <form class="navbar-form navbar-left" action="" method="post">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search">
+                        <button type="submit" class="btn btn-default">Search</button>
+                    </div>
+                </form>
+            </div><!-- /.nav-collapse -->
+        </div>
+    </div><!-- /navbar-inner -->
+</div>
+
+<!-- Subhead
+================================================== -->
+<header class="jumbotron subhead masthead" id="overview" style="padding:10px;">
+    <div class="container">
+        <h2>{{TOTAL_COUNT}} Big Data &amp; Machine Learning Frameworks, Toolsets, and Examples
+            <small><br/>Suggestion? Feedback? Tweet <a href="https://twitter.com/stkim1" style="color:blue;">@stkim1</a></small>
+        </h2>
+    </div>
+</header>

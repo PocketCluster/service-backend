@@ -10,6 +10,7 @@ import (
     "github.com/gravitational/trace"
     "github.com/zenazn/goji/web"
     "github.com/jinzhu/gorm"
+    humanize "github.com/dustin/go-humanize"
 
     "github.com/stkim1/BACKEND/util"
     "github.com/stkim1/BACKEND/model"
@@ -36,10 +37,10 @@ func (ctrl *Controller) Category(c web.C, r *http.Request) (string, int) {
     }
 
     var content map[string]interface{} = map[string]interface{} {
-        "ISINDEX":         false,
         "SITENAME":        ctrl.Site.SiteName,
         "DEFAULT_LANG":    "utf-8",
         "SITEURL":         ctrl.Config.SiteURL,
+        "TOTAL_COUNT":     humanize.FormatInteger("##,###.", int(ctrl.TotalRepoCount.Load().(int64))),
         "THEME_LINK":      ctrl.Site.ThemeLink,
         "CATEGORIES":      model.GetActivatedCategory(category),
         "title":           title,
@@ -50,7 +51,7 @@ func (ctrl *Controller) Category(c web.C, r *http.Request) (string, int) {
         content["nextpagelink"] = "/category/" + category + "2.html"
     }
 
-    return util.RenderLayout(ctrl.Config.General.TemplatePath, "index.html.mustache", "base.html.mustache", content), http.StatusOK
+    return util.RenderLayout(ctrl.Config.General.TemplatePath, "navhead.html.mustache", "index.html.mustache", content), http.StatusOK
 }
 
 // Category route
@@ -84,10 +85,10 @@ func (ctrl *Controller) CategoryPaged(c web.C, r *http.Request) (string, int) {
     }
 
     var content map[string]interface{} = map[string]interface{} {
-        "ISINDEX":         false,
         "SITENAME":        ctrl.Site.SiteName,
         "DEFAULT_LANG":    "utf-8",
         "SITEURL":         ctrl.Site.SiteURL,
+        "TOTAL_COUNT":     humanize.FormatInteger("##,###.", int(ctrl.TotalRepoCount.Load().(int64))),
         "THEME_LINK":      ctrl.Site.ThemeLink,
         "CATEGORIES":      model.GetActivatedCategory(category),
         "title":           title,
@@ -98,5 +99,5 @@ func (ctrl *Controller) CategoryPaged(c web.C, r *http.Request) (string, int) {
         content["nextpagelink"] = "/category/" + category + strconv.Itoa(page + 1) + ".html"
     }
 
-    return util.RenderLayout(ctrl.Config.General.TemplatePath, "index.html.mustache", "base.html.mustache", content), http.StatusOK
+    return util.RenderLayout(ctrl.Config.General.TemplatePath, "navhead.html.mustache", "index.html.mustache", content), http.StatusOK
 }

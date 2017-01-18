@@ -10,13 +10,17 @@ import (
     "github.com/jinzhu/gorm"
     _ "github.com/jinzhu/gorm/dialects/sqlite"
     "github.com/davecgh/go-spew/spew"
+    "github.com/blevesearch/bleve"
+)
 
+import (
     "github.com/stkim1/BACKEND/model"
     "github.com/stkim1/BACKEND/control"
     "github.com/stkim1/BACKEND/config"
     "github.com/stkim1/BACKEND/storage/boltbk"
     "github.com/stkim1/BACKEND/storage"
     "github.com/stkim1/BACKEND/update"
+    pocketsearch "github.com/stkim1/BACKEND/search"
 )
 
 func githubSortSupplementInfo(suppDB storage.Nosql, repoModel *model.Repository) error {
@@ -68,18 +72,35 @@ func main() {
     }
     cfg, err := config.NewConfig(cfgPath)
 
-    // database
-    repoDB, err := gorm.Open(cfg.Database.DatabaseType, cfg.Database.DatabasePath)
+    // (META DB) database
+    metaDB, err := gorm.Open(cfg.Database.DatabaseType, cfg.Database.DatabasePath)
     if err != nil {
         log.Fatal(trace.Wrap(err))
         return
     }
+    defer metaDB.Close()
+
     // (BOLTDB) supplementary
-    suppledb, err := boltbk.New(cfg.Supplement.DatabasePath)
+    suppDB, err := boltbk.New(cfg.Supplement.DatabasePath)
     if err != nil {
         log.Fatal(trace.Wrap(err))
         return
     }
+    defer suppDB.Close()
+
+    // (SEARCH INDEX)
+    sIndex, err := bleve.Open(cfg.Search.IndexStoragePath)
+    if err != nil {
+        m, err := pocketsearch.BuildIndexMapping()
+        if err != nil {
+            log.Fatal(err)
+        }
+        sIndex, err = bleve.New(cfg.Search.IndexStoragePath, m)
+        if err != nil {
+            log.Fatal(err)
+        }
+    }
+    defer sIndex.Close()
 
     // controller
     ctrl := control.NewController(cfg)
@@ -102,12 +123,12 @@ func main() {
         }
     */
     var repos []model.Repository
-    repoDB.Find(&repos)
+    metaDB.Find(&repos)
 
     // update meta-data
     if false {
         for _, repo := range repos {
-            _, err := update.UpdateRepoMeta(repoDB, ctrl, &repo)
+            _, err := update.UpdateRepoMeta(metaDB, sIndex, ctrl, &repo)
             if err != nil {
                 log.Error(err.Error())
             }
@@ -116,7 +137,7 @@ func main() {
         var repoCount int = len(repos)
         for i, repo := range repos {
             log.Infof("%d / %d | %s - %s", i, repoCount, repo.RepoId, repo.RepoPage)
-            resp, err := update.GithubSupplementInfo(suppledb, ctrl, &repo);
+            resp, err := update.GithubSupplementInfo(suppDB, ctrl, &repo, cfg);
             if err != nil {
                 log.Error(err.Error())
             }
@@ -131,11 +152,8 @@ func main() {
         }
     } else {
         for _, repo := range repos {
-            githubSortSupplementInfo(suppledb, &repo);
+            githubSortSupplementInfo(suppDB, &repo);
         }
     }
-
-    repoDB.Close()
-    suppledb.Close()
     log.Info("Update process ended at " + time.Now().Format("Jan. 2 2006 3:04 PM"))
 }

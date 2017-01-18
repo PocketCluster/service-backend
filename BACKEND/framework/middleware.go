@@ -13,6 +13,7 @@ import (
     "github.com/go-utils/uslice"
     "github.com/gorilla/sessions"
     "github.com/zenazn/goji/web"
+    "github.com/stkim1/BACKEND/control"
 )
 
 // Makes sure controllers can have access to session
@@ -27,8 +28,9 @@ func (a *Application) ApplySessions(c *web.C, h http.Handler) http.Handler {
 
 func (a *Application) ApplyDbMap(c *web.C, h http.Handler) http.Handler {
     fn := func(w http.ResponseWriter, r *http.Request) {
-        c.Env["META"] = a.MetaDB
-        c.Env["SUPP"] = a.SuppleDB
+        c.Env[control.DBMeta]      = a.MetaDB
+        c.Env[control.DBSupp]      = a.SuppleDB
+        c.Env[control.DBSocial]    = a.SocialDB
         h.ServeHTTP(w, r)
     }
     return http.HandlerFunc(fn)

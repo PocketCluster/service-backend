@@ -12,6 +12,7 @@ import (
     "github.com/gravitational/trace"
     "github.com/zenazn/goji/web"
     "github.com/jinzhu/gorm"
+    humanize "github.com/dustin/go-humanize"
 
     "github.com/stkim1/BACKEND/util"
     "github.com/stkim1/BACKEND/model"
@@ -48,15 +49,14 @@ func (ctrl *Controller) Repository(c web.C, r *http.Request) (string, int) {
     metaDB.Where("author_id = ?", repo.AuthorId).First(&owner)
 
     var content map[string]interface{} = map[string]interface{} {
-        "DEFAULT_LANG":  "utf-8",
-        "ISINDEX":       false,
-        "SITENAME":      ctrl.Config.Site.SiteName,
-        "SITEURL":       ctrl.Config.Site.SiteURL,
-        "THEME_LINK":    ctrl.Site.ThemeLink,
-        "CATEGORIES":    model.GetActivatedCategory(repo.Category),
-        "title":         repo.Title,
-        "repo":          &repo,
-        "owner":         &owner,
+        "DEFAULT_LANG":    "utf-8",
+        "SITENAME":        ctrl.Config.Site.SiteName,
+        "SITEURL":         ctrl.Config.Site.SiteURL,
+        "THEME_LINK":      ctrl.Site.ThemeLink,
+        "TOTAL_COUNT":     humanize.FormatInteger("##,###.", int(ctrl.TotalRepoCount.Load().(int64))),
+        "CATEGORIES":      model.GetActivatedCategory(repo.Category),
+        "repo":            &repo,
+        "owner":           &owner,
     }
 
     // Find Contribution relation
@@ -89,11 +89,11 @@ func (ctrl *Controller) Repository(c web.C, r *http.Request) (string, int) {
     }
 
     // Patch readme
-    readme, err := ioutil.ReadFile(path.Join("readme/", slug + ".html"))
+    readme, err := ioutil.ReadFile(path.Join(ctrl.Config.General.ReadmePath, slug + ".html"))
     if err != nil {
-        log.Error(trace.Wrap(err, "Cnnot read readme html file"))
+        log.Error(trace.Wrap(err))
     }
     content["readme"] = string(readme)
 
-    return util.RenderLayout(ctrl.Config.General.TemplatePath, "repo.html.mustache", "base.html.mustache", content), http.StatusOK
+    return util.RenderLayout(ctrl.Config.General.TemplatePath, "navhead.html.mustache", "repo.html.mustache", content), http.StatusOK
 }
