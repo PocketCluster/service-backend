@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/CDNSERVE.iml" filepath="$PROJECT_DIR$/CDNSERVE.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cntrcdn.iml" filepath="$PROJECT_DIR$/cntrcdn.iml" />
     </modules>
   </component>
 </project>

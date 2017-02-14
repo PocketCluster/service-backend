@@ -5,6 +5,6 @@
     <content url="file://$MODULE_DIR$" />
     <orderEntry type="jdk" jdkName="Go 1.7.5" jdkType="Go SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="GOPATH &lt;CDNSERVE&gt;" level="project" />
+    <orderEntry type="library" name="GOPATH &lt;cntrcdn&gt;" level="project" />
   </component>
 </module>

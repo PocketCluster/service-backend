@@ -1,22 +1,23 @@
 package main
 
 import (
-    "fmt"
     "net/http"
+
+    log "github.com/Sirupsen/logrus"
+    "github.com/gravitational/trace"
+    "github.com/julienschmidt/httprouter"
+
+    "github.com/stkim1/cntrcdn/handle"
+)
+
+/*
+import (
     "os"
     "os/signal"
     "syscall"
-
-    log "github.com/Sirupsen/logrus"
-    //"github.com/gravitational/trace"
 )
 
-var (
-    abort bool
-)
-
-type Server struct {
-}
+type Server struct {}
 
 func (s Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
     body := "Hello World\n"
@@ -28,21 +29,35 @@ func (s Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
     fmt.Fprint(w, body)
 }
 
-func main() {
+func main_old() {
     sigchan := make(chan os.Signal, 1)
     signal.Notify(sigchan, os.Interrupt)
     signal.Notify(sigchan, syscall.SIGTERM)
 
     server := Server{}
+    log.Printf("Running...")
 
     go func() {
         http.Handle("/", server)
-        if err := http.ListenAndServe(":8080", nil); err != nil {
+        err := http.ListenAndServe(":8080", http.FileServer(http.Dir("/cdn-content/")));
+        if err != nil {
             log.Fatal(err)
         }
     }()
 
-    log.Print("Hello World")
-
     <-sigchan
+}
+*/
+
+func main() {
+    log.Printf("Running...")
+
+    router := httprouter.New()
+    router.GET("/healthcheck",    handle.HealthCheck)
+    router.GET(handle.ImageUrlPrefix + ":filename", handle.FileDownload)
+
+    err := http.ListenAndServe(":8080", router);
+    if err != nil {
+        log.Fatal(trace.Wrap(err))
+    }
 }
