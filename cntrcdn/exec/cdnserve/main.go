@@ -23,7 +23,7 @@ func (s Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
     body := "Hello World\n"
     // Try to keep the same amount of headers
     w.Header().Set("Server", "gophr")
-    w.Header().Set("Connection", "keep-alive")
+    w.Header().Set("Connec  tion", "keep-alive")
     w.Header().Set("Content-Type", "text/plain")
     w.Header().Set("Content-Length", fmt.Sprint(len(body)))
     fmt.Fprint(w, body)
