@@ -13,13 +13,8 @@ import (
     "github.com/stkim1/cntrcdn/fileserve"
 )
 
-const (
-    ImageUrlPrefix = "/image/v014/"
-    cdnFsRoot = "/cdn-content/"
-)
-
 var (
-    cdnRoot = http.Dir(cdnFsRoot)
+    cdnRoot = http.Dir(FScdnRoot)
 )
 
 func FileDownload(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -32,7 +27,7 @@ func FileDownload(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         upath = "/" + upath
     }
     upath = path.Clean(upath)
-    fname := strings.Replace(upath, ImageUrlPrefix, "", -1)
+    fname := strings.Replace(upath, PrefixContainer, "", -1)
 
     fileserve.ServeImageFile(w, r, cdnRoot, fname)
 }

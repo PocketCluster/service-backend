@@ -8,6 +8,7 @@ import (
     "github.com/julienschmidt/httprouter"
 
     "github.com/stkim1/cntrcdn/handle"
+    "runtime"
 )
 
 /*
@@ -52,9 +53,11 @@ func main_old() {
 func main() {
     log.Printf("Running...")
 
+    runtime.GOMAXPROCS(runtime.NumCPU())
+
     router := httprouter.New()
-    router.GET("/healthcheck",    handle.HealthCheck)
-    router.GET(handle.ImageUrlPrefix + ":filename", handle.FileDownload)
+    router.GET(handle.URLHealthCheck,     handle.HealthCheck)
+    router.GET(handle.URLContainerFilter, handle.FileDownload)
 
     err := http.ListenAndServe(":8080", router);
     if err != nil {
