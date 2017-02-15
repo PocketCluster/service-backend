@@ -66,7 +66,7 @@ func ServeImageFile(w http.ResponseWriter, r *http.Request, fs http.FileSystem, 
     w.Header().Set("Connection", "keep-alive")
     w.Header().Set("Etag", d.Name()) // file name
     w.Header().Set("Cache-Control", "max-age=86400") // 24 hrs
-    w.Header().Set("Expires", time.Now().Add(time.Second * 86400).Format("Mon, 2 Jan 2006 15:04:05 MST"))
+    w.Header().Set("Expires", time.Now().UTC().Add(time.Second * 86400).Format("Mon, 2 Jan 2006 15:04:05 MST"))
 
     // ServeContent will check modification time
     // we can pass empty string to name if we already set content-type
