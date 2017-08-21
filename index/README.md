@@ -1,4 +1,4 @@
-# PocketCluster FrontEnd & BackEnd
+# PocketCluster Index FrontEnd & BackEnd
 
 FrontEnd : Scala.js
 
