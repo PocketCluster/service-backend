@@ -5,11 +5,8 @@ import (
     "path"
     "strings"
 
-//    log "github.com/Sirupsen/logrus"
-//    "github.com/gravitational/trace"
     "github.com/julienschmidt/httprouter"
-
-    "github.com/stkim1/cntrcdn/fileserve"
+    "github.com/stkim1/cdn/fileserve"
 )
 
 var (

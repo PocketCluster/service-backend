@@ -39,6 +39,16 @@ github.com/gorilla/context
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 	mkdir -p /opt/gopkg/src/github.com/gorilla && cd /opt/gopkg/src/github.com/gorilla && git clone https://github.com/gorilla/context && cd /opt/gopkg/src/github.com/gorilla/context && git checkout 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
 
+xi2.org/x/xz
+	19aeb13c4e7cb6bd3188dfede73840f33455425a	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	(go get -d xi2.org/x/xz || true) && cd /opt/gopkg/src/xi2.org/x/xz && git checkout 19aeb13c4e7cb6bd3188dfede73840f33455425a
+
+gopkg.in/check.v1
+	20d25e2804050c1cd24a7eea1e7a6447dd0e74ec	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	(go get -d gopkg.in/check.v1 || true) && cd /opt/gopkg/src/gopkg.in/check.v1 && git checkout 20d25e2804050c1cd24a7eea1e7a6447dd0e74ec
+
 github.com/go-utils/uslice
 	fb69df90f7992e63a8959323a08a85aaba012564	 -> 	service-backend
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
@@ -88,6 +98,11 @@ github.com/mattn/go-sqlite3
 	6654e412c3c7eabb310d920cf73a2102dbf8c632	 -> 	service-backend
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 	mkdir -p /opt/gopkg/src/github.com/mattn && cd /opt/gopkg/src/github.com/mattn && git clone https://github.com/mattn/go-sqlite3 && cd /opt/gopkg/src/github.com/mattn/go-sqlite3 && git checkout 6654e412c3c7eabb310d920cf73a2102dbf8c632
+
+github.com/pkg/profile
+	5b67d428864e92711fcbd2f8629456121a56d91f	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/pkg && cd /opt/gopkg/src/github.com/pkg && git clone https://github.com/pkg/profile && cd /opt/gopkg/src/github.com/pkg/profile && git checkout 5b67d428864e92711fcbd2f8629456121a56d91f
 
 github.com/davecgh/go-spew
 	adab96458c51a58dc1783b3335dcce5461522e75	 -> 	service-backend
