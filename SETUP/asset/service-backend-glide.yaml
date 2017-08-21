@@ -1,0 +1,4 @@
+package: github.com/stkim1/service-backend
+import:
+- package: github.com/jinzhu/gorm
+  version: 5409931a1bb87e484d68d649af9367c207713ea2
