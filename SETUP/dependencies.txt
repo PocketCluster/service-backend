@@ -1,7 +1,117 @@
 
-github.com/jinzhu/gorm
-	5409931a1bb87e484d68d649af9367c207713ea2	 -> 	service-backend
+github.com/ikeikeikeike/go-sitemap-generator
+	e3c3d374db77838e92e5981ba81f26d1ecea4aa8	 -> 	service-backend
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-	mkdir -p /opt/gopkg/src/github.com/jinzhu && cd /opt/gopkg/src/github.com/jinzhu && git clone https://github.com/jinzhu/gorm && cd /opt/gopkg/src/github.com/jinzhu/gorm && git checkout 5409931a1bb87e484d68d649af9367c207713ea2
+	mkdir -p /opt/gopkg/src/github.com/ikeikeikeike && cd /opt/gopkg/src/github.com/ikeikeikeike && git clone https://github.com/ikeikeikeike/go-sitemap-generator && cd /opt/gopkg/src/github.com/ikeikeikeike/go-sitemap-generator && git checkout e3c3d374db77838e92e5981ba81f26d1ecea4aa8
+
+gopkg.in/yaml.v2
+	eb3733d160e74a9c7e442f435eb3bea458e1d19f	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	(go get -d gopkg.in/yaml.v2 || true) && cd /opt/gopkg/src/gopkg.in/yaml.v2 && git checkout eb3733d160e74a9c7e442f435eb3bea458e1d19f
+
+golang.org/x/crypto
+	453249f01cfeb54c3d549ddb75ff152ca243f9d8	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	(go get -d golang.org/x/crypto || true) && cd /opt/gopkg/src/golang.org/x/crypto && git checkout 453249f01cfeb54c3d549ddb75ff152ca243f9d8
+
+github.com/PuerkitoBio/goquery
+	ce645ea5e67a713599b7415f21f0786451fa9554	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/PuerkitoBio && cd /opt/gopkg/src/github.com/PuerkitoBio && git clone https://github.com/PuerkitoBio/goquery && cd /opt/gopkg/src/github.com/PuerkitoBio/goquery && git checkout ce645ea5e67a713599b7415f21f0786451fa9554
+
+github.com/codegangsta/cli
+	f017f86fccc5a039a98f23311f34fdf78b014f78	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/codegangsta && cd /opt/gopkg/src/github.com/codegangsta && git clone https://github.com/codegangsta/cli && cd /opt/gopkg/src/github.com/codegangsta/cli && git checkout f017f86fccc5a039a98f23311f34fdf78b014f78
+
+github.com/Sirupsen/logrus
+	84573d5f03ab3740f524c7842c3a9bf617961d32	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/Sirupsen && cd /opt/gopkg/src/github.com/Sirupsen && git clone https://github.com/Sirupsen/logrus && cd /opt/gopkg/src/github.com/Sirupsen/logrus && git checkout 84573d5f03ab3740f524c7842c3a9bf617961d32
+
+github.com/gorilla/context
+	08b5f424b9271eedf6f9f0ce86cb9396ed337a42	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/gorilla && cd /opt/gopkg/src/github.com/gorilla && git clone https://github.com/gorilla/context && cd /opt/gopkg/src/github.com/gorilla/context && git checkout 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
+
+github.com/blevesearch/bleve
+	82a101aedd682bba004e28c54c460b25dd271d04	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/blevesearch && cd /opt/gopkg/src/github.com/blevesearch && git clone https://github.com/blevesearch/bleve && cd /opt/gopkg/src/github.com/blevesearch/bleve && git checkout 82a101aedd682bba004e28c54c460b25dd271d04
+
+github.com/dustin/go-humanize
+	259d2a102b871d17f30e3cd9881a642961a1e486	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/dustin && cd /opt/gopkg/src/github.com/dustin && git clone https://github.com/dustin/go-humanize && cd /opt/gopkg/src/github.com/dustin/go-humanize && git checkout 259d2a102b871d17f30e3cd9881a642961a1e486
+
+github.com/cloudflare/cfssl
+	7fb22c8cba7ecaf98e4082d22d65800cf45e042a	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/cloudflare && cd /opt/gopkg/src/github.com/cloudflare && git clone https://github.com/cloudflare/cfssl && cd /opt/gopkg/src/github.com/cloudflare/cfssl && git checkout 7fb22c8cba7ecaf98e4082d22d65800cf45e042a
+
+github.com/julienschmidt/httprouter
+	975b5c4c7c21c0e3d2764200bf2aa8e34657ae6e	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/julienschmidt && cd /opt/gopkg/src/github.com/julienschmidt && git clone https://github.com/julienschmidt/httprouter && cd /opt/gopkg/src/github.com/julienschmidt/httprouter && git checkout 975b5c4c7c21c0e3d2764200bf2aa8e34657ae6e
+
+github.com/jinzhu/gorm
+	c3bb6aaa828867eec72dd8571d111e442688f85f	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/jinzhu && cd /opt/gopkg/src/github.com/jinzhu && git clone https://github.com/jinzhu/gorm && cd /opt/gopkg/src/github.com/jinzhu/gorm && git checkout c3bb6aaa828867eec72dd8571d111e442688f85f
+
+github.com/Redundancy/go-sync
+	8931874cad5cacc627b94fcbcb182460e174aeef	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/Redundancy && cd /opt/gopkg/src/github.com/Redundancy && git clone https://github.com/Redundancy/go-sync && cd /opt/gopkg/src/github.com/Redundancy/go-sync && git checkout 8931874cad5cacc627b94fcbcb182460e174aeef
+
+golang.org/x/oauth2
+	045497edb6234273d67dbc25da3f2ddbc4c4cacf	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	(go get -d golang.org/x/oauth2 || true) && cd /opt/gopkg/src/golang.org/x/oauth2 && git checkout 045497edb6234273d67dbc25da3f2ddbc4c4cacf
+
+github.com/cbroglie/mustache
+	6857e4b493bdb8d4b1931446eb41704aeb4c28cb	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/cbroglie && cd /opt/gopkg/src/github.com/cbroglie && git clone https://github.com/cbroglie/mustache && cd /opt/gopkg/src/github.com/cbroglie/mustache && git checkout 6857e4b493bdb8d4b1931446eb41704aeb4c28cb
+
+github.com/davecgh/go-spew
+	adab96458c51a58dc1783b3335dcce5461522e75	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/davecgh && cd /opt/gopkg/src/github.com/davecgh && git clone https://github.com/davecgh/go-spew && cd /opt/gopkg/src/github.com/davecgh/go-spew && git checkout adab96458c51a58dc1783b3335dcce5461522e75
+
+github.com/boltdb/bolt
+	2f1ce7a837dcb8da3ec595b1dac9d0632f0f99e8	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/boltdb && cd /opt/gopkg/src/github.com/boltdb && git clone https://github.com/boltdb/bolt && cd /opt/gopkg/src/github.com/boltdb/bolt && git checkout 2f1ce7a837dcb8da3ec595b1dac9d0632f0f99e8
+
+gopkg.in/vmihailenco/msgpack.v2
+	v2.8.3                                  	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	(go get -d gopkg.in/vmihailenco/msgpack.v2 || true) && cd /opt/gopkg/src/gopkg.in/vmihailenco/msgpack.v2 && git checkout v2.8.3
+
+github.com/gorilla/sessions
+	b61c93cb7f67533c8bfbb5ea450efc07e5833c5e	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/gorilla && cd /opt/gopkg/src/github.com/gorilla && git clone https://github.com/gorilla/sessions && cd /opt/gopkg/src/github.com/gorilla/sessions && git checkout b61c93cb7f67533c8bfbb5ea450efc07e5833c5e
+
+github.com/zenazn/goji
+	c05078ca81941f8e801bba3ddc0e6b86b7fdc893	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/zenazn && cd /opt/gopkg/src/github.com/zenazn && git clone https://github.com/zenazn/goji && cd /opt/gopkg/src/github.com/zenazn/goji && git checkout c05078ca81941f8e801bba3ddc0e6b86b7fdc893
+
+github.com/google/go-github
+	fe4b6036cb400908b8903d3df9444b9599a60d57	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/google && cd /opt/gopkg/src/github.com/google && git clone https://github.com/google/go-github && cd /opt/gopkg/src/github.com/google/go-github && git checkout fe4b6036cb400908b8903d3df9444b9599a60d57
+
+github.com/mailgun/timetools
+	f3a7b8ffff474320c4f5cc564c9abb2c52ded8bc	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/mailgun && cd /opt/gopkg/src/github.com/mailgun && git clone https://github.com/mailgun/timetools && cd /opt/gopkg/src/github.com/mailgun/timetools && git checkout f3a7b8ffff474320c4f5cc564c9abb2c52ded8bc
+
+github.com/pkg/errors
+	c605e284fe17294bda444b34710735b29d1a9d90	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/pkg && cd /opt/gopkg/src/github.com/pkg && git clone https://github.com/pkg/errors && cd /opt/gopkg/src/github.com/pkg/errors && git checkout c605e284fe17294bda444b34710735b29d1a9d90
 
 ---------------- DELETE CONFLICETED VENDORS ---------------- 

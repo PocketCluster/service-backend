@@ -1,4 +1,52 @@
 package: github.com/stkim1/service-backend
 import:
+# --- CRITICAL COMPATIBILITY MODULES (CRYPTO & PROTOCOL MUST BE IN SYNC W/ POCKETCLUSTER) ---
+# ARMv7/ARM64 don't pass tests with old version so upgrade
+# https://github.com/golang/crypto/commit/728b753d0135da6801d45a38e6f43ff55779c5c2 (Jan 24, 2017)
+- package: golang.org/x/crypto
+  version: 453249f01cfeb54c3d549ddb75ff152ca243f9d8
+- package: github.com/cloudflare/cfssl
+  version: 7fb22c8cba7ecaf98e4082d22d65800cf45e042a
+- package: golang.org/x/oauth2
+  version: 045497edb6234273d67dbc25da3f2ddbc4c4cacf
+- package: gopkg.in/vmihailenco/msgpack.v2
+  version: v2.8.3
+# --- Normal Dependencies ---
 - package: github.com/jinzhu/gorm
-  version: 5409931a1bb87e484d68d649af9367c207713ea2
+  version: c3bb6aaa828867eec72dd8571d111e442688f85f
+- package: gopkg.in/yaml.v2
+  version: eb3733d160e74a9c7e442f435eb3bea458e1d19f
+- package: github.com/Sirupsen/logrus
+  version: 84573d5f03ab3740f524c7842c3a9bf617961d32
+- package: github.com/zenazn/goji
+  version: c05078ca81941f8e801bba3ddc0e6b86b7fdc893
+- package: github.com/dustin/go-humanize
+  version: 259d2a102b871d17f30e3cd9881a642961a1e486
+- package: github.com/gorilla/sessions
+  version: b61c93cb7f67533c8bfbb5ea450efc07e5833c5e
+- package: github.com/google/go-github
+  version: fe4b6036cb400908b8903d3df9444b9599a60d57
+- package: github.com/ikeikeikeike/go-sitemap-generator
+  version: e3c3d374db77838e92e5981ba81f26d1ecea4aa8
+- package: github.com/PuerkitoBio/goquery
+  version: ce645ea5e67a713599b7415f21f0786451fa9554
+- package: github.com/blevesearch/bleve
+  version: 82a101aedd682bba004e28c54c460b25dd271d04
+- package: github.com/davecgh/go-spew
+  version: adab96458c51a58dc1783b3335dcce5461522e75
+- package: github.com/gorilla/context
+  version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
+- package: github.com/boltdb/bolt
+  version: 2f1ce7a837dcb8da3ec595b1dac9d0632f0f99e8
+- package: github.com/mailgun/timetools
+  version: f3a7b8ffff474320c4f5cc564c9abb2c52ded8bc
+- package: github.com/cbroglie/mustache
+  version: 6857e4b493bdb8d4b1931446eb41704aeb4c28cb
+- package: github.com/pkg/errors
+  version: c605e284fe17294bda444b34710735b29d1a9d90
+- package: github.com/julienschmidt/httprouter
+  version: 975b5c4c7c21c0e3d2764200bf2aa8e34657ae6e
+- package: github.com/Redundancy/go-sync
+  version: 8931874cad5cacc627b94fcbcb182460e174aeef
+- package: github.com/codegangsta/cli
+  version: f017f86fccc5a039a98f23311f34fdf78b014f78
