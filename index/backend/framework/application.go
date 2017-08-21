@@ -9,22 +9,20 @@ import (
     "sync/atomic"
 
     log "github.com/Sirupsen/logrus"
-    "github.com/gravitational/trace"
+    "github.com/pkg/errors"
     "github.com/gorilla/sessions"
     "github.com/zenazn/goji/web"
 
     "github.com/jinzhu/gorm"
     _ "github.com/jinzhu/gorm/dialects/sqlite"
     "github.com/blevesearch/bleve"
-)
 
-import (
-    "github.com/stkim1/BACKEND/model"
-    "github.com/stkim1/BACKEND/control"
-    "github.com/stkim1/BACKEND/config"
-    "github.com/stkim1/BACKEND/storage"
-    "github.com/stkim1/BACKEND/storage/boltbk"
-    pocketsearch "github.com/stkim1/BACKEND/search"
+    "github.com/stkim1/backend/model"
+    "github.com/stkim1/backend/control"
+    "github.com/stkim1/backend/config"
+    "github.com/stkim1/backend/storage"
+    "github.com/stkim1/backend/storage/boltbk"
+    pocketsearch "github.com/stkim1/backend/search"
 )
 
 func NewApplication(config *config.Config, control *control.Controller) *Application {
@@ -90,7 +88,7 @@ func (a *Application) init() {
     // (SQLITE) metadata
     metaDB, err := gorm.Open(a.Config.Database.DatabaseType, a.Config.Database.DatabasePath)
     if err != nil {
-        log.Fatal(trace.Wrap(err))
+        log.Fatal(errors.WithStack(err))
     }
     // Migrate the schema
     metaDB.AutoMigrate(&model.Repository{}, &model.Author{}, &model.RepoContributor{});
@@ -99,7 +97,7 @@ func (a *Application) init() {
     // (BOLTDB) supplementary
     suppDB, err := boltbk.New(a.Config.Supplement.DatabasePath)
     if err != nil {
-        log.Fatal(trace.Wrap(err))
+        log.Fatal(errors.WithStack(err))
     }
     a.SuppleDB = suppDB
 
@@ -120,14 +118,14 @@ func (a *Application) init() {
     // (Search stat DB)
     statDB, err := boltbk.New(a.Config.Stat.DatabasePath)
     if err != nil {
-        log.Fatal(trace.Wrap(err))
+        log.Fatal(errors.WithStack(err))
     }
     a.SearchStat = statDB
 
     // Social Sharing DB
     socialDB, err := boltbk.New(a.Config.Social.DatabasePath)
     if err != nil {
-        log.Fatal(trace.Wrap(err))
+        log.Fatal(errors.WithStack(err))
     }
     a.SocialDB = socialDB
 
@@ -181,7 +179,7 @@ func (a *Application) Route(controller interface{}, route string) interface{} {
         if session, exists := c.Env["Session"]; exists {
             err := session.(*sessions.Session).Save(r, w)
             if err != nil {
-                log.Error(trace.Wrap(err, "Can't save session"))
+                log.Error(errors.WithMessage(err,"Can't save session"))
             }
         }
 
@@ -212,7 +210,7 @@ func (a *Application) AddRoute(method func(c web.C, r *http.Request) (string, in
         if session, exists := c.Env["Session"]; exists {
             err := session.(*sessions.Session).Save(r, w)
             if err != nil {
-                log.Error(trace.Wrap(err, "Can't save session"))
+                log.Error(errors.WithMessage(err,"Can't save session"))
             }
         }
 

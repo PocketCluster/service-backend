@@ -2,7 +2,6 @@ package control
 
 import (
     "encoding/json"
-    "errors"
     "fmt"
     "net/http"
     "path"
@@ -10,14 +9,14 @@ import (
     "strconv"
 
     log "github.com/Sirupsen/logrus"
-    "github.com/gravitational/trace"
+    "github.com/pkg/errors"
     "github.com/zenazn/goji/web"
     "github.com/jinzhu/gorm"
     "github.com/google/go-github/github"
 
-    "github.com/stkim1/BACKEND/model"
-    "github.com/stkim1/BACKEND/util"
-    "github.com/stkim1/BACKEND/config"
+    "github.com/stkim1/backend/model"
+    "github.com/stkim1/backend/util"
+    "github.com/stkim1/backend/config"
 )
 
 const (
@@ -41,26 +40,26 @@ func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, i
     requests := map[string]string{}
     decoder := json.NewDecoder(r.Body)
     err := decoder.Decode(&requests); if err != nil {
-        log.Error(trace.Wrap(err, "Cannot decode request body "))
+        log.Error(errors.WithMessage(err, "Cannot decode request body "))
         return "{}", http.StatusNotFound
     }
 
     // Check what mode this is in
     mode := strings.ToLower(strings.TrimSpace(c.URLParams["mode"]))
     if len(mode) == 0 || !strings.Contains(modeStrings, mode) {
-        log.Error(trace.Wrap(errors.New("Cannot response without a proper mode : " + mode)))
+        log.Error(errors.Errorf("Cannot response without a proper mode : " + mode))
         return "", http.StatusNotFound
     }
 
     // GITHUB API REQUEST
     repoURL := requests["add-repo-url"]
     if len(repoURL) == 0 {
-        log.Error(trace.Wrap(errors.New("Repository URL [add-repo-url] cannot be null")))
+        log.Error(errors.Errorf("Repository URL [add-repo-url] cannot be null"))
         return "{}", http.StatusNotFound
     }
     repo, _, err := ctrl.GetGithubRepoMeta(repoURL)
     if err != nil {
-        log.Error(trace.Wrap(err, "Retrieving repository failed"))
+        log.Error(errors.WithMessage(err, "Retrieving repository failed"))
         return "", http.StatusNotFound
     }
 
@@ -68,12 +67,12 @@ func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, i
     case "preview": {
         response, err := getPreview(ctrl.GetMetaDB(c), requests, repo)
         if err != nil {
-            log.Error(trace.Wrap(err, "Cannot preview repo info"))
+            log.Error(errors.WithMessage(err, "Cannot preview repo info"))
             return "{}", http.StatusNotFound
         }
         json, err := json.Marshal(response);
         if err != nil {
-            log.Error(trace.Wrap(err))
+            log.Error(errors.WithStack(err))
             return "{}", http.StatusNotFound
         }
         return string(json), http.StatusOK
@@ -82,16 +81,16 @@ func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, i
         // Decode contributor API
         contribs, _, err := ctrl.GetGithubContributors(repoURL)
         if err != nil {
-            log.Error(trace.Wrap(err, "Retrieving repository contribution data failed " + util.SafeGetString(repo.HTMLURL)))
+            log.Error(errors.WithMessage(err, "Retrieving repository contribution data failed " + util.SafeGetString(repo.HTMLURL)))
             return "", http.StatusNotFound
         }
         responses, err := updateRepo(ctrl.GetMetaDB(c), ctrl.Config, requests, repo, contribs)
         if err != nil {
-            log.Error(trace.Wrap(err, "Cannot update the repo info " + util.SafeGetString(repo.HTMLURL)))
+            log.Error(errors.WithMessage(err, "Cannot update the repo info " + util.SafeGetString(repo.HTMLURL)))
             return "{}", http.StatusNotFound
         }
         json, err := json.Marshal(responses); if err != nil {
-            log.Error(trace.Wrap(err, "Cannot marshal json"))
+            log.Error(errors.WithMessage(err, "Cannot marshal json"))
             return "{}", http.StatusNotFound
         }
         return string(json), http.StatusOK
@@ -99,11 +98,11 @@ func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, i
     case "submit": {
         responses, err := submitRepo(ctrl, c, requests, repo)
         if err != nil {
-            log.Error(trace.Wrap(err, "Cannot submit the repo info " + util.SafeGetString(repo.HTMLURL)))
+            log.Error(errors.WithMessage(err, "Cannot submit the repo info " + util.SafeGetString(repo.HTMLURL)))
             return "{}", http.StatusNotFound
         }
         json, err := json.Marshal(responses); if err != nil {
-            log.Error(trace.Wrap(err, "Cannot marshal json"))
+            log.Error(errors.WithMessage(err, "Cannot marshal json"))
             return "{}", http.StatusNotFound
         }
         return string(json), http.StatusOK
@@ -142,19 +141,19 @@ func submitRepo(ctrl *Controller, c web.C, reqs map[string]string, repoData *git
     // Build repo id
     repoID, err := githubRepoID(repoData.ID)
     if err != nil {
-        return nil, trace.Wrap(err, "Cannot parse repository id")
+        return nil, errors.WithMessage(err, "Cannot parse repository id")
     }
 
     // owner info
     var owner *github.User = repoData.Owner
     if owner == nil {
-        return nil, errors.New("Cannot parse Owner info of the repo")
+        return nil, errors.Errorf("Cannot parse Owner info of the repo")
     }
 
     // owner id
     aid, err := util.SafeGetInt(owner.ID)
     if err != nil {
-        return nil, trace.Wrap(err, fmt.Sprintf("Cannot parse Owner[%s] id from repo.Owner.ID", util.SafeGetString(owner.Login)))
+        return nil, errors.WithMessage(err, fmt.Sprintf("Cannot parse Owner[%s] id from repo.Owner.ID", util.SafeGetString(owner.Login)))
     }
     authorID := "gh" + strconv.Itoa(aid)
 
@@ -238,19 +237,19 @@ func submitRepo(ctrl *Controller, c web.C, reqs map[string]string, repoData *git
     // Decode contributor API
     contribs, _, err := ctrl.GetGithubContributors(repoURL)
     if err != nil {
-        log.Error(trace.Wrap(err))
+        log.Error(errors.WithStack(err))
     } else {
         for _, cauthor := range contribs {
             // contribution
             if cauthor == nil {
-                log.Error(trace.Wrap(errors.New("Null contribution data. WTF?")))
+                log.Error(errors.Errorf("Null contribution data. WTF?"))
                 continue
             }
 
             // user id
             cid, err := util.SafeGetInt(cauthor.ID)
             if err != nil {
-                log.Error(trace.Wrap(err, "Cannot access contributor ID"))
+                log.Error(errors.WithMessage(err,"Cannot access contributor ID"))
                 continue
             }
             contribID := "gh" + strconv.Itoa(cid)
@@ -258,7 +257,7 @@ func submitRepo(ctrl *Controller, c web.C, reqs map[string]string, repoData *git
             // how many times this contributor has worked
             cfactor, err := util.SafeGetInt(cauthor.Contributions)
             if err != nil {
-                log.Error(trace.Wrap(err, "Cannot parse contribution count"))
+                log.Error(errors.WithMessage(err,"Cannot parse contribution count"))
                 continue
             }
 
@@ -328,20 +327,20 @@ func updateRepo(repoDB *gorm.DB, config *config.Config, reqs map[string]string, 
     // Build repo id
     rid, err := util.SafeGetInt(repoData.ID)
     if err != nil {
-        return nil, trace.Wrap(err, "Cannot parse repository id")
+        return nil, errors.WithMessage(err,"Cannot parse repository id")
     }
     repoID := "gh" + strconv.Itoa(rid)
 
     // owner info
     var owner *github.User = repoData.Owner
     if owner == nil {
-        return nil, errors.New("Cannot parse Owner info of the repo")
+        return nil, errors.Errorf("Cannot parse Owner info of the repo")
     }
 
     // owner id
     aid, err := util.SafeGetInt(owner.ID)
     if err != nil {
-        return nil, trace.Wrap(err, fmt.Sprintf("Cannot parse Owner[%s] id from repo.Owner.ID", util.SafeGetString(owner.Login)))
+        return nil, errors.WithMessage(err,fmt.Sprintf("Cannot parse Owner[%s] id from repo.Owner.ID", util.SafeGetString(owner.Login)))
     }
     authorID := "gh" + strconv.Itoa(aid)
 
@@ -364,7 +363,7 @@ func updateRepo(repoDB *gorm.DB, config *config.Config, reqs map[string]string, 
         }
 
         if len(repoFound) == 0 {
-            log.Error(trace.Wrap(errors.New("Absence of repository from database in update should never happen : " + util.SafeGetString(repoData.HTMLURL))))
+            log.Error(errors.Errorf("Absence of repository from database in update should never happen : " + util.SafeGetString(repoData.HTMLURL)))
             repoAdded := model.Repository{
                 RepoId:         repoID,
                 AuthorId:       authorID,
@@ -437,14 +436,14 @@ func updateRepo(repoDB *gorm.DB, config *config.Config, reqs map[string]string, 
     for _, cauthor := range ctribs {
         // contribution
         if cauthor == nil {
-            log.Error(trace.Wrap(errors.New("Null contribution data. WTF?")))
+            log.Error(errors.Errorf("Null contribution data. WTF?"))
             continue
         }
 
         // user id
         cid, err := util.SafeGetInt(cauthor.ID)
         if err != nil {
-            log.Error(trace.Wrap(err, "Cannot access contributor ID"))
+            log.Error(errors.WithMessage(err,"Cannot access contributor ID"))
             continue
         }
         contribID := "gh" + strconv.Itoa(cid)
@@ -452,7 +451,7 @@ func updateRepo(repoDB *gorm.DB, config *config.Config, reqs map[string]string, 
         // how many times this contributor has worked
         cfactor, err := util.SafeGetInt(cauthor.Contributions)
         if err != nil {
-            log.Error(trace.Wrap(err, "Cannot parse contribution count"))
+            log.Error(errors.WithMessage(err,"Cannot parse contribution count"))
             continue
         }
 
@@ -514,7 +513,7 @@ func getPreview(repodb *gorm.DB, requests map[string]string, repoData *github.Re
     // Build repo id
     rid, err := util.SafeGetInt(repoData.ID)
     if err != nil {
-        return nil, errors.New("Cannot parse repository id")
+        return nil, errors.Errorf("Cannot parse repository id")
     }
     repoID = "gh" + strconv.Itoa(rid)
 

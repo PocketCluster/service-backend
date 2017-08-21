@@ -3,17 +3,17 @@ package main
 import (
     "os"
     "regexp"
+    "runtime"
 
     log "github.com/Sirupsen/logrus"
-    "github.com/gravitational/trace"
+    "github.com/pkg/errors"
     "github.com/gorilla/context"
     "github.com/zenazn/goji"
     "github.com/zenazn/goji/graceful"
 
-    "github.com/stkim1/BACKEND/framework"
-    "github.com/stkim1/BACKEND/control"
-    "github.com/stkim1/BACKEND/config"
-    "runtime"
+    "github.com/stkim1/backend/framework"
+    "github.com/stkim1/backend/control"
+    "github.com/stkim1/backend/config"
 )
 
 func main() {
@@ -27,7 +27,7 @@ func main() {
     }
     cfg, err := config.NewConfig(cfgPath)
     if err != nil {
-        log.Panic(trace.Wrap(err, "Cannot load config"))
+        log.Panic(errors.WithMessage(err, "Cannot load config"))
         return
     }
     runtime.GOMAXPROCS(cfg.General.MaxConcurrency)

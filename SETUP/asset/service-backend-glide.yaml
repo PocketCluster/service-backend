@@ -50,3 +50,9 @@ import:
   version: 8931874cad5cacc627b94fcbcb182460e174aeef
 - package: github.com/codegangsta/cli
   version: f017f86fccc5a039a98f23311f34fdf78b014f78
+- package: github.com/gorilla/mux
+  version: ac112f7d75a0714af1bd86ab17749b31f7809640
+- package: github.com/go-utils/uslice
+  version: fb69df90f7992e63a8959323a08a85aaba012564
+- package: github.com/mattn/go-sqlite3
+  version: 6654e412c3c7eabb310d920cf73a2102dbf8c632

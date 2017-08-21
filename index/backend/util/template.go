@@ -4,8 +4,7 @@ import (
     "path"
 
     log "github.com/Sirupsen/logrus"
-    "github.com/gravitational/trace"
-
+    "github.com/pkg/errors"
     "github.com/cbroglie/mustache"
 )
 
@@ -13,7 +12,7 @@ func RenderPage(templatePath, templateFile string, data map[string]interface{}) 
     filename := path.Join(templatePath, templateFile)
     content, err := mustache.RenderFile(filename, data)
     if err != nil {
-        log.Error(trace.Wrap(err, "RenderPage failed "))
+        log.Error(errors.WithMessage(err, "RenderPage failed "))
         return ""
     }
     return content
@@ -25,7 +24,7 @@ func RenderLayout(templatePath, bodyTemplate, baseTemplate string, data map[stri
     bodyfile := path.Join(templatePath, bodyTemplate)
     content, err := mustache.RenderFileInLayout(bodyfile, basefile, data)
     if err != nil {
-        log.Error(trace.Wrap(err, "RenderLayout failed "))
+        log.Error(errors.WithMessage(err, "RenderLayout failed "))
     }
     return content
 }

@@ -1,18 +1,17 @@
 package control
 
 import (
-    "errors"
     "net/http"
     "strings"
 
     log "github.com/Sirupsen/logrus"
-    "github.com/gravitational/trace"
+    "github.com/pkg/errors"
     "github.com/zenazn/goji/web"
 
-    "github.com/stkim1/BACKEND/util"
-    "github.com/stkim1/BACKEND/control/overview"
-    "github.com/stkim1/BACKEND/control/weekly"
-    "github.com/stkim1/BACKEND/control/scrapping"
+    "github.com/stkim1/backend/util"
+    "github.com/stkim1/backend/control/overview"
+    "github.com/stkim1/backend/control/weekly"
+    "github.com/stkim1/backend/control/scrapping"
 )
 
 // Category route
@@ -39,6 +38,6 @@ func (ctrl *Controller) DashboardFront(c web.C, r *http.Request) (string, int) {
         return scrapping.FrontEnd(ctrl.Config, c, r)
     }
 
-    log.Error(trace.Wrap(errors.New("Cannot display page without a proper mode")))
+    log.Error(errors.Errorf("Cannot display page without a proper mode"))
     return "", http.StatusNotFound
 }

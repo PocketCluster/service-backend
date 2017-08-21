@@ -9,11 +9,11 @@ import (
     "strings"
 
     log "github.com/Sirupsen/logrus"
-    "github.com/gravitational/trace"
+    "github.com/pkg/errors"
     "github.com/go-utils/uslice"
     "github.com/gorilla/sessions"
     "github.com/zenazn/goji/web"
-    "github.com/stkim1/BACKEND/control"
+    "github.com/stkim1/backend/control"
 )
 
 // Makes sure controllers can have access to session
@@ -93,13 +93,13 @@ func (a *Application) ApplyCsrfProtection(c *web.C, h http.Handler) http.Handler
             buffer := make([]byte, 32)
             _, err := rand.Read(buffer)
             if err != nil {
-                log.Error(trace.Wrap(err, "crypt/rand.Read failed"))
+                log.Error(errors.WithMessage(err,"crypt/rand.Read failed"))
             }
             hash.Write(buffer)
             session.Values["CsrfToken"] = fmt.Sprintf("%x", hash.Sum(nil))
             err = session.Save(r, w);
             if err != nil {
-                log.Error(trace.Wrap(err, "session.Save() failed"))
+                log.Error(errors.WithMessage(err,"session.Save() failed"))
             }
         }
         c.Env["CsrfKey"] = csrfProtection.Key

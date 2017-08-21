@@ -24,6 +24,11 @@ github.com/codegangsta/cli
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 	mkdir -p /opt/gopkg/src/github.com/codegangsta && cd /opt/gopkg/src/github.com/codegangsta && git clone https://github.com/codegangsta/cli && cd /opt/gopkg/src/github.com/codegangsta/cli && git checkout f017f86fccc5a039a98f23311f34fdf78b014f78
 
+github.com/gorilla/mux
+	ac112f7d75a0714af1bd86ab17749b31f7809640	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/gorilla && cd /opt/gopkg/src/github.com/gorilla && git clone https://github.com/gorilla/mux && cd /opt/gopkg/src/github.com/gorilla/mux && git checkout ac112f7d75a0714af1bd86ab17749b31f7809640
+
 github.com/Sirupsen/logrus
 	84573d5f03ab3740f524c7842c3a9bf617961d32	 -> 	service-backend
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
@@ -33,6 +38,11 @@ github.com/gorilla/context
 	08b5f424b9271eedf6f9f0ce86cb9396ed337a42	 -> 	service-backend
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 	mkdir -p /opt/gopkg/src/github.com/gorilla && cd /opt/gopkg/src/github.com/gorilla && git clone https://github.com/gorilla/context && cd /opt/gopkg/src/github.com/gorilla/context && git checkout 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
+
+github.com/go-utils/uslice
+	fb69df90f7992e63a8959323a08a85aaba012564	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/go-utils && cd /opt/gopkg/src/github.com/go-utils && git clone https://github.com/go-utils/uslice && cd /opt/gopkg/src/github.com/go-utils/uslice && git checkout fb69df90f7992e63a8959323a08a85aaba012564
 
 github.com/blevesearch/bleve
 	82a101aedd682bba004e28c54c460b25dd271d04	 -> 	service-backend
@@ -73,6 +83,11 @@ github.com/cbroglie/mustache
 	6857e4b493bdb8d4b1931446eb41704aeb4c28cb	 -> 	service-backend
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 	mkdir -p /opt/gopkg/src/github.com/cbroglie && cd /opt/gopkg/src/github.com/cbroglie && git clone https://github.com/cbroglie/mustache && cd /opt/gopkg/src/github.com/cbroglie/mustache && git checkout 6857e4b493bdb8d4b1931446eb41704aeb4c28cb
+
+github.com/mattn/go-sqlite3
+	6654e412c3c7eabb310d920cf73a2102dbf8c632	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/mattn && cd /opt/gopkg/src/github.com/mattn && git clone https://github.com/mattn/go-sqlite3 && cd /opt/gopkg/src/github.com/mattn/go-sqlite3 && git checkout 6654e412c3c7eabb310d920cf73a2102dbf8c632
 
 github.com/davecgh/go-spew
 	adab96458c51a58dc1783b3335dcce5461522e75	 -> 	service-backend

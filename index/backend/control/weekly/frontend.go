@@ -5,14 +5,11 @@ import (
     "time"
     "fmt"
 
-    //log "github.com/Sirupsen/logrus"
-    //"github.com/gravitational/trace"
-    //"github.com/davecgh/go-spew/spew"
     "github.com/jinzhu/gorm"
 
-    "github.com/stkim1/BACKEND/util"
-    "github.com/stkim1/BACKEND/config"
-    "github.com/stkim1/BACKEND/model"
+    "github.com/stkim1/backend/util"
+    "github.com/stkim1/backend/config"
+    "github.com/stkim1/backend/model"
 )
 
 const (

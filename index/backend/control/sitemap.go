@@ -5,9 +5,9 @@ import (
     "net/http"
 
     "github.com/zenazn/goji/web"
-    "github.com/stkim1/BACKEND/model"
+    "github.com/stkim1/backend/model"
     // FIXME: when xmlcontent PR is merged, change this repo to the original
-    "github.com/sungwoncho/go-sitemap-generator/stm"
+    "github.com/ikeikeikeike/go-sitemap-generator/stm"
 )
 
 func (ctrl *Controller) Sitemap(c web.C, r *http.Request) (string, int) {

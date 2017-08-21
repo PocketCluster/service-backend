@@ -10,8 +10,8 @@ import (
     //"github.com/davecgh/go-spew/spew"
     "github.com/google/go-github/github"
 
-    "github.com/stkim1/BACKEND/model"
-    "github.com/stkim1/BACKEND/util"
+    "github.com/stkim1/backend/model"
+    "github.com/stkim1/backend/util"
 )
 
 func (ctrl *Controller) GetGithubRepoMeta(repoURL string) (*github.Repository, *github.Response, error) {

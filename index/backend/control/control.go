@@ -2,22 +2,21 @@ package control
 
 import (
     "bytes"
-    "fmt"
     "strings"
     "sync/atomic"
     "net"
     "net/http"
 
     log "github.com/Sirupsen/logrus"
-    "github.com/gravitational/trace"
+    "github.com/pkg/errors"
     "github.com/gorilla/sessions"
     "github.com/zenazn/goji/web"
     "github.com/jinzhu/gorm"
     "github.com/google/go-github/github"
 
-    "github.com/stkim1/BACKEND/model"
-    "github.com/stkim1/BACKEND/config"
-    "github.com/stkim1/BACKEND/storage"
+    "github.com/stkim1/backend/model"
+    "github.com/stkim1/backend/config"
+    "github.com/stkim1/backend/storage"
 )
 
 /* ------- GITHUG API CONTROL ------- */
@@ -229,7 +228,7 @@ func (ctrl *Controller) IsSafeConnection(r *http.Request) bool {
     // access control based on IP
     ipAddress := getIPAdress(r)
     if ipAddress != ctrl.Config.VPN.VpnHost {
-        log.Error(trace.Wrap(fmt.Errorf("Cannot display page without proper access from VPN : src[%s]", ipAddress)))
+        log.Error(errors.Errorf("Cannot display page without proper access from VPN : src[%s]", ipAddress))
         return false
     }
     return true
