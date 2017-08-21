@@ -70,8 +70,11 @@ project/plugins/project/
 .ensime_cache/
 .ensime
 
+# OSX
+.DS_Store
+
 # PC-INDEX specific
-BACKEND/DEVASSETS/*
+DEVASSETS/
 
 # SQLITE3 Database
 *.db

@@ -1,0 +1,4 @@
+cdncheck
+*.pprof
+*.gz
+*.tar

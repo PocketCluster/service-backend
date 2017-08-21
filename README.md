@@ -1,5 +1,1 @@
-# PocketCluster FrontEnd & BackEnd
-
-FrontEnd : Scala.js
-
-BackEnd : Golang (Goji / GORM / Sqlite)
+# PocketCluster Index/ Cdn/ Email Services
