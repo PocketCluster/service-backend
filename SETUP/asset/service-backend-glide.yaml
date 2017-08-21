@@ -62,3 +62,5 @@ import:
   version: 19aeb13c4e7cb6bd3188dfede73840f33455425a
 - package: github.com/pkg/profile
   version: 5b67d428864e92711fcbd2f8629456121a56d91f
+- package: golang.org/x/sys/unix
+  version: 07c182904dbd53199946ba614a412c61d3c548f5

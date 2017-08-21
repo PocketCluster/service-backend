@@ -28,6 +28,7 @@ function clean_gopath() {
 	rm -rf github.com/davecgh/go-spew && (rmdir github.com/davecgh > /dev/null 2>&1 || true)
 	rm -rf github.com/boltdb/bolt && (rmdir github.com/boltdb > /dev/null 2>&1 || true)
 	rm -rf gopkg.in/vmihailenco/msgpack.v2 && (rmdir gopkg.in/vmihailenco > /dev/null 2>&1 || true)
+	rm -rf golang.org/x/sys/unix && (rmdir golang.org/x/sys > /dev/null 2>&1 || true)
 	rm -rf github.com/gorilla/sessions && (rmdir github.com/gorilla > /dev/null 2>&1 || true)
 	rm -rf github.com/zenazn/goji && (rmdir github.com/zenazn > /dev/null 2>&1 || true)
 	rm -rf github.com/google/go-github && (rmdir github.com/google > /dev/null 2>&1 || true)
