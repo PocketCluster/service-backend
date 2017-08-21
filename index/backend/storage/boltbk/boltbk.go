@@ -19,6 +19,7 @@ limitations under the License.
 package boltbk
 
 import (
+    "fmt"
     "os"
     "path/filepath"
     "sort"
@@ -26,10 +27,53 @@ import (
     "time"
 
     "github.com/boltdb/bolt"
-    "github.com/gravitational/trace"
     "github.com/mailgun/timetools"
     "gopkg.in/vmihailenco/msgpack.v2"
 )
+
+// --- not found error ---
+func notFound(format string, a ...interface{}) error {
+    return &bkNotFoundError{fmt.Sprintf(format, a...)}
+}
+type bkNotFoundError struct {s string}
+func (b *bkNotFoundError) Error() string {return b.s}
+func IsNotFound(err error) bool {
+    _, ok := err.(*bkNotFoundError)
+    return ok
+}
+
+// --- already exists ---
+func alreadyExists(format string, a ...interface{}) error {
+    return &bkAlreadyExistsError{fmt.Sprintf(format, a...)}
+}
+type bkAlreadyExistsError struct {s string}
+func (b *bkAlreadyExistsError) Error() string {return b.s}
+func IsAlreadyExists(err error) bool {
+    _, ok := err.(*bkAlreadyExistsError)
+    return ok
+}
+
+// --- bad parameter ---
+func badParameter(format string, a ...interface{}) error {
+    return &bkBadParameterError{fmt.Sprintf(format, a...)}
+}
+type bkBadParameterError struct {s string}
+func (b *bkBadParameterError) Error() string {return b.s}
+func IsBadParameter(err error) bool {
+    _, ok := err.(*bkBadParameterError)
+    return ok
+}
+
+// --- compare failed ---
+func compareFailed(format string, a ...interface{}) error {
+    return &bkcompareFailedError{fmt.Sprintf(format, a...)}
+}
+type bkcompareFailedError struct {s string}
+func (b *bkcompareFailedError) Error() string {return b.s}
+func IsCompareFailed(err error) bool {
+    _, ok := err.(*bkcompareFailedError)
+    return ok
+}
 
 // BoltBackend is a boltdb-based backend used in tests and standalone mode
 type BoltBackend struct {
@@ -55,22 +99,22 @@ func Clock(clock timetools.TimeProvider) Option {
 func New(path string, opts ...Option) (*BoltBackend, error) {
     path, err := filepath.Abs(path)
     if err != nil {
-        return nil, trace.Wrap(err, "failed to convert path")
+        return nil, fmt.Errorf(err.Error() + " : failed to convert path")
     }
     dir := filepath.Dir(path)
     s, err := os.Stat(dir)
     if err != nil {
-        return nil, trace.Wrap(err)
+        return nil, err
     }
     if !s.IsDir() {
-        return nil, trace.BadParameter("path '%v' should be a valid directory", dir)
+        return nil, badParameter("path '%v' should be a valid directory", dir)
     }
     b := &BoltBackend{
         locks: make(map[string]time.Time),
     }
     for _, option := range opts {
         if err := option(b); err != nil {
-            return nil, trace.Wrap(err)
+            return nil, err
         }
     }
     if b.clock == nil {
@@ -79,9 +123,9 @@ func New(path string, opts ...Option) (*BoltBackend, error) {
     db, err := bolt.Open(path, 0600, &bolt.Options{Timeout: 5 * time.Second})
     if err != nil {
         if err == bolt.ErrTimeout {
-            return nil, trace.Errorf("Local storage is locked. Another instance is running? (%v)", path)
+            return nil, fmt.Errorf("Local storage is locked. Another instance is running? (%v)", path)
         }
-        return nil, trace.Wrap(err)
+        return nil, err
     }
     b.db = db
     return b, nil
@@ -95,10 +139,10 @@ func (b *BoltBackend) Close() error {
 func (b *BoltBackend) GetKeys(path []string) ([]string, error) {
     keys, err := b.getKeys(path)
     if err != nil {
-        if trace.IsNotFound(err) {
+        if IsNotFound(err) {
             return nil, nil
         }
-        return nil, trace.Wrap(err)
+        return nil, err
     }
     // now do an iteration to expire keys
     for _, key := range keys {
@@ -106,7 +150,7 @@ func (b *BoltBackend) GetKeys(path []string) ([]string, error) {
     }
     keys, err = b.getKeys(path)
     if err != nil {
-        return nil, trace.Wrap(err)
+        return nil, err
     }
     sort.Sort(sort.StringSlice(keys))
     return keys, nil
@@ -115,7 +159,7 @@ func (b *BoltBackend) GetKeys(path []string) ([]string, error) {
 func (b *BoltBackend) UpsertObj(path []string, key string, val interface{}, ttl time.Duration) error {
     v, err := msgpack.Marshal(val)
     if err != nil {
-        return trace.Wrap(err)
+        return err
     }
     return b.upsertVal(path, key, v, ttl)
 }
@@ -132,35 +176,35 @@ func (b *BoltBackend) CreateVal(bucket []string, key string, val []byte, ttl tim
     }
     bytes, err := msgpack.Marshal(v)
     if err != nil {
-        return trace.Wrap(err)
+        return err
     }
     err = b.createKey(bucket, key, bytes)
-    return trace.Wrap(err)
+    return err
 }
 
 func (b *BoltBackend) TouchVal(bucket []string, key string, ttl time.Duration) error {
     err := b.db.Update(func(tx *bolt.Tx) error {
         bkt, err := UpsertBucket(tx, bucket)
         if err != nil {
-            return trace.Wrap(err)
+            return err
         }
         val := bkt.Get([]byte(key))
         if val == nil {
-            return trace.NotFound("'%v' already exists", key)
+            return notFound("'%v' already exists", key)
         }
         var k *kv
         if err := msgpack.Unmarshal(val, &k); err != nil {
-            return trace.Wrap(err)
+            return err
         }
         k.TTL = ttl
         k.Created = b.clock.UtcNow()
         bytes, err := msgpack.Marshal(k)
         if err != nil {
-            return trace.Wrap(err)
+            return err
         }
         return bkt.Put([]byte(key), bytes)
     })
-    return trace.Wrap(err)
+    return err
 }
 
 func (b *BoltBackend) upsertVal(path []string, key string, val []byte, ttl time.Duration) error {
@@ -171,7 +215,7 @@ func (b *BoltBackend) upsertVal(path []string, key string, val []byte, ttl time.
     }
     bytes, err := msgpack.Marshal(v)
     if err != nil {
-        return trace.Wrap(err)
+        return err
     }
     return b.upsertKey(path, key, bytes)
 }
@@ -182,37 +226,37 @@ func (b *BoltBackend) CompareAndSwap(path []string, key string, val []byte, ttl 
 
     storedVal, err := b.GetVal(path, key)
     if err != nil {
-        if trace.IsNotFound(err) && len(prevVal) != 0 {
+        if IsNotFound(err) && len(prevVal) != 0 {
             return nil, err
         }
     }
     if len(prevVal) == 0 && err == nil {
-        return nil, trace.AlreadyExists("key '%v' already exists", key)
+        return nil, alreadyExists("key '%v' already exists", key)
     }
     if string(prevVal) == string(storedVal) {
         err = b.upsertVal(path, key, val, ttl)
         if err != nil {
-            return nil, trace.Wrap(err)
+            return nil, err
         }
         return storedVal, nil
     }
-    return storedVal, trace.CompareFailed("expected: %v, got: %v", string(prevVal), string(storedVal))
+    return storedVal, compareFailed("expected: %v, got: %v", string(prevVal), string(storedVal))
 }
 
 func (b *BoltBackend) GetVal(path []string, key string) ([]byte, error) {
     var val []byte
     if err := b.getKey(path, key, &val); err != nil {
-        return nil, trace.Wrap(err)
+        return nil, err
     }
     var k *kv
     if err := msgpack.Unmarshal(val, &k); err != nil {
-        return nil, trace.Wrap(err)
+        return nil, err
     }
     if k.TTL != 0 && b.clock.UtcNow().Sub(k.Created) > k.TTL {
         if err := b.deleteKey(path, key); err != nil {
             return nil, err
         }
-        return nil, trace.NotFound("%v: %v not found", path, key)
+        return nil, notFound("%v: %v not found", path, key)
     }
     return k.Value, nil
 }
@@ -220,20 +264,20 @@ func (b *BoltBackend) GetVal(path []string, key string) ([]byte, error) {
 func (b *BoltBackend) GetObj(path []string, key string, obj interface{}) error {
     var val []byte
     if err := b.getKey(path, key, &val); err != nil {
-        return trace.Wrap(err)
+        return err
     }
     var k *kv
     if err := msgpack.Unmarshal(val, &k); err != nil {
-        return trace.Wrap(err)
+        return err
     }
     if k.TTL != 0 && b.clock.UtcNow().Sub(k.Created) > k.TTL {
         if err := b.deleteKey(path, key); err != nil {
             return err
         }
-        return trace.NotFound("%v: %v not found", path, key)
+        return notFound("%v: %v not found", path, key)
     }
     if err := msgpack.Unmarshal(k.Value, obj); err != nil {
-        return trace.Wrap(err)
+        return err
     }
     return nil
 }
@@ -241,17 +285,17 @@ func (b *BoltBackend) GetObj(path []string, key string, obj interface{}) error {
 func (b *BoltBackend) GetValAndTTL(path []string, key string) ([]byte, time.Duration, error) {
     var val []byte
     if err := b.getKey(path, key, &val); err != nil {
-        return nil, 0, trace.Wrap(err)
+        return nil, 0, err
     }
     var k *kv
     if err := msgpack.Unmarshal(val, &k); err != nil {
-        return nil, 0, trace.Wrap(err)
+        return nil, 0, err
     }
     if k.TTL != 0 && b.clock.UtcNow().Sub(k.Created) > k.TTL {
         if err := b.deleteKey(path, key); err != nil {
-            return nil, 0, trace.Wrap(err)
+            return nil, 0, err
         }
-        return nil, 0, trace.NotFound("%v: %v not found", path, key)
+        return nil, 0, notFound("%v: %v not found", path, key)
     }
     var newTTL time.Duration
     newTTL = 0
@@ -264,17 +308,17 @@ func (b *BoltBackend) GetValAndTTL(path []string, key string) ([]byte, time.Dura
 func (b *BoltBackend) GetObjAndTTL(path []string, key string, obj interface{}) (time.Duration, error) {
     var val []byte
     if err := b.getKey(path, key, &val); err != nil {
-        return 0, trace.Wrap(err)
+        return 0, err
     }
     var k *kv
     if err := msgpack.Unmarshal(val, &k); err != nil {
-        return 0, trace.Wrap(err)
+        return 0, err
     }
     if k.TTL != 0 && b.clock.UtcNow().Sub(k.Created) > k.TTL {
         if err := b.deleteKey(path, key); err != nil {
-            return 0, trace.Wrap(err)
+            return 0, err
         }
-        return 0, trace.NotFound("%v: %v not found", path, key)
+        return 0, notFound("%v: %v not found", path, key)
     }
     var newTTL time.Duration
     newTTL = 0
@@ -282,7 +326,7 @@ func (b *BoltBackend) GetObjAndTTL(path []string, key string, obj interface{}) (
         newTTL = k.Created.Add(k.TTL).Sub(b.clock.UtcNow())
     }
     if err := msgpack.Unmarshal(k.Value, obj); err != nil {
-        return 0, trace.Wrap(err)
+        return 0, err
     }
     return newTTL, nil
 }
@@ -304,10 +348,10 @@ func (b *BoltBackend) deleteBucket(buckets []string, bucket string) error {
     return b.db.Update(func(tx *bolt.Tx) error {
         bkt, err := GetBucket(tx, buckets)
         if err != nil {
-            return trace.Wrap(err)
+            return err
         }
         if bkt.Bucket([]byte(bucket)) == nil {
-            return trace.NotFound("%v not found", bucket)
+            return notFound("%v not found", bucket)
         }
         return bkt.DeleteBucket([]byte(bucket))
     })
@@ -317,10 +361,10 @@ func (b *BoltBackend) deleteKey(buckets []string, key string) error {
     return b.db.Update(func(tx *bolt.Tx) error {
         bkt, err := GetBucket(tx, buckets)
         if err != nil {
-            return trace.Wrap(err)
+            return err
         }
         if bkt.Get([]byte(key)) == nil {
-            return trace.NotFound("%v is not found", key)
+            return notFound("%v is not found", key)
         }
         return bkt.Delete([]byte(key))
     })
@@ -330,7 +374,7 @@ func (b *BoltBackend) upsertKey(buckets []string, key string, bytes []byte) erro
     return b.db.Update(func(tx *bolt.Tx) error {
         bkt, err := UpsertBucket(tx, buckets)
         if err != nil {
-            return trace.Wrap(err)
+            return err
         }
         return bkt.Put([]byte(key), bytes)
     })
@@ -340,11 +384,11 @@ func (b *BoltBackend) createKey(buckets []string, key string, bytes []byte) erro
     return b.db.Update(func(tx *bolt.Tx) error {
         bkt, err := UpsertBucket(tx, buckets)
         if err != nil {
-            return trace.Wrap(err)
+            return err
         }
         val := bkt.Get([]byte(key))
         if val != nil {
-            return trace.AlreadyExists("'%v' already exists", key)
+            return alreadyExists("'%v' already exists", key)
         }
         return bkt.Put([]byte(key), bytes)
     })
@@ -354,15 +398,15 @@ func (b *BoltBackend) getKey(buckets []string, key string, val *[]byte) error {
     return b.db.View(func(tx *bolt.Tx) error {
         bkt, err := GetBucket(tx, buckets)
         if err != nil {
-            return trace.Wrap(err)
+            return err
         }
         bytes := bkt.Get([]byte(key))
         if bytes == nil {
             _, err := GetBucket(tx, append(buckets, key))
             if err == nil {
-                return trace.BadParameter("key '%v 'is a bucket", key)
+                return badParameter("key '%v 'is a bucket", key)
             }
-            return trace.NotFound("%v %v not found", buckets, key)
+            return notFound("%v %v not found", buckets, key)
         }
         *val = make([]byte, len(bytes))
         copy(*val, bytes)
@@ -375,7 +419,7 @@ func (b *BoltBackend) getKeys(buckets []string) ([]string, error) {
     err := b.db.View(func(tx *bolt.Tx) error {
         bkt, err := GetBucket(tx, buckets)
         if err != nil {
-            return trace.Wrap(err)
+            return err
         }
         c := bkt.Cursor()
         for k, _ := c.First(); k != nil; k, _ = c.Next() {
@@ -384,7 +428,7 @@ func (b *BoltBackend) getKeys(buckets []string) ([]string, error) {
         return nil
     })
     if err != nil {
-        return nil, trace.Wrap(err)
+        return nil, err
     }
     return out, nil
 }
@@ -392,12 +436,12 @@ func (b *BoltBackend) getKeys(buckets []string) ([]string, error) {
 func UpsertBucket(b *bolt.Tx, buckets []string) (*bolt.Bucket, error) {
     bkt, err := b.CreateBucketIfNotExists([]byte(buckets[0]))
     if err != nil {
-        return nil, trace.Wrap(err)
+        return nil, err
     }
     for _, key := range buckets[1:] {
         bkt, err = bkt.CreateBucketIfNotExists([]byte(key))
         if err != nil {
-            return nil, trace.Wrap(err)
+            return nil, err
         }
     }
     return bkt, nil
@@ -406,12 +450,12 @@ func UpsertBucket(b *bolt.Tx, buckets []string) (*bolt.Bucket, error) {
 func GetBucket(b *bolt.Tx, buckets []string) (*bolt.Bucket, error) {
     bkt := b.Bucket([]byte(buckets[0]))
     if bkt == nil {
-        return nil, trace.NotFound("bucket %v not found", buckets[0])
+        return nil, notFound("bucket %v not found", buckets[0])
     }
     for _, key := range buckets[1:] {
         bkt = bkt.Bucket([]byte(key))
         if bkt == nil {
-            return nil, trace.NotFound("bucket %v not found", key)
+            return nil, notFound("bucket %v not found", key)
         }
     }
     return bkt, nil
@@ -442,7 +486,7 @@ func (b *BoltBackend) ReleaseLock(token string) error {
 
     expires, ok := b.locks[token]
     if !ok || (!expires.IsZero() && expires.Before(b.clock.UtcNow())) {
-        return trace.NotFound("lock %v is deleted or expired", token)
+        return notFound("lock %v is deleted or expired", token)
     }
     delete(b.locks, token)
     return nil

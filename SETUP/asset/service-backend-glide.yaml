@@ -64,3 +64,5 @@ import:
   version: 5b67d428864e92711fcbd2f8629456121a56d91f
 - package: golang.org/x/sys/unix
   version: 07c182904dbd53199946ba614a412c61d3c548f5
+- package: gopkg.in/mgo.v2
+  version: 1e52f6152a9b262873f831bb5a94bcd29ef38c38

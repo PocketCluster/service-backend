@@ -74,6 +74,11 @@ github.com/julienschmidt/httprouter
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 	mkdir -p /opt/gopkg/src/github.com/julienschmidt && cd /opt/gopkg/src/github.com/julienschmidt && git clone https://github.com/julienschmidt/httprouter && cd /opt/gopkg/src/github.com/julienschmidt/httprouter && git checkout 975b5c4c7c21c0e3d2764200bf2aa8e34657ae6e
 
+gopkg.in/mgo.v2
+	1e52f6152a9b262873f831bb5a94bcd29ef38c38	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	(go get -d gopkg.in/mgo.v2 || true) && cd /opt/gopkg/src/gopkg.in/mgo.v2 && git checkout 1e52f6152a9b262873f831bb5a94bcd29ef38c38
+
 github.com/jinzhu/gorm
 	c3bb6aaa828867eec72dd8571d111e442688f85f	 -> 	service-backend
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -

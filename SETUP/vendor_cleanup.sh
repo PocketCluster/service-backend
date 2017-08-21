@@ -19,6 +19,7 @@ function clean_gopath() {
 	rm -rf github.com/dustin/go-humanize && (rmdir github.com/dustin > /dev/null 2>&1 || true)
 	rm -rf github.com/cloudflare/cfssl && (rmdir github.com/cloudflare > /dev/null 2>&1 || true)
 	rm -rf github.com/julienschmidt/httprouter && (rmdir github.com/julienschmidt > /dev/null 2>&1 || true)
+	rm -rf gopkg.in/mgo.v2 && (rmdir gopkg.in > /dev/null 2>&1 || true)
 	rm -rf github.com/jinzhu/gorm && (rmdir github.com/jinzhu > /dev/null 2>&1 || true)
 	rm -rf github.com/Redundancy/go-sync && (rmdir github.com/Redundancy > /dev/null 2>&1 || true)
 	rm -rf golang.org/x/oauth2 && (rmdir golang.org/x > /dev/null 2>&1 || true)
