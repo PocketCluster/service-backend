@@ -40,7 +40,7 @@ func UpdateRepoMeta(metaDB *gorm.DB, searchIndex bleve.Index, ctrl *control.Cont
     )
 
     // Do not update a repo within 24 hours from the last update
-    if !repoModel.UpdatedAt.IsZero() && time.Now().Sub(repoModel.UpdatedAt) < (time.Hour * time.Duration(cfg.Update.MetaUpdateCycle)) {
+    if !repoModel.UpdatedAt.IsZero() && time.Now().Sub(repoModel.UpdatedAt) < (time.Minute * time.Duration(cfg.Update.MetaUpdateCycle)) {
         log.Infof("%s :: Updated already", repoModel.RepoPage)
         return nil, nil
     }

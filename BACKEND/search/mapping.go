@@ -27,6 +27,7 @@ func BuildIndexMapping() (mapping.IndexMapping, error) {
     kword.Analyzer = keyword.Name
 
     repoMapping := bleve.NewDocumentMapping()
+    repoMapping.AddFieldMappingsAt("Slug", kword)
     repoMapping.AddFieldMappingsAt("Category", kword)
     repoMapping.AddFieldMappingsAt("Title", englishText)
     repoMapping.AddFieldMappingsAt("Readme", englishText)

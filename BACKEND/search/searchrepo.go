@@ -19,6 +19,7 @@ func NewSerachRepo(repo *model.Repository, readme *string) *SearchRepo {
 type SearchRepo struct {
     RepoID     string       `json:"RepoID"`
     Type       string       `json:"Type"`
+    // for 404 search & url generation
     Slug       string       `json:"Slug"`
     Category   string       `json:"Category"`
     Title      string       `json:"Title"`
