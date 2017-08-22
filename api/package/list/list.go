@@ -11,9 +11,9 @@ import (
     "github.com/stkim1/api/abnormal"
 )
 
-func PackageList(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func serveList(w http.ResponseWriter, r *http.Request, fsRoot, fileName string) {
 
-    f, err := http.Dir(api.FSPackageRoot).Open(api.FilePackageList)
+    f, err := http.Dir(fsRoot).Open(fileName)
     if err != nil {
         log.Error(errors.WithStack(err))
         msg, code := abnormal.ToJsonHTTPError(err)
@@ -40,4 +40,8 @@ func PackageList(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     // ServeContent will check modification time
     // we can pass empty string to name if we already set content-type
     http.ServeContent(w, r, d.Name(), d.ModTime(), f)
+}
+
+func PackageList(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+    serveList(w, r, api.FSPackageRoot, api.FilePackageList)
 }
