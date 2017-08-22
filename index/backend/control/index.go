@@ -52,7 +52,7 @@ func (ctrl *Controller) IndexPaged(c web.C, r *http.Request) (string, int) {
         return "", http.StatusNotFound
     }
     if page <= 0 {
-        log.Error(trace.Wrap(errors.New("Page number cannot be smaller than 0")))
+        log.Error(errors.Errorf("Page number cannot be smaller than 0"))
         return "", http.StatusNotFound
     }
 

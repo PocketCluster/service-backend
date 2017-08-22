@@ -66,3 +66,25 @@ import:
   version: 07c182904dbd53199946ba614a412c61d3c548f5
 - package: gopkg.in/mgo.v2
   version: 1e52f6152a9b262873f831bb5a94bcd29ef38c38
+- package: github.com/andybalholm/cascadia
+  version: 349dd0209470eabd9514242c688c403c0926d266
+- package: github.com/beevik/etree
+  version: 15a30b44cfd6c5a16a7ddfe271bf146aaf2d3195
+- package: github.com/blevesearch/go-porterstemmer
+  version: 23a2c8e5cf1f380f27722c6d2ae8896431dc7d0e
+- package: github.com/blevesearch/segment
+  version: 762005e7a34fd909a84586299f1dd457371d36ee
+- package: github.com/fatih/structs
+  version: 7e5a8eef611ee84dd359503f3969f80df4c50723
+- package: github.com/golang/protobuf
+  version: ab9f9a6dab164b7d1246e0e688b0ab7b94d8553e
+- package: github.com/google/go-querystring
+  version: 53e6ce116135b80d037921a7fdd5138cf32d7a8a
+- package: github.com/gorilla/securecookie
+  version: e59506cc896acb7f7bf732d4fdf5e25f7ccd8983
+- package: github.com/imdario/mergo
+  version: e3000cb3d28c72b837601cac94debd91032d19fe
+- package: github.com/jinzhu/inflection
+  version: 1c35d901db3da928c72a72d8458480cc9ade058f
+- package: github.com/steveyen/gtreap
+  version: 0abe01ef9be25c4aedc174758ec2d917314d6d70
