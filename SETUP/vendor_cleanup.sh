@@ -9,6 +9,7 @@ function clean_gopath() {
 	rm -rf github.com/andybalholm/cascadia && (rmdir github.com/andybalholm > /dev/null 2>&1 || true)
 	rm -rf github.com/gorilla/securecookie && (rmdir github.com/gorilla > /dev/null 2>&1 || true)
 	rm -rf golang.org/x/crypto && (rmdir golang.org/x > /dev/null 2>&1 || true)
+	rm -rf github.com/thoas/stats && (rmdir github.com/thoas > /dev/null 2>&1 || true)
 	rm -rf github.com/PuerkitoBio/goquery && (rmdir github.com/PuerkitoBio > /dev/null 2>&1 || true)
 	rm -rf github.com/codegangsta/cli && (rmdir github.com/codegangsta > /dev/null 2>&1 || true)
 	rm -rf github.com/gorilla/mux && (rmdir github.com/gorilla > /dev/null 2>&1 || true)

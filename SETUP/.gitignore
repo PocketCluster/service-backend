@@ -1,0 +1,10 @@
+bin/
+include/
+lib/
+local/
+share/
+.idea/
+
+*.iml
+pip-selfcheck.json
+.Python

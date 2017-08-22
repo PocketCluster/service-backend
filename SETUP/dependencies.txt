@@ -24,6 +24,11 @@ golang.org/x/crypto
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 	(go get -d golang.org/x/crypto || true) && cd /opt/gopkg/src/golang.org/x/crypto && git checkout 453249f01cfeb54c3d549ddb75ff152ca243f9d8
 
+github.com/thoas/stats
+	152b5d051953fdb6e45f14b6826962aadc032324	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/thoas && cd /opt/gopkg/src/github.com/thoas && git clone https://github.com/thoas/stats && cd /opt/gopkg/src/github.com/thoas/stats && git checkout 152b5d051953fdb6e45f14b6826962aadc032324
+
 github.com/PuerkitoBio/goquery
 	ce645ea5e67a713599b7415f21f0786451fa9554	 -> 	service-backend
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
