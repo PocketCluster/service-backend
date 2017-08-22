@@ -35,7 +35,7 @@ func serveList(w http.ResponseWriter, r *http.Request, fsRoot, fileName string) 
     w.Header().Set("Connection", "keep-alive")
     w.Header().Set("Etag", d.Name()) // file name
     w.Header().Set("Cache-Control", "max-age=3600") // 1 hr
-    w.Header().Set("Expires", time.Now().UTC().Add(time.Second * 3600).Format("Mon, 2 Jan 2006 15:04:05 MST"))
+    w.Header().Set("Expires", time.Now().UTC().Add(time.Hour).Format("Mon, 2 Jan 2006 15:04:05 MST"))
 
     // ServeContent will check modification time
     // we can pass empty string to name if we already set content-type
@@ -43,5 +43,5 @@ func serveList(w http.ResponseWriter, r *http.Request, fsRoot, fileName string) 
 }
 
 func PackageList(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-    serveList(w, r, api.FSPackageRoot, api.FilePackageList)
+    serveList(w, r, api.FSPackageListRoot, api.FilePackageList)
 }

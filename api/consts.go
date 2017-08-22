@@ -13,6 +13,8 @@ const (
 )
 
 const (
-    FSPackageRoot      string = "/api-service/v014/package"
+    FSPackageListRoot  string = "/api-service/v014/package"
     FilePackageList    string = "list.json"
+
+    FSPackageMetaRoot  string = "/api-service/v014/package/meta"
 )
