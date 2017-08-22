@@ -1,6 +1,7 @@
 package meta
 
 import (
+    "fmt"
     "net/http"
     "path"
     "strings"
@@ -16,7 +17,7 @@ import (
 func serveMeta(w http.ResponseWriter, r *http.Request, fsRoot, fileName string) {
     fs := http.Dir(fsRoot)
 
-    f, err := fs.Open(fileName)
+    f, err := fs.Open(fmt.Sprintf("%s.json",fileName))
     if err != nil {
         log.Error(errors.WithStack(err))
         msg, code := abnormal.ToJsonHTTPError(err)
@@ -35,7 +36,7 @@ func serveMeta(w http.ResponseWriter, r *http.Request, fsRoot, fileName string) 
 
     // redirect if the directory name doesn't end in a slash
     if d.IsDir() {
-        log.Error(errors.Errorf("Requested file is a directory. This should not happen!"))
+        log.Error(errors.Errorf("invalid meta request %s", r.URL.Path))
         abnormal.ResponseJsonError(w, "{\"error\":\"resource not found\"}", http.StatusNotFound)
         return
     }
