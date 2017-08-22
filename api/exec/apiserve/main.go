@@ -12,6 +12,8 @@ import (
 
     "github.com/stkim1/api"
     "github.com/stkim1/api/health"
+    "github.com/stkim1/api/package/list"
+    "github.com/stkim1/api/package/meta"
 )
 
 func main() {
@@ -27,6 +29,10 @@ func main() {
     runtime.GOMAXPROCS(runtime.NumCPU())
 
     // setup route path
+    router.GET(api.URLPackageList, list.PackageList)
+    router.GET(api.URLPackageMeta, meta.PackageMeta)
+
+    // misc
     router.GET(api.URLHealthCheck, health.HealthCheck)
     router.GET(api.URLAppStats, func(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
         w.Header().Set("Content-Type", "application/json; charset=utf-8")

@@ -1,9 +1,12 @@
 package api
 
 const (
-    APIPrefix          string = "/service/"
+    APIPrefix          string = "/service"
+    URLPackageList     string = APIPrefix + "/v014/package/list"
+    URLPackageMeta     string = APIPrefix + "/v014/package/meta/:name"
+)
 
-    URLContainerFilter string = APIPrefix + "v014/:filename"
+const (
     URLHealthCheck     string = "/healthcheck"
     URLAppStats        string = "/stats"
 )
