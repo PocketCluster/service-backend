@@ -4,6 +4,7 @@ const (
     APIPrefix          string = "/service"
     URLPackageList     string = APIPrefix + "/v014/package/list"
     URLPackageMeta     string = APIPrefix + "/v014/package/meta/:name"
+    URLUserAuth        string = APIPrefix + "/v014/user/auth"
 )
 
 const (
