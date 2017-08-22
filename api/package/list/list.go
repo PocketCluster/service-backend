@@ -31,6 +31,7 @@ func PackageList(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     }
 
     w.Header().Set("Server", "PocketCluster API Service")
+    w.Header().Set("Content-Type", "application/json; charset=utf-8")
     w.Header().Set("Connection", "keep-alive")
     w.Header().Set("Etag", d.Name()) // file name
     w.Header().Set("Cache-Control", "max-age=3600") // 1 hr

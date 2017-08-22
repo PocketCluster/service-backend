@@ -12,6 +12,6 @@ const (
 )
 
 const (
-    FSPackageRoot      string = "/api-serve/v014/package"
+    FSPackageRoot      string = "/api-service/v014/package"
     FilePackageList    string = "list.json"
 )
