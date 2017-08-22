@@ -10,3 +10,8 @@ const (
     URLHealthCheck     string = "/healthcheck"
     URLAppStats        string = "/stats"
 )
+
+const (
+    FSPackageRoot      string = "/api-serve/v014/package"
+    FilePackageList    string = "list.json"
+)
