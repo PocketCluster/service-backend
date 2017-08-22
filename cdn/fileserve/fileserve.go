@@ -7,7 +7,7 @@ import (
     "time"
 
     log "github.com/Sirupsen/logrus"
-    "github.com/gravitational/trace"
+    "github.com/pkg/errors"
 )
 
 // toHTTPError returns a non-specific HTTP error message and status code
@@ -40,7 +40,7 @@ func Error(w http.ResponseWriter, error string, code int) {
 func ServeImageFile(w http.ResponseWriter, r *http.Request, fs http.FileSystem, name string) {
     f, err := fs.Open(name)
     if err != nil {
-        log.Error(trace.Wrap(err))
+        log.Error(errors.WithStack(err))
         msg, code := toHTTPError(err)
         Error(w, msg, code)
         return
@@ -49,7 +49,7 @@ func ServeImageFile(w http.ResponseWriter, r *http.Request, fs http.FileSystem, 
 
     d, err := f.Stat()
     if err != nil {
-        log.Error(trace.Wrap(err))
+        log.Error(errors.WithStack(err))
         msg, code := toHTTPError(err)
         Error(w, msg, code)
         return
@@ -57,7 +57,7 @@ func ServeImageFile(w http.ResponseWriter, r *http.Request, fs http.FileSystem, 
 
     // redirect if the directory name doesn't end in a slash
     if d.IsDir() {
-        log.Error(trace.Wrap(fmt.Errorf("Requested file is a directory. This should not happen.")))
+        log.Error(errors.Errorf("Requested file is a directory. This should not happen."))
         Error(w, "404 page not found. Your ip address is also recorded.", http.StatusNotFound)
         return
     }

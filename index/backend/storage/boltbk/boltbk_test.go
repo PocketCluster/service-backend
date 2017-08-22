@@ -19,9 +19,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/gravitational/teleport/lib/backend/test"
-	"github.com/gravitational/teleport/lib/utils"
-
 	. "gopkg.in/check.v1"
 )
 
@@ -29,14 +26,14 @@ func TestBolt(t *testing.T) { TestingT(t) }
 
 type BoltSuite struct {
 	bk    *BoltBackend
-	suite test.BackendSuite
+	suite BackendSuite
 	dir   string
 }
 
 var _ = Suite(&BoltSuite{})
 
 func (s *BoltSuite) SetUpSuite(c *C) {
-	utils.InitLoggerForTests()
+
 }
 
 func (s *BoltSuite) SetUpTest(c *C) {

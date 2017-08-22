@@ -1,26 +1,23 @@
 package main
 
 import (
-    "errors"
     "os"
     "time"
 
     log "github.com/Sirupsen/logrus"
-    "github.com/gravitational/trace"
+    "github.com/pkg/errors"
     "github.com/jinzhu/gorm"
     _ "github.com/jinzhu/gorm/dialects/sqlite"
     "github.com/davecgh/go-spew/spew"
     "github.com/blevesearch/bleve"
-)
 
-import (
-    "github.com/stkim1/BACKEND/model"
-    "github.com/stkim1/BACKEND/control"
-    "github.com/stkim1/BACKEND/config"
-    "github.com/stkim1/BACKEND/storage/boltbk"
-    "github.com/stkim1/BACKEND/storage"
-    "github.com/stkim1/BACKEND/update"
-    pocketsearch "github.com/stkim1/BACKEND/search"
+    "github.com/stkim1/backend/model"
+    "github.com/stkim1/backend/control"
+    "github.com/stkim1/backend/config"
+    "github.com/stkim1/backend/storage/boltbk"
+    "github.com/stkim1/backend/storage"
+    "github.com/stkim1/backend/update"
+    pocketsearch "github.com/stkim1/backend/search"
 )
 
 func githubSortSupplementInfo(suppDB storage.Nosql, repoModel *model.Repository) error {
@@ -37,7 +34,7 @@ func githubSortSupplementInfo(suppDB storage.Nosql, repoModel *model.Repository)
 
     // URL CHECK
     if len(repoURL) == 0 {
-        return trace.Wrap(errors.New("Cannot begin update a repo with empty URL"))
+        return errors.Errorf("Cannot begin update a repo with empty URL")
     }
 
     suppDB.AcquireLock(repoID, time.Second)
@@ -75,7 +72,7 @@ func main() {
     // (META DB) database
     metaDB, err := gorm.Open(cfg.Database.DatabaseType, cfg.Database.DatabasePath)
     if err != nil {
-        log.Fatal(trace.Wrap(err))
+        log.Fatal(errors.WithStack(err))
         return
     }
     defer metaDB.Close()
@@ -83,7 +80,7 @@ func main() {
     // (BOLTDB) supplementary
     suppDB, err := boltbk.New(cfg.Supplement.DatabasePath)
     if err != nil {
-        log.Fatal(trace.Wrap(err))
+        log.Fatal(errors.WithStack(err))
         return
     }
     defer suppDB.Close()
@@ -152,7 +149,7 @@ func main() {
         }
     } else {
         for _, repo := range repos {
-            githubSortSupplementInfo(suppDB, &repo);
+            githubSortSupplementInfo(suppDB, &repo)
         }
     }
     log.Info("Update process ended at " + time.Now().Format("Jan. 2 2006 3:04 PM"))

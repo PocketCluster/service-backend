@@ -7,17 +7,16 @@ import (
     "strings"
 
     log "github.com/Sirupsen/logrus"
-    "github.com/gravitational/trace"
+    "github.com/pkg/errors"
     "github.com/jinzhu/gorm"
     _ "github.com/jinzhu/gorm/dialects/sqlite"
     "github.com/PuerkitoBio/goquery"
     "github.com/blevesearch/bleve"
-)
 
-import (
-    "github.com/stkim1/BACKEND/config"
-    "github.com/stkim1/BACKEND/model"
-    pocketsearch "github.com/stkim1/BACKEND/search"
+    "github.com/stkim1/backend/config"
+    "github.com/stkim1/backend/model"
+    pocketsearch "github.com/stkim1/backend/search"
+
 )
 
 func readmeTokenizing(filename string) (string, error) {
@@ -77,7 +76,7 @@ func main() {
     // database
     metaDB, err := gorm.Open(cfg.Database.DatabaseType, cfg.Database.DatabasePath)
     if err != nil {
-        log.Fatal(trace.Wrap(err))
+        log.Fatal(errors.WithStack(err))
     }
     defer metaDB.Close()
 

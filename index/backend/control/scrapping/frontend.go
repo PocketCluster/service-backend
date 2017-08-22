@@ -3,8 +3,8 @@ package scrapping
 import (
     "net/http"
     "github.com/zenazn/goji/web"
-    "github.com/stkim1/BACKEND/util"
-    "github.com/stkim1/BACKEND/config"
+    "github.com/stkim1/backend/util"
+    "github.com/stkim1/backend/config"
 )
 
 func FrontEnd(cfg *config.Config, c web.C, r *http.Request) (string, int) {

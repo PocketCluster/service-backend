@@ -1,7 +1,6 @@
 package update
 
 import (
-    "errors"
     "path"
     "strconv"
     "strings"
@@ -10,19 +9,17 @@ import (
     "time"
 
     log "github.com/Sirupsen/logrus"
-    "github.com/gravitational/trace"
+    "github.com/pkg/errors"
     "github.com/jinzhu/gorm"
     _ "github.com/jinzhu/gorm/dialects/sqlite"
     "github.com/google/go-github/github"
     "github.com/blevesearch/bleve"
-)
 
-import (
-    "github.com/stkim1/BACKEND/model"
-    "github.com/stkim1/BACKEND/util"
-    "github.com/stkim1/BACKEND/control"
-    "github.com/stkim1/BACKEND/config"
-    pocketsearch "github.com/stkim1/BACKEND/search"
+    "github.com/stkim1/backend/model"
+    "github.com/stkim1/backend/util"
+    "github.com/stkim1/backend/control"
+    "github.com/stkim1/backend/config"
+    pocketsearch "github.com/stkim1/backend/search"
 )
 
 func UpdateRepoMeta(metaDB *gorm.DB, searchIndex bleve.Index, ctrl *control.Controller, repoModel *model.Repository) (*github.Response, error) {
@@ -91,13 +88,13 @@ func UpdateRepoMeta(metaDB *gorm.DB, searchIndex bleve.Index, ctrl *control.Cont
     for _, cauthor := range ctribs {
         // contribution
         if cauthor == nil {
-            trace.Wrap(errors.New(repoModel.RepoPage + " : Null contribution data. WTF?"))
+            errors.Errorf(repoModel.RepoPage + " : Null contribution data. WTF?")
             continue
         }
         // user id
         cid, err := util.SafeGetInt(cauthor.ID)
         if err != nil {
-            trace.Wrap(errors.New(repoModel.RepoPage + err.Error()))
+            errors.Errorf(repoModel.RepoPage + err.Error())
             continue
         }
         contribID := "gh" + strconv.Itoa(cid)
@@ -105,7 +102,7 @@ func UpdateRepoMeta(metaDB *gorm.DB, searchIndex bleve.Index, ctrl *control.Cont
         // how many times this contributor has worked
         cfactor, err := util.SafeGetInt(cauthor.Contributions)
         if err != nil {
-            trace.Wrap(errors.New(repoModel.RepoPage + err.Error()))
+            errors.Errorf(repoModel.RepoPage + err.Error())
             continue
         }
 
@@ -172,7 +169,7 @@ func UpdateAllRepoMeta(metaDB *gorm.DB, searchIndex bleve.Index, cfg *config.Con
     for i, _ := range repos {
         resp, err := UpdateRepoMeta(metaDB, searchIndex, ctrl, &(repos[i]))
         if err != nil {
-            log.Error(trace.Wrap(err))
+            log.Error(errors.WithStack(err))
         }
         if resp != nil && resp.Rate.Remaining < 100 {
             log.Info("HIT API LIMIT!!!")

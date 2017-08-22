@@ -14,7 +14,7 @@ import (
     "sync"
 
     log "github.com/Sirupsen/logrus"
-    "github.com/gravitational/trace"
+    "github.com/pkg/errors"
     "github.com/pkg/profile"
     "xi2.org/x/xz"
     "path/filepath"
@@ -31,20 +31,20 @@ func localGzipUncompress() {
     // write files to directory
     out, err := os.Create("protobuf-src-2.5.0.tar")
     if err != nil {
-        log.Fatal(trace.Wrap(err))
+        log.Fatal(errors.WithStack(err))
     }
     defer out.Close()
 
     // write files to directory
     in, err := os.Open("protobuf-src-2.5.0.tar.gz")
     if err != nil {
-        log.Fatal(trace.Wrap(err))
+        log.Fatal(errors.WithStack(err))
     }
     defer in.Close()
 
     gr, err := gzip.NewReader(in)
     if err != nil {
-        log.Fatal(trace.Wrap(err))
+        log.Fatal(errors.WithStack(err))
     }
     defer gr.Close()
 
@@ -58,7 +58,7 @@ func ioPipedDownload() {
     // write files to directory
     out, err := os.Create("protobuf-src-2.5.0.tar.gz")
     if err != nil {
-        log.Fatal(trace.Wrap(err))
+        log.Fatal(errors.WithStack(err))
     }
     defer out.Close()
 
@@ -77,7 +77,7 @@ func ioPipedDownload() {
 
     resp, err := http.Get("http://localhost:8080/protobuf-src-2.5.0.tar.gz")
     if err != nil {
-        log.Error(trace.Wrap(err))
+        log.Error(errors.WithStack(err))
     }
 
     log.Print("Write request to pipe")
@@ -96,7 +96,7 @@ func ioPipedClientDownload() {
     // write files to directory
     out, err := os.Create("protobuf-src-2.5.0.tar.gz")
     if err != nil {
-        log.Fatal(trace.Wrap(err))
+        log.Fatal(errors.WithStack(err))
     }
     defer out.Close()
 
@@ -117,11 +117,11 @@ func ioPipedClientDownload() {
     client := new(http.Client)
     request, err := http.NewRequest("GET", "http://localhost:8080/protobuf-src-2.5.0.tar.gz", nil)
     if err != nil {
-        log.Error(trace.Wrap(err))
+        log.Error(errors.WithStack(err))
     }
     response, err := client.Do(request)
     if err != nil {
-        log.Error(trace.Wrap(err))
+        log.Error(errors.WithStack(err))
     }
 
     io.Copy(pw, response.Body)
@@ -163,7 +163,7 @@ func pipedHttpGzipUncompress(client *http.Client, url string) error {
 
         gr, err := gzip.NewReader(pr)
         if err != nil {
-            log.Fatal(trace.Wrap(err))
+            log.Fatal(errors.WithStack(err))
         }
         defer gr.Close()
 
@@ -313,7 +313,7 @@ func main() {
         log.Info(*caFile)
         caCert, err := ioutil.ReadFile(*caFile)
         if err != nil {
-            log.Info(trace.Wrap(err))
+            log.Info(errors.WithStack(err))
         } else {
             caCertPool.AppendCertsFromPEM(caCert)
         }
@@ -350,6 +350,6 @@ func main() {
 
     err := streamHttpXzUncompress(client, *targetURL, uncompPath)
     if err != nil {
-        log.Fatal(trace.Wrap(err))
+        log.Fatal(errors.WithStack(err))
     }
 }

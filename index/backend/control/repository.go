@@ -6,17 +6,16 @@ import (
     "io/ioutil"
     "time"
     "path"
-    "fmt"
 
     log "github.com/Sirupsen/logrus"
-    "github.com/gravitational/trace"
+    "github.com/pkg/errors"
     "github.com/zenazn/goji/web"
     "github.com/jinzhu/gorm"
     humanize "github.com/dustin/go-humanize"
 
-    "github.com/stkim1/BACKEND/util"
-    "github.com/stkim1/BACKEND/model"
-    "github.com/stkim1/BACKEND/storage"
+    "github.com/stkim1/backend/util"
+    "github.com/stkim1/backend/model"
+    "github.com/stkim1/backend/storage"
 )
 
 func (ctrl *Controller) Repository(c web.C, r *http.Request) (string, int) {
@@ -40,7 +39,7 @@ func (ctrl *Controller) Repository(c web.C, r *http.Request) (string, int) {
     // Find the repo by slug
     metaDB.Where("slug = ?", slug).First(&repositories)
     if len(repositories) == 0 {
-        log.Error(trace.Wrap(fmt.Errorf("Cannot find the target repository : %s",slug)))
+        log.Error(errors.Errorf("Cannot find the target repository : %s",slug))
         return "", http.StatusNotFound
     }
     repo = repositories[0]
@@ -79,7 +78,7 @@ func (ctrl *Controller) Repository(c web.C, r *http.Request) (string, int) {
     err := suppDB.GetObj([]string{model.RepoSuppBucket}, repo.RepoId, &repoSupp)
     suppDB.ReleaseLock(repo.RepoId)
     if err != nil {
-        trace.Wrap(err)
+        log.Error(errors.WithStack(err))
     } else {
         list := repoSupp.RecentPublication(5)
         if len(list) != 0 {
@@ -91,7 +90,7 @@ func (ctrl *Controller) Repository(c web.C, r *http.Request) (string, int) {
     // Patch readme
     readme, err := ioutil.ReadFile(path.Join(ctrl.Config.General.ReadmePath, slug + ".html"))
     if err != nil {
-        log.Error(trace.Wrap(err))
+        log.Error(errors.WithStack(err))
     }
     content["readme"] = string(readme)
 

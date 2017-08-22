@@ -1,21 +1,20 @@
 package update
 
 import (
-    "errors"
     "time"
     "sync/atomic"
     "sync"
 
     log "github.com/Sirupsen/logrus"
-    "github.com/gravitational/trace"
+    "github.com/pkg/errors"
     "github.com/jinzhu/gorm"
     _ "github.com/jinzhu/gorm/dialects/sqlite"
     "github.com/google/go-github/github"
 
-    "github.com/stkim1/BACKEND/model"
-    "github.com/stkim1/BACKEND/control"
-    "github.com/stkim1/BACKEND/storage"
-    "github.com/stkim1/BACKEND/config"
+    "github.com/stkim1/backend/model"
+    "github.com/stkim1/backend/control"
+    "github.com/stkim1/backend/storage"
+    "github.com/stkim1/backend/config"
 )
 
 func GithubSupplementInfo(suppDB storage.Nosql, ctrl *control.Controller, repoModel *model.Repository, cfg *config.Config) (*github.Response, error) {
@@ -103,7 +102,7 @@ func UpdateAllRepoSupplement(metaDB *gorm.DB, suppDB storage.Nosql, cfg *config.
     for i, _ := range repos {
         resp, err := GithubSupplementInfo(suppDB, ctrl, &(repos[i]), cfg);
         if err != nil {
-            trace.Wrap(err)
+            log.Error(errors.WithStack(err))
         }
         if resp != nil && resp.Rate.Remaining < 100 {
             log.Info("HIT API LIMIT!!!")

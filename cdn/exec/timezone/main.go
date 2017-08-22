@@ -3,10 +3,9 @@ package main
 import (
     "time"
     "io/ioutil"
-    "errors"
 
     log "github.com/Sirupsen/logrus"
-    "github.com/gravitational/trace"
+    "github.com/pkg/errors"
 )
 
 func localTimezone() (*time.Location, error) {
@@ -27,7 +26,7 @@ func localTimezone() (*time.Location, error) {
 func main() {
     tz, err := localTimezone()
     if err != nil {
-        log.Fatal(trace.Wrap(err))
+        log.Fatal(errors.WithStack(err))
     }
     log.Info(tz.String())
 }

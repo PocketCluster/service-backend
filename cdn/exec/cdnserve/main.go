@@ -2,13 +2,13 @@ package main
 
 import (
     "net/http"
+    "runtime"
 
     log "github.com/Sirupsen/logrus"
-    "github.com/gravitational/trace"
+    "github.com/pkg/errors"
     "github.com/julienschmidt/httprouter"
 
-    "github.com/stkim1/cntrcdn/handle"
-    "runtime"
+    "github.com/stkim1/cdn/handle"
 )
 
 /*
@@ -61,6 +61,6 @@ func main() {
 
     err := http.ListenAndServe(":8080", router);
     if err != nil {
-        log.Fatal(trace.Wrap(err))
+        log.Fatal(errors.WithStack(err))
     }
 }

@@ -2,7 +2,7 @@ package search
 
 import (
     "github.com/blevesearch/bleve"
-    "github.com/stkim1/BACKEND/model"
+    "github.com/stkim1/backend/model"
 )
 
 func NewSerachRepo(repo *model.Repository, readme *string) *SearchRepo {

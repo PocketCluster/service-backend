@@ -3,16 +3,15 @@ package control
 import (
     "net/http"
     "strconv"
-    "errors"
 
     log "github.com/Sirupsen/logrus"
-    "github.com/gravitational/trace"
+    "github.com/pkg/errors"
     "github.com/zenazn/goji/web"
     "github.com/jinzhu/gorm"
     humanize "github.com/dustin/go-humanize"
 
-    "github.com/stkim1/BACKEND/util"
-    "github.com/stkim1/BACKEND/model"
+    "github.com/stkim1/backend/util"
+    "github.com/stkim1/backend/model"
 )
 
 // Home page route
@@ -49,11 +48,11 @@ func (ctrl *Controller) IndexPaged(c web.C, r *http.Request) (string, int) {
     )
     page, err = strconv.Atoi(c.URLParams["page"])
     if err != nil {
-        log.Error(trace.Wrap(err, "Cannot convert index page query-string to proper database index"))
+        log.Error(errors.WithMessage(err,"Cannot convert index page query-string to proper database index"))
         return "", http.StatusNotFound
     }
     if page <= 0 {
-        log.Error(trace.Wrap(errors.New("Page number cannot be smaller than 0")))
+        log.Error(errors.Errorf("Page number cannot be smaller than 0"))
         return "", http.StatusNotFound
     }
 

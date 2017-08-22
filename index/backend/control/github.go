@@ -1,17 +1,15 @@
 package control
 
 import (
+    "context"
     "fmt"
     "strings"
     "sort"
     "time"
 
-    //log "github.com/Sirupsen/logrus"
-    //"github.com/davecgh/go-spew/spew"
     "github.com/google/go-github/github"
-
-    "github.com/stkim1/BACKEND/model"
-    "github.com/stkim1/BACKEND/util"
+    "github.com/stkim1/backend/model"
+    "github.com/stkim1/backend/util"
 )
 
 func (ctrl *Controller) GetGithubRepoMeta(repoURL string) (*github.Repository, *github.Response, error) {
@@ -24,7 +22,7 @@ func (ctrl *Controller) GetGithubRepoMeta(repoURL string) (*github.Repository, *
     if len(owner) == 0 || len(repo) == 0{
         return nil, nil, fmt.Errorf("[ERR] Invalid repository URL format")
     }
-    return ctrl.githubClient.Repositories.Get(owner, repo)
+    return ctrl.githubClient.Repositories.Get(context.TODO(), owner, repo)
 }
 
 func (ctrl *Controller) GetGithubContributors(repoURL string) ([]*github.Contributor, *github.Response, error) {
@@ -41,7 +39,7 @@ func (ctrl *Controller) GetGithubContributors(repoURL string) ([]*github.Contrib
     // https://developer.github.com/v3/repos/#list-contributors
     //opts := &github.ListContributorsOptions{Anon: "true"}
     opts := &github.ListContributorsOptions{}
-    return ctrl.githubClient.Repositories.ListContributors(owner, repo, opts)
+    return ctrl.githubClient.Repositories.ListContributors(context.TODO(), owner, repo, opts)
 }
 
 func (ctrl *Controller) GetGithubContributorsStat(repoURL string) ([]*github.ContributorStats, *github.Response, error) {
@@ -54,7 +52,7 @@ func (ctrl *Controller) GetGithubContributorsStat(repoURL string) ([]*github.Con
     if len(owner) == 0 || len(repo) == 0{
         return nil, nil, fmt.Errorf("[ERR] Invalid repository URL format")
     }
-    return ctrl.githubClient.Repositories.ListContributorsStats(owner, repo)
+    return ctrl.githubClient.Repositories.ListContributorsStats(context.TODO(), owner, repo)
 }
 
 func (ctrl *Controller) GetGithubRepoLanguages(repoURL string) (model.ListLanguage, *github.Response, error) {
@@ -68,7 +66,7 @@ func (ctrl *Controller) GetGithubRepoLanguages(repoURL string) (model.ListLangua
         return nil, nil, fmt.Errorf("[ERR] Invalid repository URL format")
     }
     // (map[string]int, *Response, error)
-    languages, resp, err := ctrl.githubClient.Repositories.ListLanguages(owner, repo)
+    languages, resp, err := ctrl.githubClient.Repositories.ListLanguages(context.TODO(), owner, repo)
     if err != nil {
         return nil, nil, err
     }
@@ -124,7 +122,7 @@ func (ctrl *Controller) GetGithubAllReleases(repoURL string, oldReleases *model.
     }
 
     // ([]*RepositoryRelease, *Response, error)
-    releases, resp, err = ctrl.githubClient.Repositories.ListReleases(owner, repo, &github.ListOptions{Page:1, PerPage:size})
+    releases, resp, err = ctrl.githubClient.Repositories.ListReleases(context.TODO(), owner, repo, &github.ListOptions{Page:1, PerPage:size})
     if err != nil {
         return nil, "", resp, err
     }
@@ -194,7 +192,7 @@ func (ctrl *Controller) GetGithubAllTags(repoURL string, oldTagList *model.ListT
     }
 
     // ([]*RepositoryRelease, *Response, error) : read 26 tags due to backport of apache repositories
-    ghTags, resp, err = ctrl.githubClient.Repositories.ListTags(owner, repo, &github.ListOptions{Page:0, PerPage:size})
+    ghTags, resp, err = ctrl.githubClient.Repositories.ListTags(context.TODO(), owner, repo, &github.ListOptions{Page:0, PerPage:size})
     if err != nil {
         return nil, "", resp, err
     }
@@ -206,7 +204,7 @@ func (ctrl *Controller) GetGithubAllTags(repoURL string, oldTagList *model.ListT
             if len(updated) == 0 {
                 updated = util.SafeGetString(tag.Name)
             }
-            commit, resp, err = ctrl.githubClient.Git.GetCommit(owner, repo, SHA)
+            commit, resp, err = ctrl.githubClient.Git.GetCommit(context.TODO(), owner, repo, SHA)
             if err != nil {
                 return nil, "", resp, err
             }
