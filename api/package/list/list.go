@@ -7,6 +7,8 @@ import (
     log "github.com/Sirupsen/logrus"
     "github.com/pkg/errors"
     "github.com/julienschmidt/httprouter"
+    "github.com/stkim1/sharedpkg/errmsg"
+    "github.com/stkim1/sharedpkg/cforigin"
     "github.com/stkim1/api"
     "github.com/stkim1/api/abnormal"
 )
@@ -43,5 +45,13 @@ func serveList(w http.ResponseWriter, r *http.Request, fsRoot, fileName string) 
 }
 
 func PackageList(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+
+    err := cforigin.IsOriginAllowedCountry(r)
+    if err != nil {
+        log.Debugf(err.Error())
+        abnormal.ResponseJsonError(w, errmsg.ErrMsgJsonUnallowedCountry, http.StatusForbidden)
+        return
+    }
+
     serveList(w, r, api.FSPackageListRoot, api.FilePackageList)
 }

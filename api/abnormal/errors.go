@@ -4,6 +4,8 @@ import (
     "fmt"
     "net/http"
     "os"
+
+    "github.com/stkim1/sharedpkg/errmsg"
 )
 
 // ToJsonError returns a non-specific HTTP error message and status code
@@ -13,13 +15,12 @@ import (
 // all errors. We don't want to start leaking information in error messages.
 func ToJsonHTTPError(err error) (msg string, httpStatus int) {
     if os.IsNotExist(err) {
-        return "{\"error\":\"resource not found\"}", http.StatusNotFound
+        return errmsg.ErrMsgJsonResourceNotFound, http.StatusNotFound
     }
     if os.IsPermission(err) {
-        return "{\"error\":\"forbidden resource\"}",http.StatusForbidden
+        return errmsg.ErrMsgJsonResourceForbidden,http.StatusForbidden
     }
-    // Default:
-    return "{\"error\":\"service error\"}", http.StatusInternalServerError
+    return errmsg.ErrMsgJsonInternalServiceIssue, http.StatusInternalServerError
 }
 
 // Error replies to the request with the specified error message and HTTP code.

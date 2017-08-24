@@ -10,6 +10,8 @@ import (
     log "github.com/Sirupsen/logrus"
     "github.com/pkg/errors"
     "github.com/julienschmidt/httprouter"
+    "github.com/stkim1/sharedpkg/cforigin"
+    "github.com/stkim1/sharedpkg/errmsg"
     "github.com/stkim1/api"
     "github.com/stkim1/api/abnormal"
 )
@@ -37,7 +39,7 @@ func serveMeta(w http.ResponseWriter, r *http.Request, fsRoot, fileName string) 
     // redirect if the directory name doesn't end in a slash
     if d.IsDir() {
         log.Error(errors.Errorf("invalid meta request %s", r.URL.Path))
-        abnormal.ResponseJsonError(w, "{\"error\":\"resource not found\"}", http.StatusNotFound)
+        abnormal.ResponseJsonError(w, errmsg.ErrMsgJsonResourceNotFound, http.StatusNotFound)
         return
     }
 
@@ -54,6 +56,14 @@ func serveMeta(w http.ResponseWriter, r *http.Request, fsRoot, fileName string) 
 }
 
 func PackageMeta(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+
+    err := cforigin.IsOriginAllowedCountry(r)
+    if err != nil {
+        log.Debugf(err.Error())
+        abnormal.ResponseJsonError(w, errmsg.ErrMsgJsonUnallowedCountry, http.StatusForbidden)
+        return
+    }
+
     urlComp := strings.Split(path.Clean(r.URL.Path), "/")
     mName := urlComp[len(urlComp) - 1]
     serveMeta(w, r, api.FSPackageMetaRoot, mName)
