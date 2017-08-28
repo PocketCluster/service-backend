@@ -44,6 +44,11 @@ github.com/gorilla/mux
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 	mkdir -p /opt/gopkg/src/github.com/gorilla && cd /opt/gopkg/src/github.com/gorilla && git clone https://github.com/gorilla/mux && cd /opt/gopkg/src/github.com/gorilla/mux && git checkout ac112f7d75a0714af1bd86ab17749b31f7809640
 
+github.com/cloudflare/cloudflare-go
+	73188131583704facec77adbb1e666a7917f973c	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/cloudflare && cd /opt/gopkg/src/github.com/cloudflare && git clone https://github.com/cloudflare/cloudflare-go && cd /opt/gopkg/src/github.com/cloudflare/cloudflare-go && git checkout 73188131583704facec77adbb1e666a7917f973c
+
 github.com/Sirupsen/logrus
 	84573d5f03ab3740f524c7842c3a9bf617961d32	 -> 	service-backend
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -

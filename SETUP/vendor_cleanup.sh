@@ -13,6 +13,7 @@ function clean_gopath() {
 	rm -rf github.com/PuerkitoBio/goquery && (rmdir github.com/PuerkitoBio > /dev/null 2>&1 || true)
 	rm -rf github.com/codegangsta/cli && (rmdir github.com/codegangsta > /dev/null 2>&1 || true)
 	rm -rf github.com/gorilla/mux && (rmdir github.com/gorilla > /dev/null 2>&1 || true)
+	rm -rf github.com/cloudflare/cloudflare-go && (rmdir github.com/cloudflare > /dev/null 2>&1 || true)
 	rm -rf github.com/Sirupsen/logrus && (rmdir github.com/Sirupsen > /dev/null 2>&1 || true)
 	rm -rf github.com/gorilla/context && (rmdir github.com/gorilla > /dev/null 2>&1 || true)
 	rm -rf xi2.org/x/xz && (rmdir xi2.org/x > /dev/null 2>&1 || true)

@@ -90,3 +90,5 @@ import:
   version: 0abe01ef9be25c4aedc174758ec2d917314d6d70
 - package: github.com/thoas/stats
   version: 152b5d051953fdb6e45f14b6826962aadc032324
+- package: github.com/cloudflare/cloudflare-go
+  version: 73188131583704facec77adbb1e666a7917f973c
