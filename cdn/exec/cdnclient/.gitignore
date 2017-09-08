@@ -1,4 +1,4 @@
-cdncheck
+cdnclient
 *.pprof
 *.gz
 *.tar
