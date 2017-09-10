@@ -53,5 +53,5 @@ func PackageList(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
         return
     }
 
-    serveList(w, r, api.FSPackageListRoot, api.FilePackageList)
+    serveList(w, r, api.FSPackageRootList, api.FilePackageList)
 }

@@ -66,5 +66,5 @@ func PackageMeta(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
     urlComp := strings.Split(path.Clean(r.URL.Path), "/")
     mName := urlComp[len(urlComp) - 1]
-    serveMeta(w, r, api.FSPackageMetaRoot, mName)
+    serveMeta(w, r, api.FSPackageRootMeta, mName)
 }
