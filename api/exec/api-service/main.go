@@ -15,6 +15,7 @@ import (
     "github.com/stkim1/api"
     "github.com/stkim1/api/health"
     "github.com/stkim1/api/package/list"
+    "github.com/stkim1/api/package/repo"
     "github.com/stkim1/api/package/meta"
     "github.com/stkim1/api/package/sync"
 )
@@ -45,6 +46,7 @@ func main() {
 
     // setup route path
     router.GET(api.URLPackageList, list.PackageList)
+    router.GET(api.URLPackageRepo, repo.RepoList)
     router.GET(api.URLPackageSync, sync.PackageSync)
     router.GET(api.URLPackageMeta, meta.PackageMeta)
 
