@@ -27,6 +27,7 @@ function clean_gopath() {
 	rm -rf gopkg.in/mgo.v2 && (rmdir gopkg.in > /dev/null 2>&1 || true)
 	rm -rf github.com/blevesearch/segment && (rmdir github.com/blevesearch > /dev/null 2>&1 || true)
 	rm -rf github.com/jinzhu/gorm && (rmdir github.com/jinzhu > /dev/null 2>&1 || true)
+	rm -rf github.com/coreos/bbolt && (rmdir github.com/coreos > /dev/null 2>&1 || true)
 	rm -rf github.com/beevik/etree && (rmdir github.com/beevik > /dev/null 2>&1 || true)
 	rm -rf github.com/Redundancy/go-sync && (rmdir github.com/Redundancy > /dev/null 2>&1 || true)
 	rm -rf golang.org/x/oauth2 && (rmdir golang.org/x > /dev/null 2>&1 || true)

@@ -114,6 +114,11 @@ github.com/jinzhu/gorm
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 	mkdir -p /opt/gopkg/src/github.com/jinzhu && cd /opt/gopkg/src/github.com/jinzhu && git clone https://github.com/jinzhu/gorm && cd /opt/gopkg/src/github.com/jinzhu/gorm && git checkout c3bb6aaa828867eec72dd8571d111e442688f85f
 
+github.com/coreos/bbolt
+	e1c92081e510bb6b2bbfc93e7e6bd0b6dabd3e12	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/coreos && cd /opt/gopkg/src/github.com/coreos && git clone https://github.com/coreos/bbolt && cd /opt/gopkg/src/github.com/coreos/bbolt && git checkout e1c92081e510bb6b2bbfc93e7e6bd0b6dabd3e12
+
 github.com/beevik/etree
 	15a30b44cfd6c5a16a7ddfe271bf146aaf2d3195	 -> 	service-backend
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
