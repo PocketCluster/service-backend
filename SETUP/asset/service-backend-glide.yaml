@@ -95,3 +95,5 @@ import:
   version: 152b5d051953fdb6e45f14b6826962aadc032324
 - package: github.com/cloudflare/cloudflare-go
   version: 73188131583704facec77adbb1e666a7917f973c
+- package: github.com/dc0d/cache-control
+  version: 8eb23b9456881fd5a3095ff8d5096235771eb8f1

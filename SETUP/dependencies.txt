@@ -134,6 +134,11 @@ golang.org/x/oauth2
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 	(go get -d golang.org/x/oauth2 || true) && cd /opt/gopkg/src/golang.org/x/oauth2 && git checkout 045497edb6234273d67dbc25da3f2ddbc4c4cacf
 
+github.com/dc0d/cache-control
+	8eb23b9456881fd5a3095ff8d5096235771eb8f1	 -> 	service-backend
+	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
+	mkdir -p /opt/gopkg/src/github.com/dc0d && cd /opt/gopkg/src/github.com/dc0d && git clone https://github.com/dc0d/cache-control && cd /opt/gopkg/src/github.com/dc0d/cache-control && git checkout 8eb23b9456881fd5a3095ff8d5096235771eb8f1
+
 github.com/cbroglie/mustache
 	6857e4b493bdb8d4b1931446eb41704aeb4c28cb	 -> 	service-backend
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -

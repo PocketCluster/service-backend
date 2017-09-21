@@ -31,6 +31,7 @@ function clean_gopath() {
 	rm -rf github.com/beevik/etree && (rmdir github.com/beevik > /dev/null 2>&1 || true)
 	rm -rf github.com/Redundancy/go-sync && (rmdir github.com/Redundancy > /dev/null 2>&1 || true)
 	rm -rf golang.org/x/oauth2 && (rmdir golang.org/x > /dev/null 2>&1 || true)
+	rm -rf github.com/dc0d/cache-control && (rmdir github.com/dc0d > /dev/null 2>&1 || true)
 	rm -rf github.com/cbroglie/mustache && (rmdir github.com/cbroglie > /dev/null 2>&1 || true)
 	rm -rf github.com/fatih/structs && (rmdir github.com/fatih > /dev/null 2>&1 || true)
 	rm -rf github.com/mattn/go-sqlite3 && (rmdir github.com/mattn > /dev/null 2>&1 || true)
