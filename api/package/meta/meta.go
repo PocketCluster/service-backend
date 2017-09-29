@@ -19,7 +19,7 @@ import (
 func serveMeta(w http.ResponseWriter, r *http.Request, fsRoot, fileName string) {
     fs := http.Dir(fsRoot)
 
-    f, err := fs.Open(fmt.Sprintf("%s.json",fileName))
+    f, err := fs.Open(fmt.Sprintf("%s.taml",fileName))
     if err != nil {
         log.Error(errors.WithStack(err))
         msg, code := abnormal.ToJsonHTTPError(err)
