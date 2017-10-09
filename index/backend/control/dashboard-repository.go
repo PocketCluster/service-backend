@@ -508,7 +508,11 @@ func getPreview(repodb *gorm.DB, requests map[string]string, repoData *github.Re
     if len(stub) < 2 {
         return nil, errors.Errorf("cannot parse repository id")
     }
-    slug = strings.Join(stub[0:2],"-")
+    // in case reponame ends with extra query
+    rlug := strings.Split(stub[1], "?")[0]
+    rlug = strings.Split(rlug, "&")[0]
+    // combine it all
+    slug = fmt.Sprintf("%v-%v", stub[0], rlug)
     slug = strings.ToLower(slug)
     slug = strings.Replace(slug, "/", "-", -1)
     slug = strings.Replace(slug, "_", "-", -1)
