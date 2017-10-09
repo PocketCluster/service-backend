@@ -1,5 +1,9 @@
 # PocketCluster Index Deployment Log
 
+- 10/09/2017
+  * ScalaJS based frontend removed (We'd need to move to npm)
+  * detailed error log print
+
 - 01/15/2017
   * Repository Meta/ Supplementary (Release + Tag) update internalized
 

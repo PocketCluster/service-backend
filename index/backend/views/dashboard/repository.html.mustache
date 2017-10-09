@@ -51,7 +51,8 @@
                             <p class="lead">Add a new repository. If it already exists, than please update one.</p>
                         </div>
 
-                        <form id="add-repo-form" action="javascript:Repository().submitRepository();">
+                        <!--form id="add-repo-form" action="javascript:Repository().submitRepository();"-->
+                        <form id="add-repo-form">
                             <div class="form-group">
                                 <label for="add-repo-url">Github</label>
                                 <input id="add-repo-url" name="add-url" class="form-control" placeholder="https://github.com/username/repository" aria-describedby="add-repo-url-prefix">
@@ -84,8 +85,8 @@
                             </div>
 
                             <div class="form-group" style="text-align:center;">
-                                <button type="button" class="btn btn-default" onclick="Repository().previewRepository(event);">Preview</button>
-                                <input type="submit" value="Submit" class="btn btn-primary" />
+                                <button id="btn-preview" type="button" class="btn btn-default">Preview</button>
+                                <input id="btn-submit"  type="submit" value="Submit" class="btn btn-primary" />
                             </div>
                         </form>
 
@@ -109,7 +110,7 @@
                             <div class="panel-heading">
                                 <h3 class="panel-title">Submit Status</h3>
                             </div>
-                            <div class="panel-body"></div>
+                            <div id="add-repo-status-reason" class="panel-body"></div>
                         </div>
 
                     </div><!-- tab add -->
@@ -183,4 +184,4 @@
     </div><!-- container-fluid -->
 
     <!-- javascript -->
-    <script type="text/javascript" src="{{THEME_LINK}}/js/index-front-fastopt.js"></script>
+    <script type="text/javascript" src="{{THEME_LINK}}/js/index-repository.js"></script>

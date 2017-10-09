@@ -309,7 +309,7 @@ func submitRepo(ctrl *Controller, c web.C, reqs map[string]string, repoData *git
     }
 
     return map[string]interface{}{
-        "status" :"ok",
+        "status" :"processed",
     }, nil
 }
 
@@ -505,7 +505,7 @@ func updateRepo(repoDB *gorm.DB, config *config.Config, reqs map[string]string, 
     }
 
     return map[string]interface{}{
-        "status" :"ok",
+        "status" :"processed",
     }, nil
 }
 
