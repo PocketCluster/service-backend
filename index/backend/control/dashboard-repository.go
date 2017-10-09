@@ -46,14 +46,14 @@ func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, i
     }
 
     // GITHUB API REQUEST
-    repoURL := requests["add-repo-url"]
-    if len(repoURL) == 0 {
+    rurl := requests["add-repo-url"]
+    if len(rurl) == 0 {
         return util.JsonErrorResponse(errors.Errorf("Repository URL [add-repo-url] cannot be null"))
     }
-    if !strings.HasPrefix(repoURL, prefixGithubURL) {
+    if !strings.HasPrefix(rurl, prefixGithubURL) {
         return util.JsonErrorResponse(errors.Errorf("invalid repository url"))
     }
-    repo, _, err := ctrl.GetGithubRepoMeta(repoURL)
+    repo, _, err := ctrl.GetGithubRepoMeta(rurl)
     if err != nil {
         return util.JsonErrorResponse(errors.WithMessage(err, "Retrieving repository failed"))
     }
@@ -72,7 +72,7 @@ func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, i
         }
         case "update": {
             // Decode contributor API
-            ctrb, _, err := ctrl.GetGithubContributors(repoURL)
+            ctrb, _, err := ctrl.GetGithubContributors(rurl)
             if err != nil {
                 return util.JsonErrorResponse(errors.WithMessage(err, "Retrieving repository contribution data failed " + util.SafeGetString(repo.HTMLURL)))
             }
