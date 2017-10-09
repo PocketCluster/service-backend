@@ -106,7 +106,7 @@ func GithubReadmeScrap(location string, filename string) (string, error) {
         return textContent, err
     }
     // save to file
-    err = ioutil.WriteFile(filename, []byte(html), 0444)
+    err = ioutil.WriteFile(filename, []byte(html), 0664)
     if err != nil {
         return textContent, err
     }
