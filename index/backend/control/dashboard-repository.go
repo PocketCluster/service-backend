@@ -62,7 +62,7 @@ func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, i
         case "preview": {
             resp, err := getPreview(ctrl.GetMetaDB(c), requests, repo)
             if err != nil {
-                return util.JsonErrorResponse(errors.WithMessage(err, "Cannot preview repo info"))
+                return util.JsonErrorResponse(err)
             }
             resj, err := json.Marshal(resp)
             if err != nil {
@@ -96,6 +96,9 @@ func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, i
                 return util.JsonErrorResponse(errors.WithMessage(err, "Cannot marshal submit json"))
             }
             return string(resj), http.StatusOK
+        }
+        case "delete": {
+
         }
     }
     return "{}", http.StatusNotFound
@@ -160,10 +163,7 @@ func submitRepo(ctrl *Controller, c web.C, reqs map[string]string, repoData *git
     var repoFound []model.Repository
     repoDB.Where("repo_id = ? AND slug = ?", repoID, slug).Find(&repoFound);
     if len(repoFound) != 0 {
-        return map[string]interface{}{
-            "status"    :"duplicated",
-            "reason"    :"The repository already exists",
-        }, nil
+        return nil, errors.Errorf("The repository already exists")
     }
 
     /* ------------------------------------------- Handle Owner information ----------------------------------------- */
