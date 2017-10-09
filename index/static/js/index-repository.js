@@ -84,7 +84,7 @@ class RepositoryManagerApp {
 
               // update additional fields
               rcat.value  = results.get("add-repo-cat").toString()
-              rproj.value = results.get("add-repo-cat").toString()
+              rproj.value = results.get("add-repo-proj").toString()
               rlogo.value = results.get("add-repo-logo").toString()
               break
             }
@@ -148,7 +148,6 @@ class RepositoryManagerApp {
 
     var xhr = new XMLHttpRequest();
     if (this.isRepoDuplicated) {
-      console.log("duplicated repo update")
         xhr.open("POST", "/pocketcluster/dashboard/repository/update")
     } else {
         xhr.open("POST", "/pocketcluster/dashboard/repository/submit")
@@ -175,7 +174,7 @@ class RepositoryManagerApp {
 
             // update additional fields
             rcat.value  = results.get("add-repo-cat").toString()
-            rproj.value = results.get("add-repo-cat").toString()
+            rproj.value = results.get("add-repo-proj").toString()
             rlogo.value = results.get("add-repo-logo").toString()
             break
           }

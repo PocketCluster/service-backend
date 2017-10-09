@@ -12,3 +12,10 @@
 
 - 01/03/2017
   * Spinning indicator + page termination message added
+
+
+## TODO
+
+- [ ] watch log and find readme.html failure with insufficient permission -> fix
+- [ ] find 404 not found in readme.html from email -> fix
+- [ ] show important author's profile in their title
