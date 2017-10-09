@@ -14,6 +14,7 @@ import (
     "github.com/stkim1/backend/framework"
     "github.com/stkim1/backend/control"
     "github.com/stkim1/backend/config"
+    "github.com/stkim1/backend/util"
 )
 
 func main() {
@@ -21,11 +22,18 @@ func main() {
         app *framework.Application
         ctrl *control.Controller
     )
-    log.SetLevel(log.DebugLevel)
+
     cfgPath, ok := os.LookupEnv(config.EnvConfigFilePath)
-    if !ok {
+    // develop mode
+    if ok {
+        log.SetLevel(log.DebugLevel)
+
+    // release mode
+    } else {
+        util.InitSysLogger()
         cfgPath = "config.yaml"
     }
+
     cfg, err := config.NewConfig(cfgPath)
     if err != nil {
         log.Panic(errors.WithMessage(err, "Cannot load config"))
