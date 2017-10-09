@@ -20,3 +20,4 @@
 - [ ] find 404 not found in readme.html from email -> fix
 - [ ] show important author's profile in their title
 - [ ] redirect page to a new, moved repository url
+- [ ] prevent meta update fixes back the title
