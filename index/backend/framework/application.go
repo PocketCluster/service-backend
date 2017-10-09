@@ -91,8 +91,8 @@ func (a *Application) init() {
         log.Fatal(errors.WithStack(err))
     }
     // Migrate the schema
-    metaDB.AutoMigrate(&model.Repository{}, &model.Author{}, &model.RepoContributor{});
-    a.MetaDB = metaDB;
+    metaDB.AutoMigrate(&model.Repository{}, &model.Author{}, &model.RepoContributor{})
+    a.MetaDB = metaDB
 
     // (BOLTDB) supplementary
     suppDB, err := boltbk.New(a.Config.Supplement.DatabasePath)

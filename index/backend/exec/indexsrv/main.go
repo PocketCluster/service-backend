@@ -21,6 +21,7 @@ func main() {
         app *framework.Application
         ctrl *control.Controller
     )
+    log.SetLevel(log.DebugLevel)
     cfgPath, ok := os.LookupEnv(config.EnvConfigFilePath)
     if !ok {
         cfgPath = "config.yaml"
@@ -51,8 +52,8 @@ func main() {
     //v1Mux :=goji.SubMux()
 
     // dashboard
-    goji.Get("/pocketcluster/dashboard/:mode",                                       app.AddRoute(ctrl.DashboardFront))
-    goji.Post("/pocketcluster/dashboard/repository/:mode",                           app.AddRoute(ctrl.DashboardRepository))
+    goji.Get("/pocketcluster/dashboard/:mode",                                    app.AddRoute(ctrl.DashboardFront))
+    goji.Post("/pocketcluster/dashboard/repository/:mode",                        app.AddRoute(ctrl.DashboardRepository))
 
 /*
     // Sign In routes
@@ -68,7 +69,7 @@ func main() {
 */
 
     // sitemap
-    goji.Get("/sitemap.xml",                                                         app.AddRoute(ctrl.Sitemap))
+    goji.Get("/sitemap.xml",                                                      app.AddRoute(ctrl.Sitemap))
 
     // Home page
     // FIXME: all three regexp fail. WTF? (https://github.com/zenazn/goji/issues/75) & (https://github.com/zenazn/goji/blob/master/web/regexp_pattern.go#L56)
@@ -76,8 +77,8 @@ func main() {
     //goji.Get(regexp.MustCompile(`^/index.html\?page=(?P<page>[0-9]+)$`), application.Route(controller, "IndexPaged"))
     //goji.Get(regexp.MustCompile(`^/index.html[?]page=(?P<page>[0-9]+)$`), application.Route(controller, "IndexPaged"))
     goji.Get(regexp.MustCompile(`^/index(?P<page>[0-9]+).html$`),                    app.AddRoute(ctrl.IndexPaged))
-    goji.Get("/index.html",                                                          app.AddRoute(ctrl.Index))
-    goji.Get("/",                                                                    app.AddRoute(ctrl.Index))
+    goji.Get("/index.html",                                                       app.AddRoute(ctrl.Index))
+    goji.Get("/",                                                                 app.AddRoute(ctrl.Index))
 
     // Category Index
     goji.Get(regexp.MustCompile(`^/category/(?P<cat>[a-z]+)(?P<page>[0-9]+).html$`), app.AddRoute(ctrl.CategoryPaged))
