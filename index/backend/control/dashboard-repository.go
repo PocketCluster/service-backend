@@ -46,12 +46,9 @@ func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, i
     }
 
     // GITHUB API REQUEST
-    rurl := requests["add-repo-url"]
-    if len(rurl) == 0 {
-        return util.JsonErrorResponse(errors.Errorf("Repository URL [add-repo-url] cannot be null"))
-    }
-    if !strings.HasPrefix(rurl, prefixGithubURL) {
-        return util.JsonErrorResponse(errors.Errorf("invalid repository url"))
+    rurl, err := cleanGithubURL(requests["add-repo-url"])
+    if err != nil {
+        return util.JsonErrorResponse(err)
     }
     repo, _, err := ctrl.GetGithubRepoMeta(rurl)
     if err != nil {
@@ -111,6 +108,22 @@ func githubRepoID(repoID *int) (string, error) {
         return "", err
     }
     return fmt.Sprintf("gh%s",strconv.Itoa(rid)), nil
+}
+
+func cleanGithubURL(rurl string) (string, error) {
+    if !strings.HasPrefix(rurl, prefixGithubURL) {
+        return "", errors.Errorf("invalid github url")
+    }
+    slug := strings.Replace(strings.TrimSpace(rurl), prefixGithubURL, "", -1)
+    stub := strings.Split(slug, "/")
+    if len(stub) < 2 {
+        return "", errors.Errorf("cannot parse repository id")
+    }
+    // in case reponame ends with extra query
+    rlug := strings.Split(stub[1], "?")[0]
+    rlug = strings.Split(rlug, "&")[0]
+    // combine it all
+    return fmt.Sprintf("%v%v/%v", prefixGithubURL, stub[0], rlug), nil
 }
 
 func submitRepo(ctrl *Controller, c web.C, reqs map[string]string, repoData *github.Repository) (map[string]interface{}, error) {
@@ -503,16 +516,11 @@ func getPreview(repodb *gorm.DB, requests map[string]string, repoData *github.Re
     )
 
     // Make Slug
-    slug = strings.Replace(strings.TrimSpace(requests["add-repo-url"]), prefixGithubURL, "", -1)
-    stub := strings.Split(slug, "/")
-    if len(stub) < 2 {
-        return nil, errors.Errorf("cannot parse repository id")
+    rurl, err := cleanGithubURL(requests["add-repo-url"])
+    if err != nil {
+        return nil, errors.WithStack(err)
     }
-    // in case reponame ends with extra query
-    rlug := strings.Split(stub[1], "?")[0]
-    rlug = strings.Split(rlug, "&")[0]
-    // combine it all
-    slug = fmt.Sprintf("%v-%v", stub[0], rlug)
+    slug = strings.Replace(rurl, prefixGithubURL, "", -1)
     slug = strings.ToLower(slug)
     slug = strings.Replace(slug, "/", "-", -1)
     slug = strings.Replace(slug, "_", "-", -1)
