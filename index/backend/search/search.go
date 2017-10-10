@@ -2,16 +2,16 @@ package search
 
 import (
     "encoding/json"
-    "fmt"
     "io/ioutil"
     "net/http"
 
 	log "github.com/Sirupsen/logrus"
+	"github.com/pkg/errors"
     "github.com/zenazn/goji/web"
-
 	"github.com/blevesearch/bleve"
 	bhttp "github.com/blevesearch/bleve/http"
     "github.com/blevesearch/bleve/search/query"
+    "github.com/stkim1/backend/util"
 )
 
 type varLookupFunc func(req *http.Request) string
@@ -29,7 +29,6 @@ func NewSearchHandler(defaultIndexName string) *SearchHandler {
 }
 
 func (h *SearchHandler) ServeSearch(c web.C, req *http.Request) (string, int) {
-
     // find the index to operate on
     var indexName string
     if h.IndexNameLookup != nil {
@@ -41,14 +40,14 @@ func (h *SearchHandler) ServeSearch(c web.C, req *http.Request) (string, int) {
     index := bhttp.IndexByName(indexName)
     if index == nil {
         log.Errorf("no such index '%s'", indexName)
-        return fmt.Sprintf("no such index '%s'", indexName), 404
+        return util.JsonErrorResponse(errors.Errorf("no such index '%s'", indexName))
     }
 
     // read the request body
     requestBody, err := ioutil.ReadAll(req.Body)
     if err != nil {
         log.Errorf("error reading request body: %v", err)
-		return fmt.Sprintf("error reading request body: %v", err), 400
+        return util.JsonErrorResponse(errors.WithMessage(err,"error reading request body"))
     }
 
     log.Infof("request body: %s", requestBody)
@@ -58,7 +57,7 @@ func (h *SearchHandler) ServeSearch(c web.C, req *http.Request) (string, int) {
     err = json.Unmarshal(requestBody, &searchRequest)
     if err != nil {
         log.Errorf("error parsing query: %v", err)
-        return fmt.Sprintf("error parsing query: %v", err), 400
+        return util.JsonErrorResponse(errors.WithMessage(err,"error parsing query"))
     }
 
     log.Infof("parsed request %#v", searchRequest)
@@ -68,7 +67,7 @@ func (h *SearchHandler) ServeSearch(c web.C, req *http.Request) (string, int) {
         err = srqv.Validate()
         if err != nil {
             log.Errorf("error validating query: %v", err)
-            return fmt.Sprintf("error validating query: %v", err), 400
+            return util.JsonErrorResponse(errors.WithMessage(err,"error validating query"))
         }
     }
 
@@ -76,13 +75,13 @@ func (h *SearchHandler) ServeSearch(c web.C, req *http.Request) (string, int) {
     searchResponse, err := index.Search(&searchRequest)
     if err != nil {
         log.Errorf("error executing query: %v", err)
-        return fmt.Sprintf("error executing query: %v", err), 500
+        return util.JsonErrorResponse(errors.WithMessage(err,"error executing query"))
     }
 
     data, err := json.Marshal(searchResponse)
     if err != nil {
         log.Errorf("error parsing result query: %v", err)
-        return fmt.Sprintf("error parsing result query: %v", err), 500
+        return util.JsonErrorResponse(errors.WithMessage(err,"error parsing result query"))
     }
-    return string(data), 200
+    return string(data), http.StatusOK
 }

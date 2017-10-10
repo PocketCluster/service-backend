@@ -16,12 +16,13 @@ package search
 
 import (
     "encoding/json"
-    "fmt"
     "net/http"
 
     log "github.com/Sirupsen/logrus"
+    "github.com/pkg/errors"
 	"github.com/zenazn/goji/web"
 	bhttp "github.com/blevesearch/bleve/http"
+    "github.com/stkim1/backend/util"
 )
 
 type ListFieldsHandler struct {
@@ -36,7 +37,6 @@ func NewListFieldsHandler(defaultIndexName string) *ListFieldsHandler {
 }
 
 func (h *ListFieldsHandler) ServeList(c web.C, req *http.Request) (string, int) {
-
     // find the index to operate on
     var indexName string
     if h.IndexNameLookup != nil {
@@ -48,13 +48,13 @@ func (h *ListFieldsHandler) ServeList(c web.C, req *http.Request) (string, int) 
     index := bhttp.IndexByName(indexName)
     if index == nil {
         log.Errorf("no such index '%s'", indexName)
-        return fmt.Sprintf("no such index '%s'", indexName), 404
+        return util.JsonErrorResponse(errors.Errorf("no such index '%s'", indexName))
     }
 
     fields, err := index.Fields()
     if err != nil {
         log.Errorf("cannot access fields list: %v", err)
-        return fmt.Sprintf("cannot access fields list: %v", err), 500
+        return util.JsonErrorResponse(errors.WithMessage(err, "cannot access fields list"))
     }
 
     data, err := json.Marshal(struct {
@@ -64,7 +64,7 @@ func (h *ListFieldsHandler) ServeList(c web.C, req *http.Request) (string, int) 
     })
     if err != nil {
         log.Errorf("error parsing result query: %v", err)
-        return fmt.Sprintf("error parsing result query: %v", err), 500
+        return util.JsonErrorResponse(errors.WithMessage(err, "error parsing result query"))
     }
-    return string(data), 200
+    return string(data), http.StatusOK
 }

@@ -99,9 +99,9 @@ func main() {
     goji.Get(regexp.MustCompile(`^/(?P<repo>[a-z0-9-]+).html$`),                     app.AddRoute(ctrl.Repository))
 
     // search
-    goji.Post("/api/search",                                                      app.AddRoute(srch.ServeSearch))
+    goji.Post("/search/request",                                                      app.AddRoute(srch.ServeSearch))
     // list handler
-    goji.Get("/api/fields",                                                       app.AddRoute(lstr.ServeList))
+    goji.Get("/search/fields",                                                       app.AddRoute(lstr.ServeList))
 
     // termination
     graceful.PostHook(func() {
