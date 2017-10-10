@@ -25,7 +25,17 @@ class IndexFrontPage {
         grid.masonry('appended', elem);
         grid.imagesLoaded().progress(() => grid.masonry('layout'));
     });
+
+    // search form action
+    $("form#nav-search").on('submit', e => this.searchSubmit(e));
   }
+
+  // search request submit
+  searchSubmit(evt) {
+    evt.preventDefault();
+
+  }
+
 }
 
 document.addEventListener('DOMContentLoaded', () => new IndexFrontPage());
