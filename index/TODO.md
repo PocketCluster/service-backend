@@ -1,5 +1,8 @@
 # PocketCluster Index Deployment Log
 
+- 10/10/2017
+  * bolt -> coreos/bbolt for search stat/ supplement data/ social sharing
+
 - 10/09/2017
   * ScalaJS based frontend removed (We'd need to move to npm)
   * detailed error log print

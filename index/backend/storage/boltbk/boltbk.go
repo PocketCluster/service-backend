@@ -26,7 +26,7 @@ import (
     "sync"
     "time"
 
-    "github.com/boltdb/bolt"
+    "github.com/coreos/bbolt"
     "github.com/mailgun/timetools"
     "gopkg.in/vmihailenco/msgpack.v2"
 )
