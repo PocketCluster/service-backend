@@ -21,3 +21,5 @@
 - [ ] show important author's profile in their title
 - [ ] redirect page to a new, moved repository url
 - [ ] prevent meta update fixes back the title
+- [ ] deploy jQuery or a better alternative to dashboard app
+- [ ] mark any update error to dashboard
