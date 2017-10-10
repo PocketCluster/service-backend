@@ -74,10 +74,10 @@ github.com/go-utils/uslice
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 	mkdir -p /opt/gopkg/src/github.com/go-utils && cd /opt/gopkg/src/github.com/go-utils && git clone https://github.com/go-utils/uslice && cd /opt/gopkg/src/github.com/go-utils/uslice && git checkout fb69df90f7992e63a8959323a08a85aaba012564
 
-github.com/blevesearch/bleve
-	82a101aedd682bba004e28c54c460b25dd271d04	 -> 	service-backend
+golang.org/x/sys/unix
+	07c182904dbd53199946ba614a412c61d3c548f5	 -> 	service-backend
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-	mkdir -p /opt/gopkg/src/github.com/blevesearch && cd /opt/gopkg/src/github.com/blevesearch && git clone https://github.com/blevesearch/bleve && cd /opt/gopkg/src/github.com/blevesearch/bleve && git checkout 82a101aedd682bba004e28c54c460b25dd271d04
+	(go get -d golang.org/x/sys/unix || true) && cd /opt/gopkg/src/golang.org/x/sys/unix && git checkout master && git pull && git checkout 07c182904dbd53199946ba614a412c61d3c548f5
 
 github.com/dustin/go-humanize
 	259d2a102b871d17f30e3cd9881a642961a1e486	 -> 	service-backend
@@ -164,11 +164,6 @@ github.com/davecgh/go-spew
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 	mkdir -p /opt/gopkg/src/github.com/davecgh && cd /opt/gopkg/src/github.com/davecgh && git clone https://github.com/davecgh/go-spew && cd /opt/gopkg/src/github.com/davecgh/go-spew && git checkout adab96458c51a58dc1783b3335dcce5461522e75
 
-github.com/boltdb/bolt
-	2f1ce7a837dcb8da3ec595b1dac9d0632f0f99e8	 -> 	service-backend
-	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-	mkdir -p /opt/gopkg/src/github.com/boltdb && cd /opt/gopkg/src/github.com/boltdb && git clone https://github.com/boltdb/bolt && cd /opt/gopkg/src/github.com/boltdb/bolt && git checkout 2f1ce7a837dcb8da3ec595b1dac9d0632f0f99e8
-
 gopkg.in/vmihailenco/msgpack.v2
 	v2.8.3                                  	 -> 	service-backend
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
@@ -178,11 +173,6 @@ github.com/blevesearch/go-porterstemmer
 	23a2c8e5cf1f380f27722c6d2ae8896431dc7d0e	 -> 	service-backend
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 	mkdir -p /opt/gopkg/src/github.com/blevesearch && cd /opt/gopkg/src/github.com/blevesearch && git clone https://github.com/blevesearch/go-porterstemmer && cd /opt/gopkg/src/github.com/blevesearch/go-porterstemmer && git checkout 23a2c8e5cf1f380f27722c6d2ae8896431dc7d0e
-
-golang.org/x/sys/unix
-	07c182904dbd53199946ba614a412c61d3c548f5	 -> 	service-backend
-	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-	(go get -d golang.org/x/sys/unix || true) && cd /opt/gopkg/src/golang.org/x/sys/unix && git checkout master && git pull && git checkout 07c182904dbd53199946ba614a412c61d3c548f5
 
 github.com/gorilla/sessions
 	b61c93cb7f67533c8bfbb5ea450efc07e5833c5e	 -> 	service-backend
