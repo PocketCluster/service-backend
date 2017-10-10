@@ -10,16 +10,20 @@ import (
     "github.com/gorilla/context"
     "github.com/zenazn/goji"
     "github.com/zenazn/goji/graceful"
+    bhttp "github.com/blevesearch/bleve/http"
 
     "github.com/stkim1/backend/framework"
     "github.com/stkim1/backend/control"
     "github.com/stkim1/backend/config"
+    "github.com/stkim1/backend/search"
 )
 
 func main() {
     var (
         app *framework.Application
         ctrl *control.Controller
+        srch *search.SearchHandler
+        lstr *search.ListFieldsHandler
     )
     log.SetLevel(log.DebugLevel)
     log.SetFormatter(&log.TextFormatter{})
@@ -32,11 +36,17 @@ func main() {
     if err != nil {
         log.Panic(errors.WithMessage(err, "Cannot load config"))
     }
-    runtime.GOMAXPROCS(cfg.General.MaxConcurrency)
+
     // Setup Controller
     ctrl = control.NewController(cfg)
     // setup Application
     app = framework.NewApplication(cfg, ctrl)
+    // bleve search
+    bhttp.RegisterIndexName(search.IndexNameRepoMeta, app.SearchIndex)
+    // search handler
+    srch = search.NewSearchHandler(search.IndexNameRepoMeta)
+    // list field handler
+    lstr = search.NewListFieldsHandler(search.IndexNameRepoMeta)
 
     // Apply middleware
     //goji.Use(app.ApplySessions)
@@ -88,6 +98,12 @@ func main() {
     // Respotory
     goji.Get(regexp.MustCompile(`^/(?P<repo>[a-z0-9-]+).html$`),                     app.AddRoute(ctrl.Repository))
 
+    // search
+    goji.Post("/api/search",                                                      app.AddRoute(srch.ServeSearch))
+    // list handler
+    goji.Get("/api/fields",                                                       app.AddRoute(lstr.ServeList))
+
+    // termination
     graceful.PostHook(func() {
         app.Close()
     })
@@ -95,5 +111,8 @@ func main() {
     // just before going into serve, initiate updater
     app.ScheduleMetaUpdate()
     app.ScheduleSuppUpdate()
+
+    // get the maximum perf
+    runtime.GOMAXPROCS(cfg.General.MaxConcurrency)
     goji.Serve()
 }
