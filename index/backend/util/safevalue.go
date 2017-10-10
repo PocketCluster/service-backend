@@ -1,10 +1,11 @@
 package util
 
 import (
-    "strings"
     "errors"
-    "github.com/google/go-github/github"
+    "strings"
     "time"
+
+    "github.com/google/go-github/github"
 )
 
 func SafeGetString(str *string) string {

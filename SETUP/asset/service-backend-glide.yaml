@@ -30,14 +30,13 @@ import:
   version: e3c3d374db77838e92e5981ba81f26d1ecea4aa8
 - package: github.com/PuerkitoBio/goquery
   version: ce645ea5e67a713599b7415f21f0786451fa9554
-- package: github.com/blevesearch/bleve
-  version: 82a101aedd682bba004e28c54c460b25dd271d04
 - package: github.com/davecgh/go-spew
   version: adab96458c51a58dc1783b3335dcce5461522e75
 - package: github.com/gorilla/context
   version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
-- package: github.com/boltdb/bolt
-  version: 2f1ce7a837dcb8da3ec595b1dac9d0632f0f99e8
+# replace bolt with bbolt
+- package: github.com/coreos/bbolt
+  version: v1.3.1-coreos.2
 - package: github.com/mailgun/timetools
   version: f3a7b8ffff474320c4f5cc564c9abb2c52ded8bc
 - package: github.com/cbroglie/mustache
@@ -88,3 +87,9 @@ import:
   version: 1c35d901db3da928c72a72d8458480cc9ade058f
 - package: github.com/steveyen/gtreap
   version: 0abe01ef9be25c4aedc174758ec2d917314d6d70
+- package: github.com/thoas/stats
+  version: 152b5d051953fdb6e45f14b6826962aadc032324
+- package: github.com/cloudflare/cloudflare-go
+  version: 73188131583704facec77adbb1e666a7917f973c
+- package: github.com/dc0d/cache-control
+  version: 8eb23b9456881fd5a3095ff8d5096235771eb8f1

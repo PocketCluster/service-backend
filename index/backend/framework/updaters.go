@@ -44,8 +44,8 @@ func (a *Application) ScheduleMetaUpdate() {
                         metaDB.Model(&model.Repository{}).Count(&repoCount)
                         totalRepoCount.Store(repoCount)
 
-                        // update
-                        ioutil.WriteFile(cfg.Update.MetaUpdateRecord, []byte(launch.Format(time.RFC3339)), 0600)
+                        // update (2017/10/10 : we'll give group-read permission for backup)
+                        ioutil.WriteFile(cfg.Update.MetaUpdateRecord, []byte(launch.Format(time.RFC3339)), 0640)
                         lastRec = launch
                         go update.UpdateAllRepoMeta(metaDB, searchIndex, cfg, metaWaiter, isUpdating)
                     }
@@ -85,7 +85,8 @@ func (a *Application) ScheduleSuppUpdate() {
             select {
             case launch := <- updateTicker.C: {
                     if !isUpdating.Load().(bool) && (time.Minute * time.Duration(cfg.Update.SuppUpdateInterval)) < launch.Sub(lastRec) {
-                        ioutil.WriteFile(cfg.Update.SuppUpdateRecord, []byte(launch.Format(time.RFC3339)), 0600)
+                        // (2017/10/10 : we'll give group-read permission for backup)
+                        ioutil.WriteFile(cfg.Update.SuppUpdateRecord, []byte(launch.Format(time.RFC3339)), 0640)
                         lastRec = launch
 
                         go update.UpdateAllRepoSupplement(metaDB, suppDB, cfg, suppWaiter, isUpdating)

@@ -20,8 +20,86 @@ import (
 )
 
 const (
-    modeStrings string = "preview update submit"
+    modeStrings     string = "preview update submit"
+    prefixGithubURL string = "https://github.com/"
 )
+
+func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, int) {
+    var (
+        requests = map[string]string{}
+        err error = nil
+    )
+
+    if !ctrl.IsSafeConnection(r) {
+        return util.JsonErrorResponse(errors.Errorf("unsafe connection"))
+    }
+
+    err = json.NewDecoder(r.Body).Decode(&requests)
+    if err != nil {
+        return util.JsonErrorResponse(errors.WithMessage(err, "Cannot decode request body "))
+    }
+
+    // Check what mode this is in
+    mode := strings.ToLower(strings.TrimSpace(c.URLParams["mode"]))
+    if len(mode) == 0 || !strings.Contains(modeStrings, mode) {
+        return util.JsonErrorResponse(errors.Errorf("Cannot response without a proper mode : " + mode))
+    }
+
+    // GITHUB API REQUEST
+    rurl, err := cleanGithubURL(requests["add-repo-url"])
+    if err != nil {
+        return util.JsonErrorResponse(err)
+    }
+    repo, _, err := ctrl.GetGithubRepoMeta(rurl)
+    if err != nil {
+        return util.JsonErrorResponse(errors.WithMessage(err, "Retrieving repository failed"))
+    }
+
+    switch mode {
+        case "preview": {
+            resp, err := getPreview(ctrl.GetMetaDB(c), requests, repo)
+            if err != nil {
+                return util.JsonErrorResponse(err)
+            }
+            resj, err := json.Marshal(resp)
+            if err != nil {
+                return util.JsonErrorResponse(errors.WithMessage(err, "cannot marshal preview to json"))
+            }
+            return string(resj), http.StatusOK
+        }
+        case "update": {
+            // Decode contributor API
+            ctrb, _, err := ctrl.GetGithubContributors(rurl)
+            if err != nil {
+                return util.JsonErrorResponse(errors.WithMessage(err, "Retrieving repository contribution data failed " + util.SafeGetString(repo.HTMLURL)))
+            }
+            resp, err := updateRepo(ctrl.GetMetaDB(c), ctrl.Config, requests, repo, ctrb)
+            if err != nil {
+                return util.JsonErrorResponse(errors.WithMessage(err, "Cannot update the repo info " + util.SafeGetString(repo.HTMLURL)))
+            }
+            resj, err := json.Marshal(resp)
+            if err != nil {
+                return util.JsonErrorResponse(errors.WithMessage(err, "cannot update marshal json"))
+            }
+            return string(resj), http.StatusOK
+        }
+        case "submit": {
+            resp, err := submitRepo(ctrl, c, requests, repo)
+            if err != nil {
+                return util.JsonErrorResponse(errors.WithMessage(err, "Cannot submit the repo info " + util.SafeGetString(repo.HTMLURL)))
+            }
+            resj, err := json.Marshal(resp)
+            if err != nil {
+                return util.JsonErrorResponse(errors.WithMessage(err, "Cannot marshal submit json"))
+            }
+            return string(resj), http.StatusOK
+        }
+        case "delete": {
+
+        }
+    }
+    return "{}", http.StatusNotFound
+}
 
 func githubRepoID(repoID *int) (string, error) {
     // repository id
@@ -32,83 +110,20 @@ func githubRepoID(repoID *int) (string, error) {
     return fmt.Sprintf("gh%s",strconv.Itoa(rid)), nil
 }
 
-func (ctrl *Controller) DashboardRepository(c web.C, r *http.Request) (string, int) {
-    if !ctrl.IsSafeConnection(r) {
-        return "", http.StatusNotFound
+func cleanGithubURL(rurl string) (string, error) {
+    if !strings.HasPrefix(rurl, prefixGithubURL) {
+        return "", errors.Errorf("invalid github url")
     }
-
-    requests := map[string]string{}
-    decoder := json.NewDecoder(r.Body)
-    err := decoder.Decode(&requests); if err != nil {
-        log.Error(errors.WithMessage(err, "Cannot decode request body "))
-        return "{}", http.StatusNotFound
+    slug := strings.Replace(strings.TrimSpace(rurl), prefixGithubURL, "", -1)
+    stub := strings.Split(slug, "/")
+    if len(stub) < 2 {
+        return "", errors.Errorf("cannot parse repository id")
     }
-
-    // Check what mode this is in
-    mode := strings.ToLower(strings.TrimSpace(c.URLParams["mode"]))
-    if len(mode) == 0 || !strings.Contains(modeStrings, mode) {
-        log.Error(errors.Errorf("Cannot response without a proper mode : " + mode))
-        return "", http.StatusNotFound
-    }
-
-    // GITHUB API REQUEST
-    repoURL := requests["add-repo-url"]
-    if len(repoURL) == 0 {
-        log.Error(errors.Errorf("Repository URL [add-repo-url] cannot be null"))
-        return "{}", http.StatusNotFound
-    }
-    repo, _, err := ctrl.GetGithubRepoMeta(repoURL)
-    if err != nil {
-        log.Error(errors.WithMessage(err, "Retrieving repository failed"))
-        return "", http.StatusNotFound
-    }
-
-    switch mode {
-    case "preview": {
-        response, err := getPreview(ctrl.GetMetaDB(c), requests, repo)
-        if err != nil {
-            log.Error(errors.WithMessage(err, "Cannot preview repo info"))
-            return "{}", http.StatusNotFound
-        }
-        json, err := json.Marshal(response);
-        if err != nil {
-            log.Error(errors.WithStack(err))
-            return "{}", http.StatusNotFound
-        }
-        return string(json), http.StatusOK
-    }
-    case "update": {
-        // Decode contributor API
-        contribs, _, err := ctrl.GetGithubContributors(repoURL)
-        if err != nil {
-            log.Error(errors.WithMessage(err, "Retrieving repository contribution data failed " + util.SafeGetString(repo.HTMLURL)))
-            return "", http.StatusNotFound
-        }
-        responses, err := updateRepo(ctrl.GetMetaDB(c), ctrl.Config, requests, repo, contribs)
-        if err != nil {
-            log.Error(errors.WithMessage(err, "Cannot update the repo info " + util.SafeGetString(repo.HTMLURL)))
-            return "{}", http.StatusNotFound
-        }
-        json, err := json.Marshal(responses); if err != nil {
-            log.Error(errors.WithMessage(err, "Cannot marshal json"))
-            return "{}", http.StatusNotFound
-        }
-        return string(json), http.StatusOK
-    }
-    case "submit": {
-        responses, err := submitRepo(ctrl, c, requests, repo)
-        if err != nil {
-            log.Error(errors.WithMessage(err, "Cannot submit the repo info " + util.SafeGetString(repo.HTMLURL)))
-            return "{}", http.StatusNotFound
-        }
-        json, err := json.Marshal(responses); if err != nil {
-            log.Error(errors.WithMessage(err, "Cannot marshal json"))
-            return "{}", http.StatusNotFound
-        }
-        return string(json), http.StatusOK
-    }
-    }
-    return "{}", http.StatusNotFound
+    // in case reponame ends with extra query
+    rlug := strings.Split(stub[1], "?")[0]
+    rlug = strings.Split(rlug, "&")[0]
+    // combine it all
+    return fmt.Sprintf("%v%v/%v", prefixGithubURL, stub[0], rlug), nil
 }
 
 func submitRepo(ctrl *Controller, c web.C, reqs map[string]string, repoData *github.Repository) (map[string]interface{}, error) {
@@ -161,10 +176,7 @@ func submitRepo(ctrl *Controller, c web.C, reqs map[string]string, repoData *git
     var repoFound []model.Repository
     repoDB.Where("repo_id = ? AND slug = ?", repoID, slug).Find(&repoFound);
     if len(repoFound) != 0 {
-        return map[string]interface{}{
-            "status"    :"duplicated",
-            "reason"    :"The repository already exists",
-        }, nil
+        return nil, errors.Errorf("The repository already exists")
     }
 
     /* ------------------------------------------- Handle Owner information ----------------------------------------- */
@@ -297,7 +309,7 @@ func submitRepo(ctrl *Controller, c web.C, reqs map[string]string, repoData *git
     }
 
     return map[string]interface{}{
-        "status" :"ok",
+        "status" :"processed",
     }, nil
 }
 
@@ -493,7 +505,7 @@ func updateRepo(repoDB *gorm.DB, config *config.Config, reqs map[string]string, 
     }
 
     return map[string]interface{}{
-        "status" :"ok",
+        "status" :"processed",
     }, nil
 }
 
@@ -504,7 +516,11 @@ func getPreview(repodb *gorm.DB, requests map[string]string, repoData *github.Re
     )
 
     // Make Slug
-    slug = strings.Replace(strings.TrimSpace(requests["add-repo-url"]), "https://github.com/", "", -1)
+    rurl, err := cleanGithubURL(requests["add-repo-url"])
+    if err != nil {
+        return nil, errors.WithStack(err)
+    }
+    slug = strings.Replace(rurl, prefixGithubURL, "", -1)
     slug = strings.ToLower(slug)
     slug = strings.Replace(slug, "/", "-", -1)
     slug = strings.Replace(slug, "_", "-", -1)
@@ -513,7 +529,7 @@ func getPreview(repodb *gorm.DB, requests map[string]string, repoData *github.Re
     // Build repo id
     rid, err := util.SafeGetInt(repoData.ID)
     if err != nil {
-        return nil, errors.Errorf("Cannot parse repository id")
+        return nil, errors.Errorf("cannot parse repository id")
     }
     repoID = "gh" + strconv.Itoa(rid)
 

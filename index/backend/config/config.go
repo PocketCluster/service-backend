@@ -116,5 +116,6 @@ func SaveConfig(config *Config, filepath string) error {
     if err != nil {
         return err
     }
-    return ioutil.WriteFile(filepath, data, 0600)
+    // (2017/10/10 : we'll give group-read permission for backup)
+    return ioutil.WriteFile(filepath, data, 0640)
 }
