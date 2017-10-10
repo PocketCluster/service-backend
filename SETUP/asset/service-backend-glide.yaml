@@ -40,7 +40,7 @@ import:
   version: 2f1ce7a837dcb8da3ec595b1dac9d0632f0f99e8
 # replace bolt with bbolt
 - package: github.com/coreos/bbolt
-  version: e1c92081e510bb6b2bbfc93e7e6bd0b6dabd3e12
+  version: v1.3.1-coreos.2
 - package: github.com/mailgun/timetools
   version: f3a7b8ffff474320c4f5cc564c9abb2c52ded8bc
 - package: github.com/cbroglie/mustache

@@ -7,7 +7,7 @@ github.com/ikeikeikeike/go-sitemap-generator
 gopkg.in/yaml.v2
 	eb3733d160e74a9c7e442f435eb3bea458e1d19f	 -> 	service-backend
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-	(go get -d gopkg.in/yaml.v2 || true) && cd /opt/gopkg/src/gopkg.in/yaml.v2 && git checkout eb3733d160e74a9c7e442f435eb3bea458e1d19f
+	(go get -d gopkg.in/yaml.v2 || true) && cd /opt/gopkg/src/gopkg.in/yaml.v2 && git checkout master && git pull && git checkout eb3733d160e74a9c7e442f435eb3bea458e1d19f
 
 github.com/andybalholm/cascadia
 	349dd0209470eabd9514242c688c403c0926d266	 -> 	service-backend
@@ -22,7 +22,7 @@ github.com/gorilla/securecookie
 golang.org/x/crypto
 	453249f01cfeb54c3d549ddb75ff152ca243f9d8	 -> 	service-backend
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-	(go get -d golang.org/x/crypto || true) && cd /opt/gopkg/src/golang.org/x/crypto && git checkout 453249f01cfeb54c3d549ddb75ff152ca243f9d8
+	(go get -d golang.org/x/crypto || true) && cd /opt/gopkg/src/golang.org/x/crypto && git checkout master && git pull && git checkout 453249f01cfeb54c3d549ddb75ff152ca243f9d8
 
 github.com/thoas/stats
 	152b5d051953fdb6e45f14b6826962aadc032324	 -> 	service-backend
@@ -62,12 +62,12 @@ github.com/gorilla/context
 xi2.org/x/xz
 	19aeb13c4e7cb6bd3188dfede73840f33455425a	 -> 	service-backend
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-	(go get -d xi2.org/x/xz || true) && cd /opt/gopkg/src/xi2.org/x/xz && git checkout 19aeb13c4e7cb6bd3188dfede73840f33455425a
+	(go get -d xi2.org/x/xz || true) && cd /opt/gopkg/src/xi2.org/x/xz && git checkout master && git pull && git checkout 19aeb13c4e7cb6bd3188dfede73840f33455425a
 
 gopkg.in/check.v1
 	20d25e2804050c1cd24a7eea1e7a6447dd0e74ec	 -> 	service-backend
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-	(go get -d gopkg.in/check.v1 || true) && cd /opt/gopkg/src/gopkg.in/check.v1 && git checkout 20d25e2804050c1cd24a7eea1e7a6447dd0e74ec
+	(go get -d gopkg.in/check.v1 || true) && cd /opt/gopkg/src/gopkg.in/check.v1 && git checkout master && git pull && git checkout 20d25e2804050c1cd24a7eea1e7a6447dd0e74ec
 
 github.com/go-utils/uslice
 	fb69df90f7992e63a8959323a08a85aaba012564	 -> 	service-backend
@@ -102,7 +102,7 @@ github.com/julienschmidt/httprouter
 gopkg.in/mgo.v2
 	1e52f6152a9b262873f831bb5a94bcd29ef38c38	 -> 	service-backend
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-	(go get -d gopkg.in/mgo.v2 || true) && cd /opt/gopkg/src/gopkg.in/mgo.v2 && git checkout 1e52f6152a9b262873f831bb5a94bcd29ef38c38
+	(go get -d gopkg.in/mgo.v2 || true) && cd /opt/gopkg/src/gopkg.in/mgo.v2 && git checkout master && git pull && git checkout 1e52f6152a9b262873f831bb5a94bcd29ef38c38
 
 github.com/blevesearch/segment
 	762005e7a34fd909a84586299f1dd457371d36ee	 -> 	service-backend
@@ -115,9 +115,9 @@ github.com/jinzhu/gorm
 	mkdir -p /opt/gopkg/src/github.com/jinzhu && cd /opt/gopkg/src/github.com/jinzhu && git clone https://github.com/jinzhu/gorm && cd /opt/gopkg/src/github.com/jinzhu/gorm && git checkout c3bb6aaa828867eec72dd8571d111e442688f85f
 
 github.com/coreos/bbolt
-	e1c92081e510bb6b2bbfc93e7e6bd0b6dabd3e12	 -> 	service-backend
+	v1.3.1-coreos.2                         	 -> 	service-backend
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-	mkdir -p /opt/gopkg/src/github.com/coreos && cd /opt/gopkg/src/github.com/coreos && git clone https://github.com/coreos/bbolt && cd /opt/gopkg/src/github.com/coreos/bbolt && git checkout e1c92081e510bb6b2bbfc93e7e6bd0b6dabd3e12
+	mkdir -p /opt/gopkg/src/github.com/coreos && cd /opt/gopkg/src/github.com/coreos && git clone https://github.com/coreos/bbolt && cd /opt/gopkg/src/github.com/coreos/bbolt && git checkout v1.3.1-coreos.2
 
 github.com/beevik/etree
 	15a30b44cfd6c5a16a7ddfe271bf146aaf2d3195	 -> 	service-backend
@@ -132,7 +132,7 @@ github.com/Redundancy/go-sync
 golang.org/x/oauth2
 	045497edb6234273d67dbc25da3f2ddbc4c4cacf	 -> 	service-backend
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-	(go get -d golang.org/x/oauth2 || true) && cd /opt/gopkg/src/golang.org/x/oauth2 && git checkout 045497edb6234273d67dbc25da3f2ddbc4c4cacf
+	(go get -d golang.org/x/oauth2 || true) && cd /opt/gopkg/src/golang.org/x/oauth2 && git checkout master && git pull && git checkout 045497edb6234273d67dbc25da3f2ddbc4c4cacf
 
 github.com/dc0d/cache-control
 	8eb23b9456881fd5a3095ff8d5096235771eb8f1	 -> 	service-backend
@@ -172,7 +172,7 @@ github.com/boltdb/bolt
 gopkg.in/vmihailenco/msgpack.v2
 	v2.8.3                                  	 -> 	service-backend
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-	(go get -d gopkg.in/vmihailenco/msgpack.v2 || true) && cd /opt/gopkg/src/gopkg.in/vmihailenco/msgpack.v2 && git checkout v2.8.3
+	(go get -d gopkg.in/vmihailenco/msgpack.v2 || true) && cd /opt/gopkg/src/gopkg.in/vmihailenco/msgpack.v2 && git checkout master && git pull && git checkout v2.8.3
 
 github.com/blevesearch/go-porterstemmer
 	23a2c8e5cf1f380f27722c6d2ae8896431dc7d0e	 -> 	service-backend
@@ -182,7 +182,7 @@ github.com/blevesearch/go-porterstemmer
 golang.org/x/sys/unix
 	07c182904dbd53199946ba614a412c61d3c548f5	 -> 	service-backend
 	-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -
-	(go get -d golang.org/x/sys/unix || true) && cd /opt/gopkg/src/golang.org/x/sys/unix && git checkout 07c182904dbd53199946ba614a412c61d3c548f5
+	(go get -d golang.org/x/sys/unix || true) && cd /opt/gopkg/src/golang.org/x/sys/unix && git checkout master && git pull && git checkout 07c182904dbd53199946ba614a412c61d3c548f5
 
 github.com/gorilla/sessions
 	b61c93cb7f67533c8bfbb5ea450efc07e5833c5e	 -> 	service-backend
