@@ -13,6 +13,7 @@ import (
     "github.com/zenazn/goji/web"
     "github.com/jinzhu/gorm"
     "github.com/google/go-github/github"
+    "github.com/blevesearch/bleve"
 
     "github.com/stkim1/backend/model"
     "github.com/stkim1/backend/config"
@@ -21,18 +22,12 @@ import (
 
 /* ------- GITHUG API CONTROL ------- */
 const (
-    githubWebURL string    = "https://github.com/"
-    DBMeta       string    = "META"
-    DBSupp       string    = "SUPP"
-    DBSocial     string    = "SOCI"
+    githubWebURL string = "https://github.com/"
+    DBMeta       string = "META"
+    DBSupp       string = "SUPP"
+    DBSocial     string = "SOCI"
+    SRCHIndex    string = "SECH"
 )
-
-func NewController(config *config.Config) *Controller {
-    return &Controller{
-        Config:         config,
-        githubClient:   githubV3Client(config.Github.ClientID, config.Github.ClientSecret),
-    }
-}
 
 // Model-View-Control
 type Controller struct {
@@ -41,6 +36,13 @@ type Controller struct {
 
     // in-memory variables
     TotalRepoCount      atomic.Value
+}
+
+func NewController(config *config.Config) *Controller {
+    return &Controller{
+        Config:         config,
+        githubClient:   githubV3Client(config.Github.ClientID, config.Github.ClientSecret),
+    }
 }
 
 func (ctrl *Controller) GetSession(c web.C) *sessions.Session {
@@ -57,6 +59,10 @@ func (ctrl *Controller) GetSuppleDB(c web.C) storage.Nosql {
 
 func (ctrl *Controller) GetSocialDB(c web.C) storage.Nosql {
     return c.Env[DBSocial].(storage.Nosql)
+}
+
+func (ctrl *Controller) GetSearchIndex(c web.C) bleve.Index {
+    return c.Env[SRCHIndex].(bleve.Index)
 }
 
 func (ctrl *Controller) IsXhr(c web.C) bool {
@@ -85,8 +91,10 @@ func (ctrl *Controller) IsXhr(c web.C) bool {
 */
 
 // Assignment of repo to column within a page
-const SingleColumnCount int = 10
-const TotalRowCount int = 3
+const (
+    SingleColumnCount int = 10
+    TotalRowCount int = 3
+)
 
 func GetAssignedRepoColumn(repoCount int) ([]*model.Repository, []*model.Repository, []*model.Repository) {
 
