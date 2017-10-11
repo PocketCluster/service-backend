@@ -82,7 +82,11 @@
         {{/REPOSITORIES}}
     </div>
     {{^REPOSITORIES}}
-      {{ERROR_MESSAGE}}
+    <div class="row">
+      <div class="span12">
+        <h3>{{ERROR_MESSAGE}}</h3>
+      </div>
+    </div>
     {{/REPOSITORIES}}
 
     <div id="loading" class="row"></div>

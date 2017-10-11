@@ -37,7 +37,8 @@ class SearchPage {
     if (term.length === 0) {
       return false;
     }
-    window.location.replace("/search?term=" + encodeURI(term));
+    var shref = "//" + window.location.host + "/search?term=" + encodeURI(term)
+    window.location.replace(shref);
   }
 }
 

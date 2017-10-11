@@ -10,6 +10,7 @@ import (
     log "github.com/Sirupsen/logrus"
     "github.com/jinzhu/gorm"
     "github.com/zenazn/goji/web"
+    humanize "github.com/dustin/go-humanize"
     "github.com/blevesearch/bleve"
     "github.com/blevesearch/bleve/search/query"
     psearch "github.com/stkim1/backend/search"
@@ -24,11 +25,12 @@ func (ctrl *Controller) ServeSearch(c web.C, req *http.Request) (string, int) {
             "DEFAULT_LANG": "utf-8",
             "SITEURL":      ctrl.Config.SiteURL,
             "THEME_LINK":   ctrl.Site.ThemeLink,
+            "TOTAL_COUNT":     humanize.FormatInteger("##,###.", int(ctrl.TotalRepoCount.Load().(int64))),
             "CATEGORIES":   model.GetDefaultCategory(),
         }
         db        *gorm.DB = ctrl.GetMetaDB(c)
         repoFound []model.Repository
-        qfrom          int = 0
+        qfrom     int = 0
     )
 
     // find the index to operate on
@@ -85,7 +87,7 @@ func (ctrl *Controller) ServeSearch(c web.C, req *http.Request) (string, int) {
     }
 
     if len(srsp.Hits) == 0 {
-        content["ERROR_MESSAGE"] = "no more search result :("
+        content["ERROR_MESSAGE"] = "no more result found."
     } else {
         for _, hit := range srsp.Hits {
             var repoHit model.Repository
