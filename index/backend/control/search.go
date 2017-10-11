@@ -3,7 +3,7 @@ package control
 import (
     "fmt"
     "net/http"
-//    "net/url"
+    "net/url"
     "strconv"
     "strings"
 
@@ -64,17 +64,23 @@ func (ctrl *Controller) ServeSearch(c web.C, req *http.Request) (string, int) {
     )
 
     // build a query
+/*
+    // (2017/10/10) we can use exact field matching query + compound. That's for later
     srchqry := bleve.NewTermQuery(term)
     srchqry.SetField(psearch.SearchFieldReadme)
+    srchqry.SetBoost(1.0)
+*/
+    srchqry := bleve.NewQueryStringQuery(term)
     srchqry.SetBoost(1.0)
 
     // build a request
     sreq := bleve.NewSearchRequestOptions(srchqry, size, from, false)
+    sreq.Fields = []string{psearch.SearchFieldTitle, psearch.SearchFieldReadme}
 
     // validate the query
     if srqv, ok := sreq.Query.(query.ValidatableQuery); ok {
         if err := srqv.Validate(); err != nil {
-            content["ERROR_MESSAGE"] = "error validating query"
+            content["ERROR_MESSAGE"] = "invalid search query"
             return util.RenderLayout(ctrl.Config.General.TemplatePath, "navhead.html.mustache", "search.html.mustache", content), http.StatusOK
         }
     }
@@ -97,10 +103,10 @@ func (ctrl *Controller) ServeSearch(c web.C, req *http.Request) (string, int) {
         content["REPOSITORIES"] = &repoFound
     }
 
+    // TODO : figure out passing query to next link
     if size <= len(srsp.Hits) {
-        nlink := fmt.Sprintf("/search?term=%v&page=%v", qterm, (from + 1))
-        //nlink := url.QueryEscape(nlink)
-        content["nextpagelink"] = nlink
+        nlink := url.QueryEscape(fmt.Sprintf("term=%v&page=%v", qterm, (from + 1)))
+        content["nextpagelink"] = fmt.Sprintf("/search?%v", nlink)
     }
 
     return util.RenderLayout(ctrl.Config.General.TemplatePath, "navhead.html.mustache", "search.html.mustache", content), http.StatusOK
