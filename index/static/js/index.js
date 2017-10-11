@@ -33,9 +33,12 @@ class IndexFrontPage {
   // search request submit
   searchSubmit(evt) {
     evt.preventDefault();
-
+    var term = $("form#nav-search input.form-control")[0].value.toString();
+    if (term.length === 0) {
+      return false;
+    }
+    window.location.assign("/search?term=" + encodeURI(term));
   }
-
 }
 
 document.addEventListener('DOMContentLoaded', () => new IndexFrontPage());

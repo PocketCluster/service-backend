@@ -27,3 +27,4 @@
 - [ ] deploy jQuery or a better alternative to dashboard app
 - [ ] mark any update error to dashboard
 - [ ] 404 error handling
+- [ ] `/robots.txt` doesn't work?
