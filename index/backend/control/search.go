@@ -1,19 +1,26 @@
 package control
 
 import (
-    "encoding/json"
     "net/http"
     "strconv"
 
+    log "github.com/Sirupsen/logrus"
     "github.com/pkg/errors"
+    "github.com/jinzhu/gorm"
     "github.com/zenazn/goji/web"
     "github.com/blevesearch/bleve"
     "github.com/blevesearch/bleve/search/query"
     psearch "github.com/stkim1/backend/search"
+    "github.com/stkim1/backend/model"
     "github.com/stkim1/backend/util"
 )
 
 func (ctrl *Controller) ServeSearch(c web.C, req *http.Request) (string, int) {
+    var (
+        db        *gorm.DB = ctrl.GetMetaDB(c)
+        repoFound []model.Repository
+    )
+
     // find the index to operate on
     index := ctrl.GetSearchIndex(c)
     if index == nil {
@@ -26,6 +33,7 @@ func (ctrl *Controller) ServeSearch(c web.C, req *http.Request) (string, int) {
         return util.JsonErrorResponse(errors.Errorf("invalid search query"))
     }
     // TODO : need sanitize term
+    log.Infof("Query term %v", qterm)
 
     // read which page this is in
     var qfrom int = 0
@@ -66,9 +74,24 @@ func (ctrl *Controller) ServeSearch(c web.C, req *http.Request) (string, int) {
         return util.JsonErrorResponse(errors.Errorf("end of search"))
     }
 
-    data, err := json.Marshal(srsp)
-    if err != nil {
-        return util.JsonErrorResponse(errors.WithMessage(err,"error parsing result query"))
+    for _, hit := range srsp.Hits {
+        var repoHit model.Repository
+        db.First(&repoHit, "repo_id = ?", hit.ID)
+        repoFound = append(repoFound, repoHit)
     }
-    return string(data), http.StatusOK
+
+    var content map[string]interface{} = map[string]interface{} {
+        "SITENAME":        ctrl.Config.SiteName,
+        "DEFAULT_LANG":    "utf-8",
+        "SITEURL":         ctrl.Config.SiteURL,
+        "THEME_LINK":      ctrl.Site.ThemeLink,
+        "CATEGORIES":      model.GetDefaultCategory(),
+        "repositories":    &repoFound,
+    }
+
+    if size <= len(srsp.Hits) {
+        content["nextpagelink"] = "/index" + strconv.Itoa(from + 1) + ".html"
+    }
+
+    return util.RenderLayout(ctrl.Config.General.TemplatePath, "navhead.html.mustache", "index.html.mustache", content), http.StatusOK
 }
