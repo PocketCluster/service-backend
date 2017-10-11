@@ -58,7 +58,7 @@
 
 <div class="container">
     <div id="indexes" class="row marketing">
-        {{#repositories}}
+        {{#REPOSITORIES}}
             <div class="span4 card" {{^LogoImage}}style="padding-top:10px;"{{/LogoImage}}>
                 {{#LogoImage}}
                     <div class="card-media" >
@@ -79,8 +79,11 @@
                     <p>{{Summary}}</p>
                 </div>
             </div>
-        {{/repositories}}
+        {{/REPOSITORIES}}
     </div>
+    {{^REPOSITORIES}}
+      {{ERROR_MESSAGE}}
+    {{/REPOSITORIES}}
 
     <div id="loading" class="row"></div>
 
@@ -115,7 +118,7 @@
 <script type="text/javascript">
     var staticRoot = "{{THEME_LINK}}";
 </script>
-<script type="text/javascript" src="{{THEME_LINK}}/js/index.js?v=20171010"></script>
+<script type="text/javascript" src="{{THEME_LINK}}/js/search.js?v=20171010"></script>
 <!--
 Designed and built by Marcello Palmitessa (http://twitter.com/aozoralabs), based on the great Twitter Bootstrap made by @mdo and @fat.
 

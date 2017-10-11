@@ -1,6 +1,6 @@
 'use strict';
 
-class IndexFrontPage {
+class SearchPage {
   constructor() {
     var grid = $('#indexes').masonry({
         columnWidth: '.card',
@@ -37,8 +37,8 @@ class IndexFrontPage {
     if (term.length === 0) {
       return false;
     }
-    window.location.assign("/search?term=" + encodeURI(term));
+    window.location.replace("/search?term=" + encodeURI(term));
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => new IndexFrontPage());
+document.addEventListener('DOMContentLoaded', () => new SearchPage());
