@@ -2,8 +2,7 @@
 
 - 10/10/2017
   * bolt -> coreos/bbolt for search stat/ supplement data/ social sharing
-
-- 10/09/2017
+  * syntax search activated
   * ScalaJS based frontend removed (We'd need to move to npm)
   * detailed error log print
 
@@ -27,7 +26,10 @@
 - [ ] deploy jQuery or a better alternative to dashboard app
 - [ ] mark any update error to dashboard
 - [ ] 404 error handling
-- [ ] `/robots.txt` doesn't work?
-- [ ] update infinite script to [`infinite-scroll`](https://infinite-scroll.com/)
-- [ ] update masonry as well for *back-button*
-- [ ] there is a glitch in paging index.html and categories due to infscrl.js.
+- [ ] `/robots.txt` request doesn't go to nginx. why?
+- [ ] sometimes, two identical repositories appear in the first page
+- [ ] cannot click 'PocketCluster Index' to go back to home
+- [ ] catch signal to stop as a service
+- [ ] [LTG] rebuild the js app with `vue.js` + `infscr.js` + `mansonry` in mind that it should feel smooth
+  * update infscr.js [`infinite-scroll`](https://infinite-scroll.com/) and masonry.
+  * there is a glitch in paging index.html and categories as infscrl.js automatically increase page number
