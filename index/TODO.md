@@ -29,4 +29,5 @@
 - [ ] 404 error handling
 - [ ] `/robots.txt` doesn't work?
 - [ ] update infinite script to [`infinite-scroll`](https://infinite-scroll.com/)
-- [ ] update masonry as well for back-button
+- [ ] update masonry as well for *back-button*
+- [ ] there is a glitch in paging index.html and categories due to infscrl.js.
