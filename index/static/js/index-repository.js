@@ -48,6 +48,7 @@ class RepositoryManagerApp {
     let requests = {
       "add-repo-url":  this.addRepoURL.value.toString(),
       "add-repo-cat":  this.addRepoCat.options[this.addRepoCat.selectedIndex].value.toString(),
+      "add-repo-desc": this.addRepoDesc.value.toString(),
       "add-repo-proj": this.addRepoProj.value.toString(),
       "add-repo-logo": this.addRepoLogo.value.toString(),
     };
@@ -70,6 +71,7 @@ class RepositoryManagerApp {
           switch(ret.status) {
             case "processed": {
               sstat.classList.remove("panel-warning")
+              sstat.classList.remove("panel-danger")
               sstat.classList.add("panel-success")
               sstat.style.visibility = "visible"
               srson.textContent = "Everything went ok! Reload page!"
@@ -78,6 +80,7 @@ class RepositoryManagerApp {
             case "duplicated": {
               app.isRepoDuplicated = true
               sstat.classList.remove("panel-success")
+              sstat.classList.remove("panel-danger")
               sstat.classList.add("panel-warning")
               sstat.style.visibility = "visible"
               srson.textContent = ret.reason.toString()
@@ -90,6 +93,7 @@ class RepositoryManagerApp {
             }
             case "error": {
               sstat.classList.remove("panel-success")
+              sstat.classList.remove("panel-warning")
               sstat.classList.add("panel-danger")
               sstat.style.visibility = "visible"
               srson.textContent = ret.reason.toString()
@@ -160,6 +164,7 @@ class RepositoryManagerApp {
           case "processed": {
             app.isRepoDuplicated = true
             sstat.classList.remove("panel-warning")
+            sstat.classList.remove("panel-danger")
             sstat.classList.add("panel-success")
             sstat.style.visibility = "visible"
             srson.textContent = "Everything went ok! Reload page!"
@@ -168,6 +173,7 @@ class RepositoryManagerApp {
           case "duplicated": {
             app.isRepoDuplicated = true
             sstat.classList.remove("panel-success")
+            sstat.classList.remove("panel-danger")
             sstat.classList.add("panel-warning")
             sstat.style.visibility = "visible"
             srson.textContent = ret.reason.toString()
@@ -180,6 +186,7 @@ class RepositoryManagerApp {
           }
           case "error": {
             sstat.classList.remove("panel-success")
+            sstat.classList.remove("panel-warning")
             sstat.classList.add("panel-danger")
             sstat.style.visibility = "visible"
             srson.textContent = ret.reason.toString()

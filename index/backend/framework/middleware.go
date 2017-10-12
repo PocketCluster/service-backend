@@ -31,6 +31,7 @@ func (a *Application) ApplyDbMap(c *web.C, h http.Handler) http.Handler {
         c.Env[control.DBMeta]      = a.MetaDB
         c.Env[control.DBSupp]      = a.SuppleDB
         c.Env[control.DBSocial]    = a.SocialDB
+        c.Env[control.SRCHIndex]   = a.SearchIndex
         h.ServeHTTP(w, r)
     }
     return http.HandlerFunc(fn)

@@ -32,7 +32,7 @@ func main() {
     if err != nil {
         log.Panic(errors.WithMessage(err, "Cannot load config"))
     }
-    runtime.GOMAXPROCS(cfg.General.MaxConcurrency)
+
     // Setup Controller
     ctrl = control.NewController(cfg)
     // setup Application
@@ -88,6 +88,10 @@ func main() {
     // Respotory
     goji.Get(regexp.MustCompile(`^/(?P<repo>[a-z0-9-]+).html$`),                     app.AddRoute(ctrl.Repository))
 
+    // search
+    goji.Get("/search",                                                         app.AddRoute(ctrl.ServeSearch))
+
+    // termination
     graceful.PostHook(func() {
         app.Close()
     })
@@ -95,5 +99,8 @@ func main() {
     // just before going into serve, initiate updater
     app.ScheduleMetaUpdate()
     app.ScheduleSuppUpdate()
+
+    // get the maximum perf
+    runtime.GOMAXPROCS(cfg.General.MaxConcurrency)
     goji.Serve()
 }

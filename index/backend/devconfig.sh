@@ -7,4 +7,4 @@ go run ${PWD}/exec/config/main.go
 
 echo "\nCheck Product Config..."
 export CONFIG_PATH=${PWD}/config.yaml
-go run ${PWD}/exec/config/main.go
+${PWD}/exec/config/config

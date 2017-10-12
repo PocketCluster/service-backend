@@ -113,34 +113,9 @@
 <script type="text/javascript" src="{{THEME_LINK}}/js/masonry.js?v=20160907"></script>
 <script type="text/javascript" src="{{THEME_LINK}}/js/jquery.infinitescroll.js?v=20170103"></script>
 <script type="text/javascript">
-    $(document).ready(function() {
-        var grid = $('#indexes').masonry({
-            columnWidth: '.card',
-            itemSelector: '.card',
-            percentPosition: true,
-            transitionDuration: 10,
-        });
-        grid.imagesLoaded().progress( function() {
-            grid.masonry('layout');
-        });
-        grid.infinitescroll({
-            loading: {
-                selector: '#loading',
-                finishedMsg: '<em>Feeling like adding your project? We have seats for you! Tweet <a href="https://twitter.com/stkim1">@stkim1</a> now!<em>',
-                msg: $('<div id="infscr-loading" class="span12"><img alt="Loading..." src="{{THEME_LINK}}/img/default.svg"/></div>'),
-            },
-            navSelector: '#pagination',
-            nextSelector: '#pagination a.next',
-            itemSelector: '.card',
-        },
-        function(elem) {
-            grid.masonry('appended', elem);
-            grid.imagesLoaded().progress( function() {
-                grid.masonry('layout');
-            });
-        });
-    });
+    var staticRoot = "{{THEME_LINK}}";
 </script>
+<script type="text/javascript" src="{{THEME_LINK}}/js/index.js?v=20171010"></script>
 <!--
 Designed and built by Marcello Palmitessa (http://twitter.com/aozoralabs), based on the great Twitter Bootstrap made by @mdo and @fat.
 

@@ -8,12 +8,15 @@ import (
 )
 
 const (
-    IndexNameRepoMeta  string       = "indexmeta"
-)
+    IndexNameRepoMeta   string = "indexmeta"
 
-const (
-    SearchTypeField    string       = "Type"
-    SearchTypeRepoMeta string       = "repometa"
+    SearchTypeField     string = "Type"
+    SearchTypeRepoMeta  string = "repometa"
+
+    SearchFieldSlug     string = "Slug"
+    SearchFieldCategory string = "Category"
+    SearchFieldTitle    string = "Title"
+    SearchFieldReadme   string = "Readme"
 )
 
 func BuildIndexMapping() (mapping.IndexMapping, error) {
@@ -27,10 +30,10 @@ func BuildIndexMapping() (mapping.IndexMapping, error) {
     kword.Analyzer = keyword.Name
 
     repoMapping := bleve.NewDocumentMapping()
-    repoMapping.AddFieldMappingsAt("Slug", kword)
-    repoMapping.AddFieldMappingsAt("Category", kword)
-    repoMapping.AddFieldMappingsAt("Title", englishText)
-    repoMapping.AddFieldMappingsAt("Readme", englishText)
+    repoMapping.AddFieldMappingsAt(SearchFieldSlug, kword)
+    repoMapping.AddFieldMappingsAt(SearchFieldCategory, kword)
+    repoMapping.AddFieldMappingsAt(SearchFieldTitle, englishText)
+    repoMapping.AddFieldMappingsAt(SearchFieldReadme, englishText)
 
     indexMapping := bleve.NewIndexMapping()
     indexMapping.AddDocumentMapping(SearchTypeRepoMeta, repoMapping)

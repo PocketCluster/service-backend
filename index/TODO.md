@@ -26,3 +26,8 @@
 - [ ] prevent meta update fixes back the title
 - [ ] deploy jQuery or a better alternative to dashboard app
 - [ ] mark any update error to dashboard
+- [ ] 404 error handling
+- [ ] `/robots.txt` doesn't work?
+- [ ] update infinite script to [`infinite-scroll`](https://infinite-scroll.com/)
+- [ ] update masonry as well for *back-button*
+- [ ] there is a glitch in paging index.html and categories due to infscrl.js.
