@@ -20,6 +20,9 @@ class SearchPage {
         navSelector: '#pagination',
         nextSelector: '#pagination a.next',
         itemSelector: '.card',
+        path: function(currPage) {
+            return $('#pagination a.next')[0].href + "&page=" + (currPage - 1);
+        },
     },
     (elem) => {
         grid.masonry('appended', elem);
