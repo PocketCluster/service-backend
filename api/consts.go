@@ -6,15 +6,13 @@ const (
     URLPackageRepo     string = APIPrefix + "/v014/package/repo"
     URLPackageSync     string = APIPrefix + "/v014/package/sync/:name"
     URLPackageMeta     string = APIPrefix + "/v014/package/meta/:name"
-    URLUserAuth        string = APIPrefix + "/v014/user/auth"
-)
+    URLAuthCheck       string = APIPrefix + "/v014/auth/check"
 
-const (
+
     URLHealthCheck     string = "/healthcheck"
     URLAppStats        string = "/stats"
-)
 
-const (
+
     FilePackageList    string = "list.json"
     FilePackageRepo    string = "srcs.json"
 
