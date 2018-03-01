@@ -7,8 +7,8 @@ import (
 type AuthIdentity struct {
     gorm.Model
     // hashed user invitation
-    UserID    string    `gorm:"column:user_id;type:VARCHAR(256) UNIQUE" sql:"index"`
+    Invitation    string    `gorm:"column:invitation;type:VARCHAR(40) UNIQUE" sql:"index"`
     // hashed device ID
-    DeviceID  string    `gorm:"column:device_id;type:VARCHAR(256)"`
+    Device        string    `gorm:"column:device;type:VARCHAR(40)"`
 }
 
