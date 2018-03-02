@@ -46,7 +46,7 @@ func (a *authGateway) IsUserAuthValid(w http.ResponseWriter, r *http.Request, _ 
         hashChecker string = "^[a-z0-9]{40}$"
     )
     var (
-        authid *model.AuthIdentity = nil
+        authid = model.AuthIdentity{}
     )
 
     if err := cforigin.IsOriginAllowedCountry(r); err != nil {
@@ -72,8 +72,8 @@ func (a *authGateway) IsUserAuthValid(w http.ResponseWriter, r *http.Request, _ 
     }
 
     // find invitation
-    a.orm.Where("invitation = ?", iMatch).First(&authid)
-    if authid == nil {
+    a.orm.Where("invitation = ?", iHash).First(&authid)
+    if len(authid.Invitation) == 0 {
         abnormal.ResponseJsonError(w, errmsg.ErrMsgJsonInvalidInvitation, http.StatusForbidden)
         return
     }
@@ -97,8 +97,8 @@ func (a *authGateway) IsUserAuthValid(w http.ResponseWriter, r *http.Request, _ 
     w.Header().Set("Server", "PocketCluster API Service")
     w.Header().Set("Content-Type", "application/json; charset=utf-8")
     w.Header().Set("Connection", "keep-alive")
-    //w.Header().Set("Etag", d.Name()) // file name
     w.Header().Set("Cache-Control", "max-age=3600") // 1 hr
     w.Header().Set("Expires", time.Now().UTC().Add(time.Hour).Format("Mon, 2 Jan 2006 15:04:05 MST"))
     json.NewEncoder(w).Encode(map[string]string{"auth":"pass"})
+    w.WriteHeader(http.StatusOK)
 }

@@ -34,6 +34,7 @@ func main() {
         log.Errorf("[DATABASE] auth db open error %v", errors.WithStack(derr).Error())
         os.Exit(2)
     }
+    defer orm.Close()
     authsrvc, err := auth.NewAuthGateway(orm)
     if err != nil {
         log.Errorf("[DATABASE] initialization error %v", errors.WithStack(err).Error())
