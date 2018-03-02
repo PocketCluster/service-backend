@@ -17,6 +17,7 @@ import (
     "github.com/stkim1/api/auth/model"
     "github.com/stkim1/sharedpkg/errmsg"
     "github.com/stkim1/sharedpkg/cforigin"
+    "fmt"
 )
 
 type AuthGateway interface {
@@ -44,6 +45,8 @@ func NewAuthGateway(orm *gorm.DB) (AuthGateway, error) {
 func (a *authGateway) IsUserAuthValid(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     const (
         hashChecker string = "^[a-z0-9]{40}$"
+        kInviation  string = "invitation"
+        kDevice     string = "device"
     )
     var (
         authid = model.AuthIdentity{}
@@ -56,7 +59,7 @@ func (a *authGateway) IsUserAuthValid(w http.ResponseWriter, r *http.Request, _ 
     }
 
     // c37ace13-e333-4f51-bb38-eb5728d14a38 -> 14b43cd77d391e05b1f24f5235aa596f63cf1bf5 | ^[a-z0-9]{40}$
-    iHash := strings.TrimSpace(r.FormValue("invitation"))
+    iHash := strings.TrimSpace(r.FormValue(kInviation))
     iMatch, err := regexp.MatchString(hashChecker, iHash)
     if err != nil || !iMatch {
         abnormal.ResponseJsonError(w, errmsg.ErrMsgJsonInvalidInvitation, http.StatusForbidden)
@@ -64,7 +67,7 @@ func (a *authGateway) IsUserAuthValid(w http.ResponseWriter, r *http.Request, _ 
     }
 
     // G8815052XYL -> 6c458e9b8821e4b5b6053bf91dc46723ad0e42d3 | ^[a-z0-9]{40}$
-    dHash := strings.TrimSpace(r.FormValue("device"))
+    dHash := strings.TrimSpace(r.FormValue(kDevice))
     dMatch, err := regexp.MatchString(hashChecker, dHash)
     if err != nil || !dMatch {
         abnormal.ResponseJsonError(w, errmsg.ErrMsgJsonUnsubmittedDevice, http.StatusForbidden)
@@ -72,7 +75,7 @@ func (a *authGateway) IsUserAuthValid(w http.ResponseWriter, r *http.Request, _ 
     }
 
     // find invitation
-    a.orm.Where("invitation = ?", iHash).First(&authid)
+    a.orm.Where(fmt.Sprintf("%s = ?", kInviation), iHash).First(&authid)
     if len(authid.Invitation) == 0 {
         abnormal.ResponseJsonError(w, errmsg.ErrMsgJsonInvalidInvitation, http.StatusForbidden)
         return
@@ -91,7 +94,7 @@ func (a *authGateway) IsUserAuthValid(w http.ResponseWriter, r *http.Request, _ 
 
     } else {
         // 3. when no device hash found, this is the first use
-        a.orm.Model(&authid).Update("device", dHash)
+        a.orm.Model(&authid).Update(kDevice, dHash)
     }
 
     w.Header().Set("Server", "PocketCluster API Service")
@@ -99,6 +102,6 @@ func (a *authGateway) IsUserAuthValid(w http.ResponseWriter, r *http.Request, _ 
     w.Header().Set("Connection", "keep-alive")
     w.Header().Set("Cache-Control", "max-age=3600") // 1 hr
     w.Header().Set("Expires", time.Now().UTC().Add(time.Hour).Format("Mon, 2 Jan 2006 15:04:05 MST"))
-    json.NewEncoder(w).Encode(map[string]string{"auth":"pass"})
+    json.NewEncoder(w).Encode(map[string]string{"auth":"pass", "error":""})
     w.WriteHeader(http.StatusOK)
 }

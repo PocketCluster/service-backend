@@ -55,7 +55,7 @@ func closeTestOrm(orm *gorm.DB) error {
     return os.Remove(dbfile)
 }
 
-func TestUncoveredCountry(t *testing.T) {
+func Test_UncoveredCountry(t *testing.T) {
     router, orm, err := openRouteWithAuth()
     defer closeTestOrm(orm)
     if err != nil {
@@ -76,7 +76,7 @@ func TestUncoveredCountry(t *testing.T) {
     }
 }
 
-func TestEmptyPostValue(t *testing.T) {
+func Test_Empty_Post_Value(t *testing.T) {
     router, orm, err := openRouteWithAuth()
     defer closeTestOrm(orm)
     if err != nil {
@@ -99,7 +99,7 @@ func TestEmptyPostValue(t *testing.T) {
     }
 }
 
-func TestInvalidInviatation(t *testing.T) {
+func Test_Invalid_Inviatation(t *testing.T) {
     router, orm, err := openRouteWithAuth()
     defer closeTestOrm(orm)
     if err != nil {
@@ -130,7 +130,7 @@ func TestInvalidInviatation(t *testing.T) {
     }
 }
 
-func TestNoDeviceHash(t *testing.T) {
+func Test_No_DeviceHash(t *testing.T) {
     router, orm, err := openRouteWithAuth()
     defer closeTestOrm(orm)
     if err != nil {
@@ -161,7 +161,47 @@ func TestNoDeviceHash(t *testing.T) {
     }
 }
 
-func TestInvitationNotFound(t *testing.T) {
+func Test_Invitation_With_Invalid_DevicePair(t *testing.T) {
+    router, orm, err := openRouteWithAuth()
+    defer closeTestOrm(orm)
+    if err != nil {
+        t.Error(err.Error())
+        t.FailNow()
+    }
+
+    var (
+        a = model.AuthIdentity{
+            Invitation: valid_inviation,
+            Device: valid_device,
+        }
+    )
+    orm.Create(&a)
+
+    v := url.Values{}
+    v.Set("invitation", valid_inviation)
+    v.Set("device", "1c458e9b8821e4b5b6053bf91dc46723ad0e42d3")
+
+    r, err := http.NewRequest("POST", api.URLAuthCheck, strings.NewReader(v.Encode()))
+    if err != nil {
+        t.Errorf("request construction error : %v", err.Error())
+        t.FailNow()
+    }
+    r.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+    r.Header.Set("cf-ipcountry", "US")
+
+    w := httptest.NewRecorder()
+    router.ServeHTTP(w, r)
+    if w.Code != http.StatusForbidden {
+        t.Errorf("[%v] invalid response code : %v", api.URLAuthCheck, w.Code)
+        t.FailNow()
+    }
+    if w.Body.String() != fmt.Sprintln(errmsg.ErrMsgJsonUnsubmittedDevice) {
+        t.Errorf("[%v] invalid response body : %v", api.URLAuthCheck, w.Body.String())
+        t.FailNow()
+    }
+}
+
+func Test_Invitation_NotFound(t *testing.T) {
     router, orm, err := openRouteWithAuth()
     defer closeTestOrm(orm)
     if err != nil {
@@ -193,7 +233,7 @@ func TestInvitationNotFound(t *testing.T) {
     }
 }
 
-func TestInvitationWithoutDevicePair(t *testing.T) {
+func Test_Invitation_Without_DevicePair(t *testing.T) {
     router, orm, err := openRouteWithAuth()
     defer closeTestOrm(orm)
     if err != nil {
@@ -202,9 +242,11 @@ func TestInvitationWithoutDevicePair(t *testing.T) {
     }
 
     var (
-        a, b = model.AuthIdentity{}, model.AuthIdentity{}
+        a = model.AuthIdentity{
+            Invitation: valid_inviation,
+        }
+        b = model.AuthIdentity{}
     )
-    a.Invitation = valid_inviation
     orm.Create(&a)
 
     v := url.Values{}
@@ -225,7 +267,122 @@ func TestInvitationWithoutDevicePair(t *testing.T) {
         t.Errorf("[%v] invalid response. code : %v | message %v", api.URLAuthCheck, w.Code, w.Body.String())
         t.FailNow()
     }
-    if w.Body.String() != fmt.Sprintln(`{"auth":"pass"}`) {
+    if w.Body.String() != fmt.Sprintln(`{"auth":"pass","error":""}`) {
+        t.Errorf("[%v] invalid response body : %v", api.URLAuthCheck, w.Body.String())
+        t.FailNow()
+    }
+
+    orm.Where("invitation = ?", valid_inviation).First(&b)
+    if len(b.Invitation) == 0 {
+        t.Errorf("unable to find inviation with valid code")
+        t.FailNow()
+    }
+    if b.Invitation != valid_inviation {
+        t.Errorf("unable to find the corresponding invitation with code")
+        t.FailNow()
+    }
+    if b.Device != valid_device {
+        t.Errorf("incorrect device hash for invitation")
+        t.FailNow()
+    }
+}
+
+func Test_Invitation_With_DevicePair(t *testing.T) {
+    router, orm, err := openRouteWithAuth()
+    defer closeTestOrm(orm)
+    if err != nil {
+        t.Error(err.Error())
+        t.FailNow()
+    }
+
+    var (
+        a = model.AuthIdentity{
+            Invitation: valid_inviation,
+            Device: valid_device,
+        }
+        b = model.AuthIdentity{}
+    )
+    orm.Create(&a)
+
+    v := url.Values{}
+    v.Set("invitation", valid_inviation)
+    v.Set("device", valid_device)
+
+    r, err := http.NewRequest("POST", api.URLAuthCheck, strings.NewReader(v.Encode()))
+    if err != nil {
+        t.Errorf("request construction error : %v", err.Error())
+        t.FailNow()
+    }
+    r.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+    r.Header.Set("cf-ipcountry", "US")
+
+    w := httptest.NewRecorder()
+    router.ServeHTTP(w, r)
+    if w.Code != http.StatusOK {
+        t.Errorf("[%v] invalid response. code : %v | message %v", api.URLAuthCheck, w.Code, w.Body.String())
+        t.FailNow()
+    }
+    if w.Body.String() != fmt.Sprintln(`{"auth":"pass","error":""}`) {
+        t.Errorf("[%v] invalid response body : %v", api.URLAuthCheck, w.Body.String())
+        t.FailNow()
+    }
+
+    orm.Where("invitation = ?", valid_inviation).First(&b)
+    if len(b.Invitation) == 0 {
+        t.Errorf("unable to find inviation with valid code")
+        t.FailNow()
+    }
+    if b.Invitation != valid_inviation {
+        t.Errorf("unable to find the corresponding invitation with code")
+        t.FailNow()
+    }
+    if b.Device != valid_device {
+        t.Errorf("incorrect device hash for invitation")
+        t.FailNow()
+    }
+}
+
+
+func Test_Invitation_Check_With_Pool(t *testing.T) {
+    router, orm, err := openRouteWithAuth()
+    defer closeTestOrm(orm)
+    if err != nil {
+        t.Error(err.Error())
+        t.FailNow()
+    }
+
+    var (
+        a = model.AuthIdentity{
+            Invitation: valid_inviation,
+            Device: valid_device,
+        }
+        a1 = model.AuthIdentity{
+            Invitation: "24b43cd77d391e05b1f24f5237aa596f63cf1bf5",
+            Device: valid_device,
+        }
+        b = model.AuthIdentity{}
+    )
+    orm.Create(&a).Create(&a1)
+
+    v := url.Values{}
+    v.Set("invitation", valid_inviation)
+    v.Set("device", valid_device)
+
+    r, err := http.NewRequest("POST", api.URLAuthCheck, strings.NewReader(v.Encode()))
+    if err != nil {
+        t.Errorf("request construction error : %v", err.Error())
+        t.FailNow()
+    }
+    r.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+    r.Header.Set("cf-ipcountry", "US")
+
+    w := httptest.NewRecorder()
+    router.ServeHTTP(w, r)
+    if w.Code != http.StatusOK {
+        t.Errorf("[%v] invalid response. code : %v | message %v", api.URLAuthCheck, w.Code, w.Body.String())
+        t.FailNow()
+    }
+    if w.Body.String() != fmt.Sprintln(`{"auth":"pass","error":""}`) {
         t.Errorf("[%v] invalid response body : %v", api.URLAuthCheck, w.Body.String())
         t.FailNow()
     }
