@@ -23,6 +23,7 @@ func testEmptyCSVFilename() string {
 func Test_CSV_Reading_Fail(t *testing.T) {
     if _, err := readRequestCSV(""); err == nil {
         t.Error("absent file should generate error")
+        t.FailNow()
     } else {
         t.Log(err.Error())
     }
@@ -31,6 +32,7 @@ func Test_CSV_Reading_Fail(t *testing.T) {
 func Test_Empty_CSV_Reading_Fail(t *testing.T) {
     if req, err := readRequestCSV(testEmptyCSVFilename()); err == nil {
         t.Errorf("empty file should generate error | %v", req)
+        t.FailNow()
     } else {
         t.Log(err.Error())
     }
