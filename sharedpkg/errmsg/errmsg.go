@@ -6,5 +6,5 @@ const (
     ErrMsgJsonInternalServiceIssue  string = "{\"error\":\"internal service error\"}"
     ErrMsgJsonUnallowedCountry      string = "{\"error\":\"uncovered region\"}"
     ErrMsgJsonInvalidInvitation     string = "{\"error\":\"invalid invitation code\"}"
-    ErrMsgJsonUnsubmittedDevice     string = "{\"error\":\"unsubmitted device\"}"
+    ErrMsgJsonUnsubmittedDevice     string = "{\"error\":\"invitation code used\"}"
 )
