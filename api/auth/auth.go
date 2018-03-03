@@ -2,8 +2,8 @@ package auth
 
 import (
     "encoding/json"
+    "fmt"
     "net/http"
-    "regexp"
     "strings"
     "time"
 
@@ -11,13 +11,11 @@ import (
     "github.com/pkg/errors"
     "github.com/julienschmidt/httprouter"
     "github.com/jinzhu/gorm"
-    //"golang.org/x/crypto/ripemd160"
 
     "github.com/stkim1/api/abnormal"
     "github.com/stkim1/api/auth/model"
     "github.com/stkim1/sharedpkg/errmsg"
     "github.com/stkim1/sharedpkg/cforigin"
-    "fmt"
 )
 
 type AuthGateway interface {
@@ -44,7 +42,6 @@ func NewAuthGateway(orm *gorm.DB) (AuthGateway, error) {
 
 func (a *authGateway) IsUserAuthValid(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
     const (
-        hashChecker string = "^[a-z0-9]{40}$"
         kInviation  string = "invitation"
         kDevice     string = "device"
     )
@@ -60,32 +57,30 @@ func (a *authGateway) IsUserAuthValid(w http.ResponseWriter, r *http.Request, _ 
 
     // c37ace13-e333-4f51-bb38-eb5728d14a38 -> 14b43cd77d391e05b1f24f5235aa596f63cf1bf5 | ^[a-z0-9]{40}$
     iHash := strings.TrimSpace(r.FormValue(kInviation))
-    iMatch, err := regexp.MatchString(hashChecker, iHash)
-    if err != nil || !iMatch {
+    if !model.IsValidHash(iHash) {
         abnormal.ResponseJsonError(w, errmsg.ErrMsgJsonInvalidInvitation, http.StatusForbidden)
         return
     }
 
     // G8815052XYL -> 6c458e9b8821e4b5b6053bf91dc46723ad0e42d3 | ^[a-z0-9]{40}$
     dHash := strings.TrimSpace(r.FormValue(kDevice))
-    dMatch, err := regexp.MatchString(hashChecker, dHash)
-    if err != nil || !dMatch {
+    if !model.IsValidHash(dHash) {
         abnormal.ResponseJsonError(w, errmsg.ErrMsgJsonUnsubmittedDevice, http.StatusForbidden)
         return
     }
 
     // find invitation
-    a.orm.Where(fmt.Sprintf("%s = ?", kInviation), iHash).First(&authid)
-    if len(authid.Invitation) == 0 {
+    a.orm.Where(fmt.Sprintf("%s = ?", model.ColInvHash), iHash).First(&authid)
+    if len(authid.InvHash) == 0 {
         abnormal.ResponseJsonError(w, errmsg.ErrMsgJsonInvalidInvitation, http.StatusForbidden)
         return
     }
 
     // check device hash
-    if len(authid.Device) != 0 {
+    if len(authid.DevHash) != 0 {
 
         // 1. when device hash is not equal to submitted hash
-        if authid.Device != dHash {
+        if authid.DevHash != dHash {
             abnormal.ResponseJsonError(w, errmsg.ErrMsgJsonUnsubmittedDevice, http.StatusForbidden)
             return
         }
@@ -94,7 +89,7 @@ func (a *authGateway) IsUserAuthValid(w http.ResponseWriter, r *http.Request, _ 
 
     } else {
         // 3. when no device hash found, this is the first use
-        a.orm.Model(&authid).Update(kDevice, dHash)
+        a.orm.Model(&authid).Update(model.ColDevHash, dHash)
     }
 
     w.Header().Set("Server", "PocketCluster API Service")

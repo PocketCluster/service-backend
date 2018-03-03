@@ -1,14 +1,36 @@
 package model
 
 import (
+    "regexp"
+
     "github.com/jinzhu/gorm"
+)
+
+const (
+    ColEmail         string = "email"
+    ColInvitation    string = "invitation"
+    ColInvHash       string = "invhash"
+    ColDevHash       string = "devhash"
+
+    RegHashChecker   string = "^[a-z0-9]{40}$"
 )
 
 type AuthIdentity struct {
     gorm.Model
+    // user email
+    Email         string    `gorm:"column:email;type:VARCHAR(256)"`
+    // user invitation
+    Invitation    string    `gorm:"column:invitation;type:VARCHAR(20)"`
     // hashed user invitation
-    Invitation    string    `gorm:"column:invitation;type:VARCHAR(40) UNIQUE" sql:"index"`
+    InvHash       string    `gorm:"column:invhash;type:VARCHAR(40)"`
     // hashed device ID
-    Device        string    `gorm:"column:device;type:VARCHAR(40)"`
+    DevHash       string    `gorm:"column:devhash;type:VARCHAR(40)"`
 }
 
+func IsValidHash(hashstr string) bool {
+    if len(hashstr) != 40 {
+        return false
+    }
+    match, _ := regexp.MatchString(RegHashChecker, hashstr)
+    return match
+}

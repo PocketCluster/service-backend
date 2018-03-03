@@ -171,8 +171,8 @@ func Test_Invitation_With_Invalid_DevicePair(t *testing.T) {
 
     var (
         a = model.AuthIdentity{
-            Invitation: valid_inviation,
-            Device: valid_device,
+            InvHash: valid_inviation,
+            DevHash: valid_device,
         }
     )
     orm.Create(&a)
@@ -243,7 +243,7 @@ func Test_Invitation_Without_DevicePair(t *testing.T) {
 
     var (
         a = model.AuthIdentity{
-            Invitation: valid_inviation,
+            InvHash: valid_inviation,
         }
         b = model.AuthIdentity{}
     )
@@ -272,16 +272,16 @@ func Test_Invitation_Without_DevicePair(t *testing.T) {
         t.FailNow()
     }
 
-    orm.Where("invitation = ?", valid_inviation).First(&b)
-    if len(b.Invitation) == 0 {
+    orm.Where(fmt.Sprintf("%s = ?", model.ColInvHash), valid_inviation).First(&b)
+    if len(b.InvHash) == 0 {
         t.Errorf("unable to find inviation with valid code")
         t.FailNow()
     }
-    if b.Invitation != valid_inviation {
+    if b.InvHash != valid_inviation {
         t.Errorf("unable to find the corresponding invitation with code")
         t.FailNow()
     }
-    if b.Device != valid_device {
+    if b.DevHash != valid_device {
         t.Errorf("incorrect device hash for invitation")
         t.FailNow()
     }
@@ -297,8 +297,8 @@ func Test_Invitation_With_DevicePair(t *testing.T) {
 
     var (
         a = model.AuthIdentity{
-            Invitation: valid_inviation,
-            Device: valid_device,
+            InvHash: valid_inviation,
+            DevHash: valid_device,
         }
         b = model.AuthIdentity{}
     )
@@ -327,16 +327,16 @@ func Test_Invitation_With_DevicePair(t *testing.T) {
         t.FailNow()
     }
 
-    orm.Where("invitation = ?", valid_inviation).First(&b)
-    if len(b.Invitation) == 0 {
+    orm.Where(fmt.Sprintf("%s = ?", model.ColInvHash), valid_inviation).First(&b)
+    if len(b.InvHash) == 0 {
         t.Errorf("unable to find inviation with valid code")
         t.FailNow()
     }
-    if b.Invitation != valid_inviation {
+    if b.InvHash != valid_inviation {
         t.Errorf("unable to find the corresponding invitation with code")
         t.FailNow()
     }
-    if b.Device != valid_device {
+    if b.DevHash != valid_device {
         t.Errorf("incorrect device hash for invitation")
         t.FailNow()
     }
@@ -353,12 +353,12 @@ func Test_Invitation_Check_With_Pool(t *testing.T) {
 
     var (
         a = model.AuthIdentity{
-            Invitation: valid_inviation,
-            Device: valid_device,
+            InvHash: valid_inviation,
+            DevHash: valid_device,
         }
         a1 = model.AuthIdentity{
-            Invitation: "24b43cd77d391e05b1f24f5237aa596f63cf1bf5",
-            Device: valid_device,
+            InvHash: "24b43cd77d391e05b1f24f5237aa596f63cf1bf5",
+            DevHash: valid_device,
         }
         b = model.AuthIdentity{}
     )
@@ -387,16 +387,16 @@ func Test_Invitation_Check_With_Pool(t *testing.T) {
         t.FailNow()
     }
 
-    orm.Where("invitation = ?", valid_inviation).First(&b)
-    if len(b.Invitation) == 0 {
+    orm.Where(fmt.Sprintf("%s = ?", model.ColInvHash), valid_inviation).First(&b)
+    if len(b.InvHash) == 0 {
         t.Errorf("unable to find inviation with valid code")
         t.FailNow()
     }
-    if b.Invitation != valid_inviation {
+    if b.InvHash != valid_inviation {
         t.Errorf("unable to find the corresponding invitation with code")
         t.FailNow()
     }
-    if b.Device != valid_device {
+    if b.DevHash != valid_device {
         t.Errorf("incorrect device hash for invitation")
         t.FailNow()
     }
