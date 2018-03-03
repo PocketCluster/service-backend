@@ -6,6 +6,7 @@ import (
     "os"
     "path/filepath"
     "runtime"
+    "sync"
 
     log "github.com/Sirupsen/logrus"
     "github.com/pkg/errors"
@@ -21,7 +22,7 @@ import (
     "github.com/stkim1/api/package/list"
     "github.com/stkim1/api/package/repo"
     "github.com/stkim1/api/package/meta"
-    "github.com/stkim1/api/package/sync"
+    apisync "github.com/stkim1/api/package/sync"
 )
 
 func main() {
@@ -62,7 +63,7 @@ func main() {
     // setup route path
     router.GET(api.URLPackageList, list.PackageList)
     router.GET(api.URLPackageRepo, repo.RepoList)
-    router.GET(api.URLPackageSync, sync.PackageSync)
+    router.GET(api.URLPackageSync, apisync.PackageSync)
     router.GET(api.URLPackageMeta, meta.PackageMeta)
 
     // setup auth path
@@ -79,10 +80,23 @@ func main() {
         w.Write(s)
     })
 
+    // setup inv request refresher
+    var (
+        closeInvRef = make(chan interface{})
+        invRefWaiter = sync.WaitGroup{}
+    )
+
+    invRefWaiter.Add(1)
+    auth.RefreshInvitationList(&invRefWaiter, closeInvRef, orm, "/api-service/v014/request.csv", "/api-service/v014/invitation.csv")
+
     // start serving
     log.Printf("API Service Running...")
     err = http.ListenAndServe(":8080", router);
     if err != nil {
         log.Fatal(errors.WithStack(err))
     }
+    go func() {
+        close(closeInvRef)
+    }()
+    invRefWaiter.Wait()
 }

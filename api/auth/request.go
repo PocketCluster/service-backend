@@ -7,7 +7,10 @@ import (
     "os"
     "regexp"
     "strings"
+    "sync"
+    "time"
 
+    log "github.com/Sirupsen/logrus"
     "github.com/pkg/errors"
     "github.com/jinzhu/gorm"
     "golang.org/x/crypto/ripemd160"
@@ -116,3 +119,71 @@ func recordInvitation(orm *gorm.DB, filename string) error {
     return nil
 }
 
+func RefreshInvitationList(wg *sync.WaitGroup, isTermC <- chan interface{}, orm *gorm.DB, reqcsv, invcsv string) error {
+    if wg == nil {
+        return errors.New("invalid workgroup")
+    }
+    if orm == nil {
+        return errors.New("invalid orm")
+    }
+    if len(reqcsv) == 0 {
+        return errors.New("invalid request list")
+    }
+    if len(invcsv) == 0 {
+        return errors.New("invalid request list")
+    }
+
+    go func(fwg *sync.WaitGroup, fisTermC <- chan interface{}, form *gorm.DB, freqcsv, finvcsv string) error {
+        var reftick = time.NewTicker(time.Minute * 5)
+        defer func() {
+            reftick.Stop()
+            fwg.Done()
+        }()
+
+        {
+            // update invitation list as soon as start
+            reqs, err := readRequestCSV(freqcsv)
+            if err != nil {
+                log.Error(err.Error())
+                return errors.WithStack(err)
+            }
+            err = updateRequestRecord(reqs, form)
+            if err != nil {
+                log.Error(err.Error())
+                return errors.WithStack(err)
+            }
+            err = recordInvitation(orm, finvcsv)
+            if err != nil {
+                log.Error(err.Error())
+                return errors.WithStack(err)
+            }
+        }
+
+        for {
+            select {
+                case <- fisTermC: {
+                    return nil
+                }
+                case <- reftick.C: {
+                    reqs, err := readRequestCSV(freqcsv)
+                    if err != nil {
+                        log.Error(err.Error())
+                        return errors.WithStack(err)
+                    }
+                    err = updateRequestRecord(reqs, form)
+                    if err != nil {
+                        log.Error(err.Error())
+                        return errors.WithStack(err)
+                    }
+                    err = recordInvitation(orm, finvcsv)
+                    if err != nil {
+                        log.Error(err.Error())
+                        return errors.WithStack(err)
+                    }
+                }
+            }
+        }
+    }(wg, isTermC, orm, reqcsv, invcsv)
+
+    return nil
+}
