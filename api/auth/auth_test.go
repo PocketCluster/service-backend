@@ -25,12 +25,32 @@ const (
     valid_device    = "6c458e9b8821e4b5b6053bf91dc46723ad0e42d3"
 )
 
-func openRouteWithAuth() (*httprouter.Router, *gorm.DB, error) {
+func testOrmFilename() string {
     var (
         _, testfile, _, _ = runtime.Caller(0)
-        dbfile = filepath.Join(filepath.Dir(testfile), "auth.sql")
     )
-    orm, err := gorm.Open("sqlite3", dbfile)
+    return filepath.Join(filepath.Dir(testfile), "auth.sql")
+}
+
+func openTestOrm() (*gorm.DB, error) {
+    orm, err := gorm.Open("sqlite3", testOrmFilename())
+    if err != nil {
+        return nil, err
+    }
+    orm.CreateTable(&model.AuthIdentity{})
+    return orm, nil
+}
+
+func closeTestOrm(orm *gorm.DB) error {
+    if orm == nil {
+        return nil
+    }
+    orm.Close()
+    return os.Remove(testOrmFilename())
+}
+
+func openRouteWithAuth() (*httprouter.Router, *gorm.DB, error) {
+    orm, err := openTestOrm()
     if err != nil {
         return nil, nil, err
     }
@@ -43,25 +63,13 @@ func openRouteWithAuth() (*httprouter.Router, *gorm.DB, error) {
     return router, orm, nil
 }
 
-func closeTestOrm(orm *gorm.DB) error {
-    if orm == nil {
-        return nil
-    }
-    orm.Close()
-    var (
-        _, testfile, _, _ = runtime.Caller(0)
-        dbfile = filepath.Join(filepath.Dir(testfile), "auth.sql")
-    )
-    return os.Remove(dbfile)
-}
-
 func Test_UncoveredCountry(t *testing.T) {
     router, orm, err := openRouteWithAuth()
-    defer closeTestOrm(orm)
     if err != nil {
         t.Error(err.Error())
         t.FailNow()
     }
+    defer closeTestOrm(orm)
 
     r, _ := http.NewRequest("POST", api.URLAuthCheck, nil)
     w := httptest.NewRecorder()
@@ -78,11 +86,11 @@ func Test_UncoveredCountry(t *testing.T) {
 
 func Test_Empty_Post_Value(t *testing.T) {
     router, orm, err := openRouteWithAuth()
-    defer closeTestOrm(orm)
     if err != nil {
         t.Error(err.Error())
         t.FailNow()
     }
+    defer closeTestOrm(orm)
 
     r, _ := http.NewRequest("POST", api.URLAuthCheck, nil)
     r.Header.Set("cf-ipcountry", "US")
@@ -101,11 +109,11 @@ func Test_Empty_Post_Value(t *testing.T) {
 
 func Test_Invalid_Inviatation(t *testing.T) {
     router, orm, err := openRouteWithAuth()
-    defer closeTestOrm(orm)
     if err != nil {
         t.Error(err.Error())
         t.FailNow()
     }
+    defer closeTestOrm(orm)
 
     v := url.Values{}
     v.Set("invitation", "14b43cd77d391e05b1f24f523 aa596f63cf1bf5")
@@ -132,11 +140,11 @@ func Test_Invalid_Inviatation(t *testing.T) {
 
 func Test_No_DeviceHash(t *testing.T) {
     router, orm, err := openRouteWithAuth()
-    defer closeTestOrm(orm)
     if err != nil {
         t.Error(err.Error())
         t.FailNow()
     }
+    defer closeTestOrm(orm)
 
     v := url.Values{}
     v.Set("invitation", valid_inviation)
@@ -163,11 +171,11 @@ func Test_No_DeviceHash(t *testing.T) {
 
 func Test_Invitation_With_Invalid_DevicePair(t *testing.T) {
     router, orm, err := openRouteWithAuth()
-    defer closeTestOrm(orm)
     if err != nil {
         t.Error(err.Error())
         t.FailNow()
     }
+    defer closeTestOrm(orm)
 
     var (
         a = model.AuthIdentity{
@@ -203,11 +211,11 @@ func Test_Invitation_With_Invalid_DevicePair(t *testing.T) {
 
 func Test_Invitation_NotFound(t *testing.T) {
     router, orm, err := openRouteWithAuth()
-    defer closeTestOrm(orm)
     if err != nil {
         t.Error(err.Error())
         t.FailNow()
     }
+    defer closeTestOrm(orm)
 
     v := url.Values{}
     v.Set("invitation", valid_inviation)
@@ -235,11 +243,11 @@ func Test_Invitation_NotFound(t *testing.T) {
 
 func Test_Invitation_Without_DevicePair(t *testing.T) {
     router, orm, err := openRouteWithAuth()
-    defer closeTestOrm(orm)
     if err != nil {
         t.Error(err.Error())
         t.FailNow()
     }
+    defer closeTestOrm(orm)
 
     var (
         a = model.AuthIdentity{
@@ -289,11 +297,11 @@ func Test_Invitation_Without_DevicePair(t *testing.T) {
 
 func Test_Invitation_With_DevicePair(t *testing.T) {
     router, orm, err := openRouteWithAuth()
-    defer closeTestOrm(orm)
     if err != nil {
         t.Error(err.Error())
         t.FailNow()
     }
+    defer closeTestOrm(orm)
 
     var (
         a = model.AuthIdentity{
@@ -345,11 +353,11 @@ func Test_Invitation_With_DevicePair(t *testing.T) {
 
 func Test_Invitation_Check_With_Pool(t *testing.T) {
     router, orm, err := openRouteWithAuth()
-    defer closeTestOrm(orm)
     if err != nil {
         t.Error(err.Error())
         t.FailNow()
     }
+    defer closeTestOrm(orm)
 
     var (
         a = model.AuthIdentity{

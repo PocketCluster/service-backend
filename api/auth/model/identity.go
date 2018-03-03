@@ -27,6 +27,10 @@ type AuthIdentity struct {
     DevHash       string    `gorm:"column:devhash;type:VARCHAR(40)"`
 }
 
+func (AuthIdentity) TableName() string {
+    return "auth_identity"
+}
+
 func IsValidHash(hashstr string) bool {
     if len(hashstr) != 40 {
         return false

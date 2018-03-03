@@ -1,9 +1,12 @@
 package auth
 
 import (
+    "os"
+    "path/filepath"
+    "reflect"
     "runtime"
     "testing"
-    "path/filepath"
+    "io/ioutil"
 )
 
 func testCSVFilename() string {
@@ -18,6 +21,13 @@ func testEmptyCSVFilename() string {
         _, testfile, _, _= runtime.Caller(0)
     )
     return filepath.Join(filepath.Dir(testfile), "empty_request_test.csv")
+}
+
+func testInvRecFilename() string {
+    var (
+        _, testfile, _, _= runtime.Caller(0)
+    )
+    return filepath.Join(filepath.Dir(testfile), "invitation_record_test.csv")
 }
 
 func Test_CSV_Reading_Fail(t *testing.T) {
@@ -39,11 +49,50 @@ func Test_Empty_CSV_Reading_Fail(t *testing.T) {
 }
 
 func Test_CSV_Reading(t *testing.T) {
-    csvfile := testCSVFilename()
-    req, err := readRequestCSV(csvfile)
+    reqs, err := readRequestCSV(testCSVFilename())
     if err != nil {
         t.Error(err.Error())
         t.FailNow()
     }
-    t.Logf("%v | %v", csvfile, req)
+    var expected = []string{"ldgoodbrod@gmail.com", "socjuan.jbt@gmail.com", "diegobarrioh@gmail.com"}
+    if !reflect.DeepEqual(reqs, expected) {
+        t.Errorf("email list does not match expected | actual %v, expected %v", reqs, expected)
+        t.FailNow()
+    }
+}
+
+func Test_Invitation_CSV_Record(t *testing.T) {
+    orm, err := openTestOrm()
+    if err != nil {
+        t.Error(err.Error())
+        t.FailNow()
+    }
+    defer closeTestOrm(orm)
+
+    reqs, err := readRequestCSV(testCSVFilename())
+    if err != nil {
+        t.Error(err.Error())
+        t.FailNow()
+    }
+
+    err = updateRequestRecord(reqs, orm)
+    if err != nil {
+        t.Error(err.Error())
+        t.FailNow()
+    }
+
+    err = recordInvitation(orm, testInvRecFilename())
+    if err != nil {
+        t.Error(err.Error())
+        t.FailNow()
+    }
+
+    actual, err := ioutil.ReadFile(testInvRecFilename())
+    if err != nil {
+        t.Error(err.Error())
+        t.FailNow()
+    }
+    t.Log(string(actual))
+
+    os.Remove(testInvRecFilename())
 }
