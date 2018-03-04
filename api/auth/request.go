@@ -82,7 +82,7 @@ func updateRequestRecord(requester []string, orm *gorm.DB) error {
         full := fmt.Sprintf("%s-%s-%s-%s-%s", ic[0:4], ic[4:8], ic[8:12], ic[12:16], ic[16:])
         hasher := ripemd160.New()
         hasher.Write([]byte(full))
-        iHash := fmt.Sprintf("%x\n", hasher.Sum(nil))
+        iHash := fmt.Sprintf("%x", hasher.Sum(nil))
 
         // save to orm
         authid.Email = req
@@ -105,7 +105,7 @@ func recordInvitation(orm *gorm.DB, filename string) error {
         return errors.New("empty invitation list")
     }
 
-    invrec, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+    invrec, err := os.OpenFile(filename, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
     if err != nil {
         return errors.WithStack(err)
     }

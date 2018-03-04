@@ -50,7 +50,7 @@ func (a *authGateway) IsUserAuthValid(w http.ResponseWriter, r *http.Request, _ 
     )
 
     if err := cforigin.IsOriginAllowedCountry(r); err != nil {
-        log.Debugf(errors.WithStack(err).Error())
+        log.Error(errors.WithStack(err).Error())
         abnormal.ResponseJsonError(w, errmsg.ErrMsgJsonUnallowedCountry, http.StatusForbidden)
         return
     }
