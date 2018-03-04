@@ -20,7 +20,7 @@ type AuthIdentity struct {
     // user email
     Email         string    `gorm:"column:email;type:VARCHAR(256)"`
     // user invitation
-    Invitation    string    `gorm:"column:invitation;type:VARCHAR(20)"`
+    Invitation    string    `gorm:"column:invitation;type:VARCHAR(24)"`
     // hashed user invitation
     InvHash       string    `gorm:"column:invhash;type:VARCHAR(40)"`
     // hashed device ID

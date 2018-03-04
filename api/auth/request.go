@@ -78,8 +78,8 @@ func updateRequestRecord(requester []string, orm *gorm.DB) error {
         }
 
         // generate
-        ic := randstr.NewCapRandString(16)
-        full := fmt.Sprintf("%s-%s-%s-%s", ic[0:4], ic[4:8], ic[8:12], ic[12:])
+        ic := strings.ToUpper(randstr.NewRandomString(20))
+        full := fmt.Sprintf("%s-%s-%s-%s-%s", ic[0:4], ic[4:8], ic[8:12], ic[12:16], ic[16:])
         hasher := ripemd160.New()
         hasher.Write([]byte(full))
         iHash := fmt.Sprintf("%x\n", hasher.Sum(nil))
