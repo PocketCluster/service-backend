@@ -99,4 +99,5 @@ func main() {
         close(closeInvRef)
     }()
     invRefWaiter.Wait()
+    log.Info("api service terminated ok")
 }
