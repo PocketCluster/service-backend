@@ -133,52 +133,40 @@ func RefreshInvitationList(wg *sync.WaitGroup, isTermC <- chan interface{}, orm 
         return errors.New("invalid request list")
     }
 
-    go func(fwg *sync.WaitGroup, fisTermC <- chan interface{}, form *gorm.DB, freqcsv, finvcsv string) error {
+    go func(fwg *sync.WaitGroup, fisTermC <- chan interface{}, form *gorm.DB, freqcsv, finvcsv string) {
         var reftick = time.NewTicker(time.Minute * 5)
-        defer func() {
-            reftick.Stop()
-            fwg.Done()
-        }()
 
-        {
-            // update invitation list as soon as start
-            reqs, err := readRequestCSV(freqcsv)
-            if err != nil {
-                log.Error(err.Error())
-                return errors.WithStack(err)
+        // update invitation list as soon as start
+        if reqs, rerr := readRequestCSV(freqcsv); rerr == nil {
+            if ierr := updateRequestRecord(reqs, form); ierr == nil {
+                if cerr := recordInvitation(orm, finvcsv); cerr != nil {
+                    log.Error(cerr.Error())
+                }
+            } else {
+                log.Error(ierr.Error())
             }
-            err = updateRequestRecord(reqs, form)
-            if err != nil {
-                log.Error(err.Error())
-                return errors.WithStack(err)
-            }
-            err = recordInvitation(orm, finvcsv)
-            if err != nil {
-                log.Error(err.Error())
-                return errors.WithStack(err)
-            }
+        } else {
+            log.Error(rerr.Error())
         }
 
         for {
             select {
                 case <- fisTermC: {
-                    return nil
+                    reftick.Stop()
+                    fwg.Done()
                 }
                 case <- reftick.C: {
-                    reqs, err := readRequestCSV(freqcsv)
-                    if err != nil {
-                        log.Error(err.Error())
-                        return errors.WithStack(err)
-                    }
-                    err = updateRequestRecord(reqs, form)
-                    if err != nil {
-                        log.Error(err.Error())
-                        return errors.WithStack(err)
-                    }
-                    err = recordInvitation(orm, finvcsv)
-                    if err != nil {
-                        log.Error(err.Error())
-                        return errors.WithStack(err)
+                    // update invitation list as soon as start
+                    if reqs, rerr := readRequestCSV(freqcsv); rerr == nil {
+                        if ierr := updateRequestRecord(reqs, form); ierr == nil {
+                            if cerr := recordInvitation(orm, finvcsv); cerr != nil {
+                                log.Error(cerr.Error())
+                            }
+                        } else {
+                            log.Error(ierr.Error())
+                        }
+                    } else {
+                        log.Error(rerr.Error())
                     }
                 }
             }
