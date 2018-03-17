@@ -6,18 +6,23 @@ import (
     "os"
     "path/filepath"
     "runtime"
+    "sync"
 
     log "github.com/Sirupsen/logrus"
     "github.com/pkg/errors"
     "github.com/thoas/stats"
     "github.com/julienschmidt/httprouter"
 
+    _ "github.com/mattn/go-sqlite3"
+    "github.com/jinzhu/gorm"
+
     "github.com/stkim1/api"
+    "github.com/stkim1/api/auth"
     "github.com/stkim1/api/health"
     "github.com/stkim1/api/package/list"
     "github.com/stkim1/api/package/repo"
     "github.com/stkim1/api/package/meta"
-    "github.com/stkim1/api/package/sync"
+    apisync "github.com/stkim1/api/package/sync"
 )
 
 func main() {
@@ -25,6 +30,17 @@ func main() {
         router = httprouter.New()
         s = stats.New()
     )
+    orm, derr := gorm.Open("sqlite3", "/api-service/v014/authdata.sql")
+    if derr != nil {
+        log.Errorf("[DATABASE] auth db open error %v", errors.WithStack(derr).Error())
+        os.Exit(2)
+    }
+    defer orm.Close()
+    authsrvc, err := auth.NewAuthGateway(orm)
+    if err != nil {
+        log.Errorf("[DATABASE] initialization error %v", errors.WithStack(err).Error())
+        os.Exit(2)
+    }
 
     // setup logging
     log.SetFormatter(&log.TextFormatter{})
@@ -47,8 +63,11 @@ func main() {
     // setup route path
     router.GET(api.URLPackageList, list.PackageList)
     router.GET(api.URLPackageRepo, repo.RepoList)
-    router.GET(api.URLPackageSync, sync.PackageSync)
+    router.GET(api.URLPackageSync, apisync.PackageSync)
     router.GET(api.URLPackageMeta, meta.PackageMeta)
+
+    // setup auth path
+    router.POST(api.URLAuthCheck,  authsrvc.IsUserAuthValid)
 
     // misc
     router.GET(api.URLHealthCheck, health.HealthCheck)
@@ -61,10 +80,24 @@ func main() {
         w.Write(s)
     })
 
+    // setup inv request refresher
+    var (
+        closeInvRef = make(chan interface{})
+        invRefWaiter = sync.WaitGroup{}
+    )
+
+    invRefWaiter.Add(1)
+    auth.RefreshInvitationList(&invRefWaiter, closeInvRef, orm, "/api-service/v014/request.csv", "/api-service/v014/invitation.csv")
+
     // start serving
     log.Printf("API Service Running...")
     err = http.ListenAndServe(":8080", router);
     if err != nil {
         log.Fatal(errors.WithStack(err))
     }
+    go func() {
+        close(closeInvRef)
+    }()
+    invRefWaiter.Wait()
+    log.Info("api service terminated ok")
 }

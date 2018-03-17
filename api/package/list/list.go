@@ -48,7 +48,7 @@ func PackageList(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
     err := cforigin.IsOriginAllowedCountry(r)
     if err != nil {
-        log.Debugf(err.Error())
+        log.Error(err.Error())
         abnormal.ResponseJsonError(w, errmsg.ErrMsgJsonUnallowedCountry, http.StatusForbidden)
         return
     }

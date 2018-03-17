@@ -59,7 +59,7 @@ func PackageSync(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 
     err := cforigin.IsOriginAllowedCountry(r)
     if err != nil {
-        log.Debugf(err.Error())
+        log.Error(err.Error())
         abnormal.ResponseJsonError(w, errmsg.ErrMsgJsonUnallowedCountry, http.StatusForbidden)
         return
     }
