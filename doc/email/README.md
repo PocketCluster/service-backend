@@ -1,2 +1,0 @@
-# PocketCluster Email Subscription Forms
-
