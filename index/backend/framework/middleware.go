@@ -13,7 +13,7 @@ import (
     "github.com/go-utils/uslice"
     "github.com/gorilla/sessions"
     "github.com/zenazn/goji/web"
-    "github.com/stkim1/backend/control"
+    "github.com/stkim1/service-backend/index/backend/control"
 )
 
 // Makes sure controllers can have access to session

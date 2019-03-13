@@ -5,18 +5,18 @@ import (
     "fmt"
     "net/http"
     "path"
-    "strings"
     "strconv"
+    "strings"
 
     log "github.com/Sirupsen/logrus"
+    "github.com/google/go-github/github"
+    "github.com/jinzhu/gorm"
     "github.com/pkg/errors"
     "github.com/zenazn/goji/web"
-    "github.com/jinzhu/gorm"
-    "github.com/google/go-github/github"
 
-    "github.com/stkim1/backend/model"
-    "github.com/stkim1/backend/util"
-    "github.com/stkim1/backend/config"
+    "github.com/stkim1/service-backend/index/backend/config"
+    "github.com/stkim1/service-backend/index/backend/model"
+    "github.com/stkim1/service-backend/index/backend/util"
 )
 
 const (

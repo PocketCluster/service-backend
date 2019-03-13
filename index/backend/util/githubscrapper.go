@@ -1,9 +1,9 @@
 package util
 
 import (
+    "io/ioutil"
     "regexp"
     "strings"
-    "io/ioutil"
 
     "github.com/PuerkitoBio/goquery"
 )

@@ -1,12 +1,12 @@
 package auth
 
 import (
+    "io/ioutil"
     "os"
     "path/filepath"
     "reflect"
     "runtime"
     "testing"
-    "io/ioutil"
 )
 
 func testCSVFilename() string {

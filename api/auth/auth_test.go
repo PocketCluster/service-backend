@@ -15,9 +15,9 @@ import (
     "github.com/jinzhu/gorm"
     "github.com/julienschmidt/httprouter"
 
-    "github.com/stkim1/api"
-    "github.com/stkim1/api/auth/model"
-    "github.com/stkim1/sharedpkg/errmsg"
+    "github.com/stkim1/service-backend/api"
+    "github.com/stkim1/service-backend/api/auth/model"
+    "github.com/stkim1/service-backend/shared/errmsg"
 )
 
 const (

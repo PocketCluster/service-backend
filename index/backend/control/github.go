@@ -3,13 +3,13 @@ package control
 import (
     "context"
     "fmt"
-    "strings"
     "sort"
+    "strings"
     "time"
 
     "github.com/google/go-github/github"
-    "github.com/stkim1/backend/model"
-    "github.com/stkim1/backend/util"
+    "github.com/stkim1/service-backend/index/backend/model"
+    "github.com/stkim1/service-backend/index/backend/util"
 )
 
 func (ctrl *Controller) GetGithubRepoMeta(repoURL string) (*github.Repository, *github.Response, error) {

@@ -24,8 +24,9 @@ import (
     "testing"
     "time"
 
-    "github.com/stkim1/backend/storage"
     . "gopkg.in/check.v1"
+
+    "github.com/stkim1/service-backend/index/backend/storage"
 )
 
 func TestBackend(t *testing.T) { TestingT(t) }

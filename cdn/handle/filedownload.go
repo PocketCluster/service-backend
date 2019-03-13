@@ -6,7 +6,7 @@ import (
     "strings"
 
     "github.com/julienschmidt/httprouter"
-    "github.com/stkim1/cdn/fileserve"
+    "github.com/stkim1/service-backend/cdn/fileserve"
 )
 
 var (
