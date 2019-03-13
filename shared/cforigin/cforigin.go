@@ -2,9 +2,9 @@ package cforigin
 
 import (
     "net/http"
+    "strings"
 
     "github.com/pkg/errors"
-    "strings"
 )
 
 var (

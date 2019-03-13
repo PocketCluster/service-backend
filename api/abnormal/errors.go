@@ -5,7 +5,7 @@ import (
     "net/http"
     "os"
 
-    "github.com/stkim1/sharedpkg/errmsg"
+    "github.com/stkim1/service-backend/shared/errmsg"
 )
 
 // ToJsonError returns a non-specific HTTP error message and status code

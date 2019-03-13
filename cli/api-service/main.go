@@ -9,20 +9,20 @@ import (
     "sync"
 
     log "github.com/Sirupsen/logrus"
+    "github.com/julienschmidt/httprouter"
     "github.com/pkg/errors"
     "github.com/thoas/stats"
-    "github.com/julienschmidt/httprouter"
 
-    _ "github.com/mattn/go-sqlite3"
     "github.com/jinzhu/gorm"
+    _ "github.com/mattn/go-sqlite3"
 
-    "github.com/stkim1/api"
-    "github.com/stkim1/api/auth"
-    "github.com/stkim1/api/health"
-    "github.com/stkim1/api/package/list"
-    "github.com/stkim1/api/package/repo"
-    "github.com/stkim1/api/package/meta"
-    apisync "github.com/stkim1/api/package/sync"
+    "github.com/stkim1/service-backend/api"
+    "github.com/stkim1/service-backend/api/auth"
+    "github.com/stkim1/service-backend/api/health"
+    "github.com/stkim1/service-backend/api/package/list"
+    "github.com/stkim1/service-backend/api/package/meta"
+    "github.com/stkim1/service-backend/api/package/repo"
+    apisync "github.com/stkim1/service-backend/api/package/sync"
 )
 
 func main() {

@@ -15,8 +15,8 @@ import (
     "github.com/jinzhu/gorm"
     "golang.org/x/crypto/ripemd160"
 
-    "github.com/stkim1/api/auth/model"
-    "github.com/stkim1/sharedpkg/randstr"
+    "github.com/stkim1/service-backend/api/auth/model"
+    "github.com/stkim1/service-backend/shared/randstr"
 )
 
 const (

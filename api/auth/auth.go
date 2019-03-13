@@ -8,14 +8,14 @@ import (
     "time"
 
     log "github.com/Sirupsen/logrus"
-    "github.com/pkg/errors"
-    "github.com/julienschmidt/httprouter"
     "github.com/jinzhu/gorm"
+    "github.com/julienschmidt/httprouter"
+    "github.com/pkg/errors"
 
-    "github.com/stkim1/api/abnormal"
-    "github.com/stkim1/api/auth/model"
-    "github.com/stkim1/sharedpkg/errmsg"
-    "github.com/stkim1/sharedpkg/cforigin"
+    "github.com/stkim1/service-backend/api/abnormal"
+    "github.com/stkim1/service-backend/api/auth/model"
+    "github.com/stkim1/service-backend/shared/cforigin"
+    "github.com/stkim1/service-backend/shared/errmsg"
 )
 
 type AuthGateway interface {

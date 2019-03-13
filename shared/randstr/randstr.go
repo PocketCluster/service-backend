@@ -1,8 +1,8 @@
 package randstr
 
 import (
-    "encoding/binary"
     crand "crypto/rand"
+    "encoding/binary"
 )
 
 func cryptoRandomInt64() int64 {
