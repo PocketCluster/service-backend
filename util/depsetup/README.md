@@ -11,6 +11,7 @@
 - [ ] Generate TLS _without_ `IP.1` in `[alt_name]`  
 - [ ] Autojoin with DHCP failure incorporated
 - [ ] OSX DHCP notification change
+- [ ] `github.com/blevesearch/bleve' is modified to use `coreos/bbolt` and intentially left out of asset.
 
 **Postponed**  
 - [`gomvpkg`](https://godoc.org/golang.org/x/tools/cmd/gomvpkg) is not deployed  

@@ -291,21 +291,25 @@ def generate_dir_cleanup_script(pkg=""):
 
 if __name__ == "__main__":
 
-    if platform.system() != "Linux":
-        print "Please execute depedency condensor on Linux!"
+    if platform.system() != "Darwin":
+        print "Please execute depedency condensor on OSX!"
         exit(-1)
 
     WORK_ROOT = None
     try:
         WORK_ROOT = os.environ["WORK_ROOT"]
     except Exception:
-        WORK_ROOT = "/opt/gopkg/service-backend/SETUP"
+        # WORK_ROOT = os.getcwd()
+        # WORK_ROOT = os.path.abspath(os.getcwd())
+        WORK_ROOT = os.path.dirname(os.path.realpath(__file__))
 
     GOREPO = None
     try:
         GOREPO = os.environ["GOREPO"]
     except Exception:
-        GOREPO = "/opt/gopkg"
+        # https://stackoverflow.com/questions/2817264/how-to-get-the-parent-dir-location
+        # https://stackoverflow.com/questions/4028904/how-to-get-the-home-directory-in-python
+        GOREPO = os.path.join(os.path.abspath(os.path.expanduser("~")), "INDEX/GOPKG")
 
     pkg_root = "{}/src".format(GOREPO)
     # these are the main component we need to manually keep
@@ -409,6 +413,8 @@ if __name__ == "__main__":
         print "-" * 8, "cleanup vendor script", "-" * 8
         with open(os.path.join(WORK_ROOT, "vendor_cleanup.sh"), "w") as cleandep:
             cleandep.write("#!/usr/bin/env bash\n\nfunction clean_vendor() {\n")
+
+            """
             for pkg, vers in package.iteritems():
                 if 1 < len(vers):
                     cleandep.write(generate_dir_cleanup_script(pkg))
@@ -417,6 +423,7 @@ if __name__ == "__main__":
                 cleandep.write(generate_dir_cleanup_script(pkg))
 
             cleandep.write("}\n\nfunction clean_gopath() {\n")
+            """
 
             for pkg, vers in package.iteritems():
                 if 1 == len(vers):

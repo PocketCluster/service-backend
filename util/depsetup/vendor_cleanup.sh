@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 
 function clean_vendor() {
-}
-
-function clean_gopath() {
 	rm -rf github.com/ikeikeikeike/go-sitemap-generator && (rmdir github.com/ikeikeikeike > /dev/null 2>&1 || true)
 	rm -rf gopkg.in/yaml.v2 && (rmdir gopkg.in > /dev/null 2>&1 || true)
 	rm -rf github.com/andybalholm/cascadia && (rmdir github.com/andybalholm > /dev/null 2>&1 || true)
