@@ -74,7 +74,7 @@ project/plugins/project/
 .DS_Store
 
 # PC-INDEX specific
-DEVASSETS/
+util/devasset/
 
 # SQLITE3 Database
 *.db
