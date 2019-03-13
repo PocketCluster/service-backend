@@ -10,10 +10,10 @@ import (
     "github.com/jinzhu/gorm"
     "github.com/blevesearch/bleve"
 
-    "github.com/stkim1/backend/storage"
-    "github.com/stkim1/backend/config"
-    "github.com/stkim1/backend/update"
-    "github.com/stkim1/backend/model"
+    "github.com/stkim1/service-backend/index/backend/storage"
+    "github.com/stkim1/service-backend/index/backend/config"
+    "github.com/stkim1/service-backend/index/backend/update"
+    "github.com/stkim1/service-backend/index/backend/model"
 )
 
 func (a *Application) ScheduleMetaUpdate() {

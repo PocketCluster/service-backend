@@ -1,21 +1,21 @@
 package control
 
 import (
-    "net/http"
-    "strings"
     "io/ioutil"
-    "time"
+    "net/http"
     "path"
+    "strings"
+    "time"
 
     log "github.com/Sirupsen/logrus"
+    "github.com/dustin/go-humanize"
+    "github.com/jinzhu/gorm"
     "github.com/pkg/errors"
     "github.com/zenazn/goji/web"
-    "github.com/jinzhu/gorm"
-    humanize "github.com/dustin/go-humanize"
 
-    "github.com/stkim1/backend/util"
-    "github.com/stkim1/backend/model"
-    "github.com/stkim1/backend/storage"
+    "github.com/stkim1/service-backend/index/backend/model"
+    "github.com/stkim1/service-backend/index/backend/storage"
+    "github.com/stkim1/service-backend/index/backend/util"
 )
 
 func (ctrl *Controller) Repository(c web.C, r *http.Request) (string, int) {

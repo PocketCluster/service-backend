@@ -9,17 +9,17 @@ import (
     "time"
 
     log "github.com/Sirupsen/logrus"
-    "github.com/pkg/errors"
+    "github.com/blevesearch/bleve"
+    "github.com/google/go-github/github"
     "github.com/jinzhu/gorm"
     _ "github.com/jinzhu/gorm/dialects/sqlite"
-    "github.com/google/go-github/github"
-    "github.com/blevesearch/bleve"
+    "github.com/pkg/errors"
 
-    "github.com/stkim1/backend/model"
-    "github.com/stkim1/backend/util"
-    "github.com/stkim1/backend/control"
-    "github.com/stkim1/backend/config"
-    pocketsearch "github.com/stkim1/backend/search"
+    "github.com/stkim1/service-backend/index/backend/config"
+    "github.com/stkim1/service-backend/index/backend/control"
+    "github.com/stkim1/service-backend/index/backend/model"
+    pocketsearch "github.com/stkim1/service-backend/index/backend/search"
+    "github.com/stkim1/service-backend/index/backend/util"
 )
 
 func UpdateRepoMeta(metaDB *gorm.DB, searchIndex bleve.Index, ctrl *control.Controller, repoModel *model.Repository) (*github.Response, error) {

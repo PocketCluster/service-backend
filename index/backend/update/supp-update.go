@@ -1,20 +1,20 @@
 package update
 
 import (
-    "time"
-    "sync/atomic"
     "sync"
+    "sync/atomic"
+    "time"
 
     log "github.com/Sirupsen/logrus"
-    "github.com/pkg/errors"
+    "github.com/google/go-github/github"
     "github.com/jinzhu/gorm"
     _ "github.com/jinzhu/gorm/dialects/sqlite"
-    "github.com/google/go-github/github"
+    "github.com/pkg/errors"
 
-    "github.com/stkim1/backend/model"
-    "github.com/stkim1/backend/control"
-    "github.com/stkim1/backend/storage"
-    "github.com/stkim1/backend/config"
+    "github.com/stkim1/service-backend/index/backend/config"
+    "github.com/stkim1/service-backend/index/backend/control"
+    "github.com/stkim1/service-backend/index/backend/model"
+    "github.com/stkim1/service-backend/index/backend/storage"
 )
 
 func GithubSupplementInfo(suppDB storage.Nosql, ctrl *control.Controller, repoModel *model.Repository, cfg *config.Config) (*github.Response, error) {

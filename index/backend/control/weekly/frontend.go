@@ -1,15 +1,15 @@
 package weekly
 
 import (
+    "fmt"
     "net/http"
     "time"
-    "fmt"
 
     "github.com/jinzhu/gorm"
 
-    "github.com/stkim1/backend/util"
-    "github.com/stkim1/backend/config"
-    "github.com/stkim1/backend/model"
+    "github.com/stkim1/service-backend/index/backend/config"
+    "github.com/stkim1/service-backend/index/backend/model"
+    "github.com/stkim1/service-backend/index/backend/util"
 )
 
 const (

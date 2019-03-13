@@ -2,22 +2,22 @@ package control
 
 import (
     "bytes"
-    "strings"
-    "sync/atomic"
     "net"
     "net/http"
+    "strings"
+    "sync/atomic"
 
     log "github.com/Sirupsen/logrus"
-    "github.com/pkg/errors"
-    "github.com/gorilla/sessions"
-    "github.com/zenazn/goji/web"
-    "github.com/jinzhu/gorm"
-    "github.com/google/go-github/github"
     "github.com/blevesearch/bleve"
+    "github.com/google/go-github/github"
+    "github.com/gorilla/sessions"
+    "github.com/jinzhu/gorm"
+    "github.com/pkg/errors"
+    "github.com/zenazn/goji/web"
 
-    "github.com/stkim1/backend/model"
-    "github.com/stkim1/backend/config"
-    "github.com/stkim1/backend/storage"
+    "github.com/stkim1/service-backend/index/backend/config"
+    "github.com/stkim1/service-backend/index/backend/model"
+    "github.com/stkim1/service-backend/index/backend/storage"
 )
 
 /* ------- GITHUG API CONTROL ------- */

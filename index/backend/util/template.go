@@ -4,8 +4,8 @@ import (
     "path"
 
     log "github.com/Sirupsen/logrus"
-    "github.com/pkg/errors"
     "github.com/cbroglie/mustache"
+    "github.com/pkg/errors"
 )
 
 func RenderPage(templatePath, templateFile string, data map[string]interface{}) string {

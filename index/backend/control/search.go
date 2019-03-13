@@ -7,14 +7,15 @@ import (
     "strconv"
     "strings"
 
-    "github.com/jinzhu/gorm"
-    "github.com/zenazn/goji/web"
-    humanize "github.com/dustin/go-humanize"
     "github.com/blevesearch/bleve"
     "github.com/blevesearch/bleve/search/query"
-    psearch "github.com/stkim1/backend/search"
-    "github.com/stkim1/backend/model"
-    "github.com/stkim1/backend/util"
+    "github.com/dustin/go-humanize"
+    "github.com/jinzhu/gorm"
+    "github.com/zenazn/goji/web"
+
+    "github.com/stkim1/service-backend/index/backend/model"
+    psearch "github.com/stkim1/service-backend/index/backend/search"
+    "github.com/stkim1/service-backend/index/backend/util"
 )
 
 const (

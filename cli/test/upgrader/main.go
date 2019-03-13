@@ -11,13 +11,13 @@ import (
     "github.com/davecgh/go-spew/spew"
     "github.com/blevesearch/bleve"
 
-    "github.com/stkim1/backend/model"
-    "github.com/stkim1/backend/control"
-    "github.com/stkim1/backend/config"
-    "github.com/stkim1/backend/storage/boltbk"
-    "github.com/stkim1/backend/storage"
-    "github.com/stkim1/backend/update"
-    pocketsearch "github.com/stkim1/backend/search"
+    "github.com/stkim1/service-backend/index/backend/model"
+    "github.com/stkim1/service-backend/index/backend/control"
+    "github.com/stkim1/service-backend/index/backend/config"
+    "github.com/stkim1/service-backend/index/backend/storage/boltbk"
+    "github.com/stkim1/service-backend/index/backend/storage"
+    "github.com/stkim1/service-backend/index/backend/update"
+    pocketsearch "github.com/stkim1/service-backend/index/backend/search"
 )
 
 func githubSortSupplementInfo(suppDB storage.Nosql, repoModel *model.Repository) error {

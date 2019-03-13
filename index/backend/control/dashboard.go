@@ -8,10 +8,10 @@ import (
     "github.com/pkg/errors"
     "github.com/zenazn/goji/web"
 
-    "github.com/stkim1/backend/util"
-    "github.com/stkim1/backend/control/overview"
-    "github.com/stkim1/backend/control/weekly"
-    "github.com/stkim1/backend/control/scrapping"
+    "github.com/stkim1/service-backend/index/backend/control/overview"
+    "github.com/stkim1/service-backend/index/backend/control/scrapping"
+    "github.com/stkim1/service-backend/index/backend/control/weekly"
+    "github.com/stkim1/service-backend/index/backend/util"
 )
 
 // Category route

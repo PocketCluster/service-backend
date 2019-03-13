@@ -6,7 +6,7 @@ import (
     log "github.com/Sirupsen/logrus"
     "github.com/davecgh/go-spew/spew"
 
-    "github.com/stkim1/backend/config"
+    "github.com/stkim1/service-backend/index/backend/config"
 )
 
 func main() {

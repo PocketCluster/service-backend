@@ -11,8 +11,8 @@ import (
     "time"
 
     log "github.com/Sirupsen/logrus"
-    "github.com/pkg/errors"
     "github.com/jinzhu/gorm"
+    "github.com/pkg/errors"
     "golang.org/x/crypto/ripemd160"
 
     "github.com/stkim1/service-backend/api/auth/model"

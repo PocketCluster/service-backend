@@ -4,8 +4,8 @@ import (
     "bytes"
     "net/http"
 
+    "github.com/stkim1/service-backend/index/backend/model"
     "github.com/zenazn/goji/web"
-    "github.com/stkim1/backend/model"
     // FIXME: when xmlcontent PR is merged, change this repo to the original
     "github.com/ikeikeikeike/go-sitemap-generator/stm"
 )

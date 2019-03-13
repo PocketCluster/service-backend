@@ -17,12 +17,12 @@ import (
     _ "github.com/jinzhu/gorm/dialects/sqlite"
     "github.com/blevesearch/bleve"
 
-    "github.com/stkim1/backend/model"
-    "github.com/stkim1/backend/control"
-    "github.com/stkim1/backend/config"
-    "github.com/stkim1/backend/storage"
-    "github.com/stkim1/backend/storage/boltbk"
-    pocketsearch "github.com/stkim1/backend/search"
+    "github.com/stkim1/service-backend/index/backend/model"
+    "github.com/stkim1/service-backend/index/backend/control"
+    "github.com/stkim1/service-backend/index/backend/config"
+    "github.com/stkim1/service-backend/index/backend/storage"
+    "github.com/stkim1/service-backend/index/backend/storage/boltbk"
+    pocketsearch "github.com/stkim1/service-backend/index/backend/search"
 )
 
 func NewApplication(config *config.Config, control *control.Controller) *Application {

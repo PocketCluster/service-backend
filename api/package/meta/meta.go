@@ -8,12 +8,13 @@ import (
     "time"
 
     log "github.com/Sirupsen/logrus"
-    "github.com/pkg/errors"
     "github.com/julienschmidt/httprouter"
-    "github.com/stkim1/service-backend/shared/cforigin"
-    "github.com/stkim1/service-backend/shared/errmsg"
+    "github.com/pkg/errors"
+
     "github.com/stkim1/service-backend/api"
     "github.com/stkim1/service-backend/api/abnormal"
+    "github.com/stkim1/service-backend/shared/cforigin"
+    "github.com/stkim1/service-backend/shared/errmsg"
 )
 
 func serveMeta(w http.ResponseWriter, r *http.Request, fsRoot, fileName string) {
