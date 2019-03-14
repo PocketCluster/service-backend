@@ -1,0 +1,41 @@
+query ($owner:String!, $repo:String!, $lang_order:LanguageOrder) {
+  repository(owner:$owner, name:$repo) {
+    id
+    databaseId
+    url
+    description
+    createdAt
+    updatedAt
+    diskUsage
+    defaultBranchRef {
+      name
+    }
+    hasWikiEnabled
+    watchers {
+      totalCount
+    }
+    forks {
+      totalCount
+    }
+    collaborators(first:10, affiliation:ALL) {
+      totalCount
+      edges {
+        node {
+          id
+          databaseId
+          url
+          avatarUrl
+        }
+      }
+    }
+    languages(first:20, orderBy:$lang_order) {
+      edges {
+       	node{
+          name
+        }
+      }
+    }
+  }
+}
+
+{"owner":"Olivia-Blundell","repo":"ConCatch-Issue", "lang_order": {"direction":"DESC", "field":"SIZE"}}
